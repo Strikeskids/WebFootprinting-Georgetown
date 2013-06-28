@@ -24,7 +24,10 @@ public abstract class AbstractParser implements Parser {
 
 	@Override
 	public void load(URL url) throws IOException {
-		doc.set(HttpConnection.connect(url).get());
+		doc.set(HttpConnection
+				.connect(url)
+				.header("User-Agent",
+						"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0").get());
 	}
 
 	@Override
