@@ -1,2 +1,2 @@
-WebFootprinting-Georgtown
+WebFootprinting-Georgetown
 =========================
