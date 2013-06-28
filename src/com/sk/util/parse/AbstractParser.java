@@ -16,7 +16,7 @@ import org.jsoup.nodes.Document;
  */
 public abstract class AbstractParser implements Parser {
 
-	protected ThreadLocal<Document> doc;
+	protected ThreadLocal<Document> doc = new ThreadLocal<>();
 
 	public AbstractParser() {
 		// TODO Auto-generated constructor stub

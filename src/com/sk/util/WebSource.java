@@ -1,9 +1,12 @@
 package com.sk.util;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.swing.text.html.Option;
 
 import com.google.common.base.Optional;
 
@@ -19,7 +22,11 @@ public class WebSource {
 	private Map<String, String> hosts = new HashMap<>();
 
 	private WebSource() {
-
+		// Initialize sources
+		try {
+			this.addSite("linkedin", new URL("https://www.linkedin.com/"));
+		} catch (MalformedURLException ignored) {
+		}
 	}
 
 	private static WebSource source;

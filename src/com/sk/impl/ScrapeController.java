@@ -14,10 +14,11 @@ import com.sk.util.parse.Scraper;
 public class ScrapeController extends AbstractScraper {
 
 	private Map<String, Scraper> scrapers = new HashMap<>();
-	private ThreadLocal<Scraper> current;
+	private ThreadLocal<Scraper> current = new ThreadLocal<>();;
 
 	public ScrapeController() {
 		// Initialize the scrapers
+		scrapers.put("linkedin", new LinkedInScraper("linkedin"));
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.sk.util;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,6 +80,11 @@ public class PersonalData extends HashMap<String, String> {
 	 */
 	public String getWebsiteId() {
 		return webId;
+	}
+
+	@Override
+	public String toString() {
+		return "PersonalData (" + webId + ", " + super.toString() + ")";
 	}
 
 	private static final long serialVersionUID = 4259139787451939836L;
