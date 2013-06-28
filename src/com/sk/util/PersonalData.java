@@ -5,6 +5,48 @@ import java.util.Map;
 
 import com.google.common.base.Optional;
 
+/**
+ * This contains all the data about an individual garnered from a specific website
+ * 
+ * Keys used
+ * <table>
+ * <tr>
+ * <th>Key</th>
+ * <th>Purpose</th>
+ * </tr>
+ * <tr>
+ * <td>first-name</td>
+ * <td>Individual's first name (or given name)</td>
+ * </tr>
+ * <tr>
+ * <td>last-name</td>
+ * <td>Individual's last name (or family name)</td>
+ * </tr>
+ * <tr>
+ * <td>industry</td>
+ * <td>The industry where the individual works</td>
+ * </tr>
+ * <tr>
+ * <td>profile-picture-url</td>
+ * <td>A {@link URL} to the individual's profile picture</td>
+ * </tr>
+ * <tr>
+ * <td>education</td>
+ * <td>A summary of the individual's education</td>
+ * </tr>
+ * <tr>
+ * <td>title</td>
+ * <td>The individual's job title</td>
+ * </tr>
+ * <tr>
+ * <td>location</td>
+ * <td>The individual's location</td>
+ * </tr>
+ * </table>
+ * 
+ * @author Strikeskids
+ * 
+ */
 public class PersonalData extends HashMap<String, String> {
 
 	private String webId;
