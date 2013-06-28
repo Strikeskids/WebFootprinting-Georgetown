@@ -3,6 +3,7 @@ package com.sk.util;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.common.base.Optional;
 
@@ -15,6 +16,7 @@ import com.google.common.base.Optional;
 public class WebSource {
 
 	private Map<String, URL> websites = new HashMap<>();
+	private Map<String, String> hosts = new HashMap<>();
 
 	private WebSource() {
 
@@ -52,6 +54,20 @@ public class WebSource {
 	}
 
 	/**
+	 * Gets the site id from the specified host
+	 * 
+	 * @param host
+	 *            the host to search for
+	 * @return the site id of the host or an absent {@link Option} if the host was not found
+	 */
+	public Optional<String> getSiteId(String host) {
+		if (hosts.containsKey(host))
+			return Optional.of(hosts.get(host));
+		else
+			return Optional.absent();
+	}
+
+	/**
 	 * Adds the specified site to the {@link WebSource}
 	 * 
 	 * @param siteId
@@ -61,14 +77,18 @@ public class WebSource {
 	 */
 	public void addSite(String siteId, URL url) {
 		websites.put(siteId, url);
+		hosts.put(url.getHost(), siteId);
 	}
 
-	public void addAll(WebSource source) {
-		addAll(source.websites);
-	}
+	// public void addAll(WebSource source) {
+	// websites.putAll(source.websites);
+	// hosts.putAll(source.hosts);
+	// }
 
 	public void addAll(Map<String, URL> source) {
-		websites.putAll(source);
+		for (Entry<String, URL> entry : source.entrySet()) {
+			addSite(entry.getKey(), entry.getValue());
+		}
 	}
 
 	public void addAll(String[] siteIds, URL[] urls) {

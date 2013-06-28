@@ -16,7 +16,7 @@ import org.jsoup.nodes.Document;
  */
 public abstract class AbstractParser implements Parser {
 
-	protected Document doc;
+	protected ThreadLocal<Document> doc;
 
 	public AbstractParser() {
 		// TODO Auto-generated constructor stub
@@ -24,12 +24,12 @@ public abstract class AbstractParser implements Parser {
 
 	@Override
 	public void load(URL url) throws IOException {
-		doc = HttpConnection.connect(url).get();
+		doc.set(HttpConnection.connect(url).get());
 	}
 
 	@Override
 	public void load(String source, String baseURI) {
-		doc = Jsoup.parse(source, baseURI);
+		doc.set(Jsoup.parse(source, baseURI));
 	}
 
 }
