@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.base.Optional;
+import com.sk.util.PersonalData;
 import com.sk.util.WebSource;
 import com.sk.util.parse.AbstractScraper;
 import com.sk.util.parse.Scraper;
@@ -64,6 +65,24 @@ public class ScrapeController extends AbstractScraper {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	/**
+	 * Does the entire parsing process from start to finish. Convinience method
+	 * 
+	 * @param url
+	 *            The {@link URL} to parse
+	 * @return The {@link PersonalData} parsed
+	 */
+	public Optional<PersonalData> loadAndParse(URL url) {
+		try {
+			load(url);
+			if (!parse())
+				return Optional.absent();
+			return Optional.of(get());
+		} catch (IOException ignored) {
+			return Optional.absent();
 		}
 	}
 
