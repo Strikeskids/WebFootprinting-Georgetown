@@ -35,7 +35,7 @@ import com.google.common.base.Optional;
  * <td>A summary of the individual's education</td>
  * </tr>
  * <tr>
- * <td>title</td>
+ * <td>job-title</td>
  * <td>The individual's job title</td>
  * </tr>
  * <tr>
