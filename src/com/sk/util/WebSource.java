@@ -16,27 +16,25 @@ public class WebSource {
 
 	private Map<String, URL> websites = new HashMap<>();
 
-	/**
-	 * Instantiates the {@link WebSource} with a copy of the websites and ids stored in the argument
-	 * 
-	 * @param copy
-	 *            The {@link WebSource} to copy
-	 */
-	public WebSource(WebSource copy) {
-		addAll(copy);
+	private WebSource() {
+
 	}
 
+	private static WebSource source;
+
 	/**
-	 * Instantiates the {@link WebSource} with the contents of the {@link String} array of ids and {@link URL}
-	 * array provided
+	 * Gets the singleton {@link WebSource}
 	 * 
-	 * @param ids
-	 *            The website ids to use
-	 * @param urls
-	 *            The {@link URL}s of the corresponding website ids
+	 * @return The {@link WebSource} for the application
 	 */
-	public WebSource(String[] ids, URL[] urls) {
-		addAll(ids, urls);
+	public static WebSource get() {
+		if (source == null) {
+			synchronized (WebSource.class) {
+				if (source == null)
+					source = new WebSource();
+			}
+		}
+		return source;
 	}
 
 	/**
