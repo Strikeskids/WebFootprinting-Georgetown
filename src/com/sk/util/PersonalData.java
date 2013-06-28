@@ -49,21 +49,25 @@ import com.google.common.base.Optional;
  */
 public class PersonalData extends HashMap<String, String> {
 
-	private String webId;
+	private final String siteId;
 
 	public PersonalData(String source) {
+		this.siteId = source;
 	}
 
 	public PersonalData(String source, int initialCapacity) {
 		super(initialCapacity);
+		this.siteId = source;
 	}
 
 	public PersonalData(String source, Map<? extends String, ? extends String> m) {
 		super(m);
+		this.siteId = source;
 	}
 
 	public PersonalData(String source, int initialCapacity, float loadFactor) {
 		super(initialCapacity, loadFactor);
+		this.siteId = source;
 	}
 
 	public Optional<String> get(String attribute) {
@@ -79,12 +83,12 @@ public class PersonalData extends HashMap<String, String> {
 	 * @return The website id
 	 */
 	public String getWebsiteId() {
-		return webId;
+		return siteId;
 	}
 
 	@Override
 	public String toString() {
-		return "PersonalData (" + webId + ", " + super.toString() + ")";
+		return "PersonalData (" + siteId + ", " + super.toString() + ")";
 	}
 
 	private static final long serialVersionUID = 4259139787451939836L;
