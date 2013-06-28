@@ -6,8 +6,7 @@ import java.util.Map;
 import com.google.common.base.Optional;
 
 /**
- * This contains all the data about an individual garnered from a specific website
- * 
+ * This contains all the data about an individual garnered from a specific website <br />
  * Keys used
  * <table>
  * <tr>
