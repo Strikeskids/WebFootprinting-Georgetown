@@ -46,13 +46,14 @@ public class BasicGrabber implements Grabber {
 		if (!found.isEmpty()) {
 			Element first = found.first();
 			String store;
-			if (attribute == null) {
+			if (attribute == null)
 				store = first.text();
-			} else {
+			else
 				store = first.attributes().get(attribute);
+			if (store.length() > 0) {
+				destination.put(property, store);
+				return true;
 			}
-			destination.put(property, store);
-			return true;
 		}
 		return false;
 	}
