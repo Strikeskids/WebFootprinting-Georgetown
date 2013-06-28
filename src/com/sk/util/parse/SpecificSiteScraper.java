@@ -1,6 +1,7 @@
 package com.sk.util.parse;
 
 import com.sk.util.PersonalData;
+import com.sk.util.SiteScraperInfo;
 
 /**
  * A scraper for a specific site only (eg. LinkedIn, Facebook/ Google+)
@@ -12,8 +13,10 @@ public abstract class SpecificSiteScraper extends AbstractScraper {
 
 	private final String siteId;
 
-	public SpecificSiteScraper(String siteId) {
-		this.siteId = siteId;
+	public SpecificSiteScraper() {
+		if (!getClass().isAnnotationPresent(SiteScraperInfo.class))
+			throw new IllegalArgumentException();
+		siteId = getClass().getAnnotation(SiteScraperInfo.class).siteId();
 	}
 
 	/**

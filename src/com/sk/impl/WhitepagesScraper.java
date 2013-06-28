@@ -7,10 +7,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import com.sk.util.PersonalData;
+import com.sk.util.SiteScraperInfo;
 import com.sk.util.parse.BasicGrabber;
 import com.sk.util.parse.Grabber;
 import com.sk.util.parse.GrabberSiteScraper;
 
+@SiteScraperInfo(siteBase = "http://www.whitepages.com/", siteId = "whitepages")
 public class WhitepagesScraper extends GrabberSiteScraper {
 
 	private static final Grabber[] grabbers = { new BasicGrabber("div.address.adr", "address"),
@@ -35,9 +37,8 @@ public class WhitepagesScraper extends GrabberSiteScraper {
 				}
 			} };
 
-	public WhitepagesScraper(String siteId) {
-		super(siteId, grabbers);
-		// TODO Auto-generated constructor stub
+	public WhitepagesScraper() {
+		super(grabbers);
 	}
 
 }

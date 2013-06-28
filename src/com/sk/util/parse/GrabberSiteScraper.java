@@ -14,8 +14,7 @@ public class GrabberSiteScraper extends SpecificSiteScraper {
 
 	private final Grabber[] grabbers;
 
-	public GrabberSiteScraper(String siteId, Grabber... grabbers) {
-		super(siteId);
+	public GrabberSiteScraper(Grabber... grabbers) {
 		this.grabbers = grabbers;
 	}
 

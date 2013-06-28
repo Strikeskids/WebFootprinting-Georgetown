@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.google.common.base.Optional;
 import com.sk.util.PersonalData;
+import com.sk.util.SiteScraperInfo;
 import com.sk.util.WebSource;
 import com.sk.util.parse.AbstractScraper;
 import com.sk.util.parse.Scraper;
@@ -15,12 +16,35 @@ import com.sk.util.parse.Scraper;
 public class ScrapeController extends AbstractScraper {
 
 	private Map<String, Scraper> scrapers = new HashMap<>();
-	private ThreadLocal<Scraper> current = new ThreadLocal<>();;
+	private ThreadLocal<Scraper> current = new ThreadLocal<>();
 
-	public ScrapeController() {
+	private static ScrapeController singleton;
+
+	public static ScrapeController getController() {
+		if (singleton == null) {
+			synchronized (ScrapeController.class) {
+				if (singleton == null)
+					singleton = new ScrapeController();
+			}
+		}
+		return singleton;
+	}
+
+	private ScrapeController() {
 		// Initialize the scrapers
-		scrapers.put("linkedin", new LinkedInScraper("linkedin"));
-		scrapers.put("whitepages", new WhitepagesScraper("whitepages"));
+		addScraper(LinkedInScraper.class);
+		addScraper(WhitepagesScraper.class);
+	}
+
+	private <T extends Scraper> void addScraper(Class<T> clazz) {
+		if (!clazz.isAnnotationPresent(SiteScraperInfo.class))
+			throw new IllegalArgumentException();
+		try {
+			SiteScraperInfo info = clazz.getAnnotation(SiteScraperInfo.class);
+			scrapers.put(info.siteId(), clazz.newInstance());
+			WebSource.get().addSite(info.siteId(), new URL(info.siteBase()));
+		} catch (InstantiationException | IllegalAccessException | MalformedURLException ignored) {
+		}
 	}
 
 	@Override
