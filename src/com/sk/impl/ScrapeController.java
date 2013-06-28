@@ -19,6 +19,7 @@ public class ScrapeController extends AbstractScraper {
 	public ScrapeController() {
 		// Initialize the scrapers
 		scrapers.put("linkedin", new LinkedInScraper("linkedin"));
+		scrapers.put("whitepages", new WhitepagesScraper("whitepages"));
 	}
 
 	@Override

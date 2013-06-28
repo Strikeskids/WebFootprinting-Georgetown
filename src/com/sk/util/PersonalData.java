@@ -42,6 +42,30 @@ import com.google.common.base.Optional;
  * <td>location</td>
  * <td>The individual's location</td>
  * </tr>
+ * <tr>
+ * <td>phone-home</td>
+ * <td>Individual's home phone</td>
+ * </tr>
+ * <tr>
+ * <td>phone-work</td>
+ * <td>Individuals' work phone</td>
+ * </tr>
+ * <tr>
+ * <td>phone-mobile</td>
+ * <td>Individual's mobile phone</td>
+ * </tr>
+ * <tr>
+ * <td>address</td>
+ * <td>Individual's home address. Similar to location</td>
+ * </tr>
+ * <tr>
+ * <td>age</td>
+ * <td>individual's age</td>
+ * </tr>
+ * <tr>
+ * <td></td>
+ * <td></td>
+ * </tr>
  * </table>
  * 
  * @author Strikeskids
