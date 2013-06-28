@@ -1,7 +1,10 @@
 package com.sk.util;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Optional;
@@ -74,6 +77,7 @@ import com.google.common.base.Optional;
 public class PersonalData extends HashMap<String, String> {
 
 	private final String siteId;
+	private final List<URL> adjacent = new ArrayList<URL>();
 
 	public PersonalData(String source) {
 		this.siteId = source;
@@ -101,6 +105,14 @@ public class PersonalData extends HashMap<String, String> {
 			return Optional.absent();
 	}
 
+	public void addAdjacent(URL... urls) {
+		Collections.addAll(adjacent, urls);
+	}
+
+	public List<URL> getAdjacent() {
+		return adjacent;
+	}
+
 	/**
 	 * Get the website id of the source of the {@link PersonalData}
 	 * 
@@ -112,7 +124,17 @@ public class PersonalData extends HashMap<String, String> {
 
 	@Override
 	public String toString() {
-		return "PersonalData (" + siteId + ", " + super.toString() + ")";
+		StringBuilder ret = new StringBuilder();
+		ret.append("PersonalData (");
+		ret.append(siteId);
+		ret.append(", ");
+		ret.append(super.toString());
+		if (adjacent.size() > 0) {
+			ret.append(", ");
+			ret.append(adjacent);
+		}
+		ret.append(")");
+		return ret.toString();
 	}
 
 	private static final long serialVersionUID = 4259139787451939836L;
