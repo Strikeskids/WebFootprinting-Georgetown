@@ -25,6 +25,8 @@ public class WebSource {
 		// Initialize sources
 		try {
 			this.addSite("linkedin", new URL("https://www.linkedin.com/"));
+			this.addSite("facebook", new URL("https://www.facebook.com"));
+			this.addSite("whitepages", new URL("http://www.whitepages.com/"));
 		} catch (MalformedURLException ignored) {
 		}
 	}
