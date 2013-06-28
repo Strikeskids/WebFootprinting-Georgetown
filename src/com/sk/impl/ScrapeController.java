@@ -58,7 +58,7 @@ public class ScrapeController extends AbstractScraper {
 	public boolean parse() throws IllegalStateException {
 		Optional<Scraper> sub = Optional.fromNullable(current.get());
 		if (sub.isPresent() && sub.get().parse()) {
-			data.set(sub.get().get());
+			personalData.set(sub.get().get());
 			return true;
 		} else {
 			return false;
