@@ -36,6 +36,7 @@ public class ScrapeController extends AbstractScraper {
 		addScraper(WhitepagesScraper.class);
 		addScraper(GooglePlusScraper.class);
 		addScraper(TwitterScraper.class);
+		addScraper(ZillowScraper.class);
 	}
 
 	private <T extends Scraper> void addScraper(Class<T> clazz) {

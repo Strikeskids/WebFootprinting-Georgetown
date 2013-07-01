@@ -74,6 +74,34 @@ import com.google.common.base.Optional;
  * <td>Individual's home page</td>
  * </tr>
  * <tr>
+ * <td>house-price</td>
+ * <td>Estimate house price</td>
+ * </tr>
+ * <tr>
+ * <td>num-bedrooms</td>
+ * <td></td>
+ * </tr>
+ * <tr>
+ * <td>num-bathrooms</td>
+ * <td></td>
+ * </tr>
+ * <tr>
+ * <td>property-type</td>
+ * <td></td>
+ * </tr>
+ * <tr>
+ * <td>house-size</td>
+ * <td></td>
+ * </tr>
+ * <tr>
+ * <td>lot-size</td>
+ * <td></td>
+ * </tr>
+ * <tr>
+ * <td>year-built</td>
+ * <td></td>
+ * </tr>
+ * <tr>
  * <td></td>
  * <td></td>
  * </tr>

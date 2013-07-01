@@ -8,7 +8,9 @@ import com.sk.util.PersonalData;
 
 public class BasicGrabber implements Grabber {
 
-	private final String selector, attribute, property;
+	protected final String selector;
+	protected final String attribute;
+	protected final String property;
 
 	/**
 	 * Creates a new {@link Grabber} that grabs all of the text from the first selected element and places it
