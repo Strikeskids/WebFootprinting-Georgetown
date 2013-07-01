@@ -18,6 +18,10 @@ import com.google.common.base.Optional;
  * <th>Purpose</th>
  * </tr>
  * <tr>
+ * <td>name</td>
+ * <td>Individual's name</td>
+ * </tr>
+ * <tr>
  * <td>first-name</td>
  * <td>Individual's first name (or given name)</td>
  * </tr>
@@ -64,6 +68,10 @@ import com.google.common.base.Optional;
  * <tr>
  * <td>age</td>
  * <td>individual's age</td>
+ * </tr>
+ * <tr>
+ * <td>home-page</td>
+ * <td>Individual's home page</td>
  * </tr>
  * <tr>
  * <td></td>
