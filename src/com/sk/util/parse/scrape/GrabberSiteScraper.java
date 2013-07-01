@@ -1,4 +1,4 @@
-package com.sk.util.parse;
+package com.sk.util.parse.scrape;
 
 import org.jsoup.nodes.Document;
 

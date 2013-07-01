@@ -3,10 +3,10 @@ package com.sk.impl;
 import java.util.regex.Pattern;
 
 import com.sk.util.SiteScraperInfo;
-import com.sk.util.parse.BasicGrabber;
-import com.sk.util.parse.Grabber;
-import com.sk.util.parse.GrabberSiteScraper;
-import com.sk.util.parse.RegexGrabber;
+import com.sk.util.parse.scrape.BasicGrabber;
+import com.sk.util.parse.scrape.Grabber;
+import com.sk.util.parse.scrape.GrabberSiteScraper;
+import com.sk.util.parse.scrape.RegexGrabber;
 
 @SiteScraperInfo(siteBase = "http://www.zillow.com", siteId = "zillow")
 public class ZillowScraper extends GrabberSiteScraper {

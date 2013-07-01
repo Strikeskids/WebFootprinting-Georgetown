@@ -10,8 +10,8 @@ import com.google.common.base.Optional;
 import com.sk.util.PersonalData;
 import com.sk.util.SiteScraperInfo;
 import com.sk.util.WebSource;
-import com.sk.util.parse.AbstractScraper;
-import com.sk.util.parse.Scraper;
+import com.sk.util.parse.scrape.AbstractScraper;
+import com.sk.util.parse.scrape.Scraper;
 
 public class ScrapeController extends AbstractScraper {
 

@@ -1,4 +1,4 @@
-package com.sk.util.parse;
+package com.sk.util.parse.scrape;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

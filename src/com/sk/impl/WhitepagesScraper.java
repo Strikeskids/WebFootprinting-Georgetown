@@ -8,9 +8,9 @@ import org.jsoup.select.Elements;
 
 import com.sk.util.PersonalData;
 import com.sk.util.SiteScraperInfo;
-import com.sk.util.parse.BasicGrabber;
-import com.sk.util.parse.Grabber;
-import com.sk.util.parse.GrabberSiteScraper;
+import com.sk.util.parse.scrape.BasicGrabber;
+import com.sk.util.parse.scrape.Grabber;
+import com.sk.util.parse.scrape.GrabberSiteScraper;
 
 @SiteScraperInfo(siteBase = "http://www.whitepages.com/", siteId = "whitepages")
 public class WhitepagesScraper extends GrabberSiteScraper {

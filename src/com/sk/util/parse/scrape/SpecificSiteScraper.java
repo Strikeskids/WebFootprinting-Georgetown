@@ -1,4 +1,4 @@
-package com.sk.util.parse;
+package com.sk.util.parse.scrape;
 
 import com.sk.util.PersonalData;
 import com.sk.util.SiteScraperInfo;

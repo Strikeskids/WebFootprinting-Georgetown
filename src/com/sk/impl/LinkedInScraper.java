@@ -1,9 +1,9 @@
 package com.sk.impl;
 
 import com.sk.util.SiteScraperInfo;
-import com.sk.util.parse.BasicGrabber;
-import com.sk.util.parse.Grabber;
-import com.sk.util.parse.GrabberSiteScraper;
+import com.sk.util.parse.scrape.BasicGrabber;
+import com.sk.util.parse.scrape.Grabber;
+import com.sk.util.parse.scrape.GrabberSiteScraper;
 
 @SiteScraperInfo(siteBase = "http://www.linkedin.com/", siteId = "linkedin")
 public class LinkedInScraper extends GrabberSiteScraper {

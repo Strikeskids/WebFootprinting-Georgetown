@@ -1,9 +1,10 @@
-package com.sk.util.parse;
+package com.sk.util.parse.scrape;
 
 import java.io.IOException;
 import java.net.URL;
 
 import com.sk.util.PersonalData;
+import com.sk.util.parse.AbstractParser;
 
 public abstract class AbstractScraper extends AbstractParser implements Scraper {
 

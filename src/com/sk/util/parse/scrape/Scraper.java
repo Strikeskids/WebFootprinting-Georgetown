@@ -1,6 +1,7 @@
-package com.sk.util.parse;
+package com.sk.util.parse.scrape;
 
 import com.sk.util.PersonalData;
+import com.sk.util.parse.Parser;
 
 /**
  * A {@link PersonalData} scraper. Scrapes from various website sources
