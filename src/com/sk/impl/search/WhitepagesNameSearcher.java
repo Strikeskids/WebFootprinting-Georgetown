@@ -36,10 +36,10 @@ public class WhitepagesNameSearcher extends AbstractSearcher implements NameSear
 	public void lookFor(String first, String last) throws IOException {
 		StringBuilder build = new StringBuilder();
 		if (first != null) {
-			build.append(first);
+			build.append(first.replaceAll(" ", ""));
 			build.append("-");
 		}
-		build.append(last);
+		build.append(last.replaceAll(" ", ""));
 		load(new URL(BASE + build));
 	}
 
