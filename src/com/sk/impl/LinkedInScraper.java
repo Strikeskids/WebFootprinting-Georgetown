@@ -12,7 +12,8 @@ public class LinkedInScraper extends GrabberSiteScraper {
 			new BasicGrabber("span.family-name", "last-name"),
 			new BasicGrabber("dd.summary-education ul li", "education"), new BasicGrabber("p.title", "job-title"),
 			new BasicGrabber("dd span.locality", "location"), new BasicGrabber("dd.industry", "industry"),
-			new BasicGrabber("div#profile-picture img", "src", "profile-picture-url") };
+			new BasicGrabber("div#profile-picture img", "src", "profile-picture-url"),
+			new BasicGrabber("span.full-name", "name") };
 
 	public LinkedInScraper() {
 		super(grabbers);
