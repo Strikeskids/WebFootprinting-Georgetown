@@ -24,7 +24,6 @@ public abstract class AbstractParser implements Parser {
 
 	@Override
 	public void load(URL url) throws IOException {
-		System.out.println(url);
 		doc.set(HttpConnection
 				.connect(url)
 				.timeout(8000)
