@@ -49,4 +49,22 @@ WebFootprint Documentation:
 					inserts the user profile raw xml into experiment_rawresult
 					gets all the fields and inserts them into user_data with each attribute separate
 		linkedinleech.py:
-	.
+			addusertodb:
+				equivalent to addusertodb from helperfunctions but instead inserts into linkedin_data
+			addusertorawdb:
+				adds the raw xml to the linkedin_data_raw
+			addusertojsondb:
+				adds raw json to linkedin_jsondata
+			getIDsFromSearchResults:
+				equivalent to same method from linkedin.py
+			getTokensFromSearchResults:
+				equivalent to same method from linkedin.py
+			getNumberOfSearchResults:
+				equivalent to same method from linkedin.py
+			file_methods:
+				|
+					reads attributes from file
+					loads the names from twitter and searches for those names in linkedin
+					adds the raw xml to the linkedin_data_raw
+					adds the searched name to searched_names
+			
