@@ -1,67 +1,94 @@
 WebFootprint Documentation:
-	apiscripts:
-		facebooksrch.py:
-			getfbprofile: grabs profile data from facebook graph api
-			getfbsearch: searches for a user with firstname and lastname from graph api
-		fbscrape.py:
-			process_html: |
-				grabs a dictionary of attributes (name, sex, city, hometown, activities) from facebook html
-			_clean: removes extra whitespace
-			_html_decode: decodes some html entities
-		gpplusprocess.py:
-			addtogplusdb: |
-				adds a profile to the database where each row is a different attribute
-			file_methods: |
-				opens the database and gets all of the ids that have raw data for gplus_data_raw
-				grabs each of the raw data from the database and loads the profile from it.
-				stores the profile in the new table glus_data using addtogplusdb.
-		gpplussrch.py:
-			file_methods: |
-				opens the database
-				for each name in the names grabbed from twitter search for the name in google plus
-				and store the found profile in raw gplus_data_raw
-			getgpprofile: gets a g+ profile from an id and returns it
-			getrawgpprofle: gets a g+ profile from an id and stores it into the gplus_data_raw table
-			getgpsearch: |
-				searches for a person with first and last name and returns the ids found
-		helperfunctions.py:
-			addusertodb: |
-				inserts a profile from xml into the database with each attribute as a separate row
-		linkedin.py:
-			getIDsFromSearchResults: |
-				returns ids as strings from a linkedin search xml doc
-			getTokensFromSearchResults: |
-				"??? what are tokens but gets them from search results xml (found in http-header)"
-			getNumberOfSearchResults: |
-				returns the total number of search results from the xml
-			file_methods: |
-				insert experiment into new row of experiment_attribute table.
-				searches for a person and adds all of their ids and tokesn to a searchresults.
-				inserts the user profile raw xml into experiment_rawresult
-				gets all the fields and inserts them into user_data with each attribute separate
-		linkedinleech.py:
-			addusertodb: |
-				see helperfunctions.py. changed to insert into linkedin_data
-			addusertorawdb: adds the raw xml to the linkedin_data_raw
-			addusertojsondb: adds raw json to linkedin_jsondata
-			getIDsFromSearchResults: see linkedin.py
-			getTokensFromSearchResults: see linkedin.py
-			getNumberOfSearchResults: see linkedin.py
-			file_methods: |
-				reads attributes from file
-				loads the names from twitter and searches for those names in linkedin
-				adds the raw xml to the linkedin_data_raw
-				adds the searched name to searched_names
-		linkedinresearcher.py:
-			file_methods: |
-				prints out the number of results for each searched name from searched_names
-			getNumberOfSearchResults: see linkedin.py
-		linkedinsearch_2.py:
-			addusertodb: see helperfunctions.py
-			getIDsFromSearchResults: see linkedin.py
-			getTokensFromSearchResults: see linkedin.py
-			file_methods: |
-				calculates score of each found user by matching attribute values to known attribute values
-				inserts the scores into experiment_score
-				prints out absolute scores with respect to each attribute
-			
+    apiscripts:
+        facebooksrch.py:
+            getfbprofile: grabs profile data from facebook graph api
+            getfbsearch: searches for a user with firstname and lastname from graph api
+        fbscrape.py:
+            process_html: |
+                grabs a dictionary of attributes (name, sex, city, hometown, activities) from facebook html
+            _clean: removes extra whitespace
+            _html_decode: decodes some html entities
+        gpplusprocess.py:
+            addtogplusdb: |
+                adds a profile to the database where each row is a different attribute
+            file_methods: |
+                opens the database and gets all of the ids that have raw data for gplus_data_raw
+                grabs each of the raw data from the database and loads the profile from it.
+                stores the profile in the new table glus_data using addtogplusdb.
+        gpplussrch.py:
+            file_methods: |
+                opens the database
+                for each name in the names grabbed from twitter search for the name in google plus
+                and store the found profile in raw gplus_data_raw
+            getgpprofile: gets a g+ profile from an id and returns it
+            getrawgpprofle: gets a g+ profile from an id and stores it into the gplus_data_raw table
+            getgpsearch: |
+                searches for a person with first and last name and returns the ids found
+        helperfunctions.py:
+            addusertodb: |
+                inserts a profile from xml into the database with each attribute as a separate row
+        linkedin.py:
+            getIDsFromSearchResults: |
+                returns ids as strings from a linkedin search xml doc
+            getTokensFromSearchResults: |
+                ??? what are tokens but gets them from search results xml (found in http-header)
+            getNumberOfSearchResults: |
+                returns the total number of search results from the xml
+            file_methods: |
+                insert experiment into new row of experiment_attribute table.
+                searches for a person and adds all of their ids and tokesn to a searchresults.
+                inserts the user profile raw xml into experiment_rawresult
+                gets all the fields and inserts them into user_data with each attribute separate
+        linkedinleech.py:
+            addusertodb: |
+                see helperfunctions.py. changed to insert into linkedin_data
+            addusertorawdb: adds the raw xml to the linkedin_data_raw
+            addusertojsondb: adds raw json to linkedin_jsondata
+            getIDsFromSearchResults: see linkedin.py
+            getTokensFromSearchResults: see linkedin.py
+            getNumberOfSearchResults: see linkedin.py
+            file_methods: |
+                reads attributes from file
+                loads the names from twitter and searches for those names in linkedin
+                adds the raw xml to the linkedin_data_raw
+                adds the searched name to searched_names
+        linkedinresearcher.py:
+            file_methods: |
+                prints out the number of results for each searched name from searched_names
+            getNumberOfSearchResults: see linkedin.py
+        linkedinsearch_2.py:
+            addusertodb: see helperfunctions.py
+            getIDsFromSearchResults: see linkedin.py
+            getTokensFromSearchResults: see linkedin.py
+            file_methods: |
+                calculates score of each found user by matching attribute values to known attribute values
+                inserts the scores into experiment_score
+                prints out absolute scores with respect to each attribute
+        linkedinsearch.py: "equivalent to linkedinsearch_2.py"
+        newlinkedinsearch.py:
+            getIDsFromSearchResults: see linkedin.py
+            getTokensFromSearchResults: see linkedin.py
+            getNumberOfSearchResults: see linkedin.py
+            file_methods: |
+                inserts search result xml into user_xmldata
+        oauth2-facebook.py: "gets an oauth token and secret for facebook using the pin method"
+        oauth2-linkedin.py: "equivalent to oauth2-facebook except for linkedin"
+        oauth2-twitter.py: "equivalent to oauth2-facebook except for twitter"
+        pgtest.py: "tests pg library in python?"
+        reconcile.py:
+            comparetwogplus: returns the string comparison matching values between two profiles
+            compareallgplus: returns the string comparison matching values for all profiles of the given ids
+            getgpprofile: gets the g+ profile with the google apis
+            getgpsearch: searches g+ for profiles that have the given first and last names
+            comparetoli: returns the string comparison matching between two linkedin profiles
+            lisearch: searches linkedin for a given first and last name
+            addusertodb: see linkedinleech.py
+            addusertorawdb: see linkedinleech.py
+            getIDsFromSearchResults: see linkedin.py
+            getTokensFromSearchResults: see linkedin.py
+            getNumberOfSearchResults: see linkedin.py
+            prettyprint: uses json to nicely print an object
+            go: processes and prints the search for the given raw_input name
+            go2: processes and prints the search for the given argument name
+            processliresults: gets common attributes between all search results 
+            file_methods: searches for usernames in twitter that haven't been searched for yet
