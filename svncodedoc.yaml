@@ -1,0 +1,52 @@
+WebFootprint Documentation:
+	apiscripts:
+		facebooksrch.py:
+			getfbprofile:
+				grabs profile data from facebook graph api
+			getfbsearch:
+				searches for a user with firstname and lastname from graph api
+		fbscrape.py:
+			process_html:
+				grabs a dictionary of attributes (name, sex, city, hometown, activities) from facebook html
+			_clean:
+				removes extra whitespace
+			_html_decode:
+				decodes some html entities
+		gpplusprocess.py:
+			addtogplusdb:
+				adds a profile to the database where each row is a different attribute
+			file_methods:
+				|
+					opens the database and gets all of the ids that have raw data for gplus_data_raw
+					grabs each of the raw data from the database and loads the profile from it.
+					stores the profile in the new table glus_data using addtogplusdb.
+		gpplussrch.py:
+			file_methods:
+				|
+					opens the database
+					for each name in the names grabbed from twitter search for the name in google plus
+					and store the found profile in raw gplus_data_raw
+			getgpprofile:
+				gets a g+ profile from an id and returns it
+			getrawgpprofle:
+				gets a g+ profile from an id and stores it into the gplus_data_raw table
+			getgpsearch:
+				searches for a person with first and last name and returns the ids found
+		helperfunctions.py:
+			addusertodb:
+				inserts a profile from xml into the database with each attribute as a separate row
+		linkedin.py:
+			getIDsFromSearchResults:
+				returns ids as strings from a linkedin search xml doc
+			getTokensFromSearchResults:
+				"??? what are tokens but gets them from search results xml (found in http-header)"
+			getNumberOfSearchResults:
+				returns the total number of search results from the xml
+			file_methods:
+				|
+					insert experiment into new row of experiment_attribute table.
+					searches for a person and adds all of their ids and tokesn to a searchresults.
+					inserts the user profile raw xml into experiment_rawresult
+					gets all the fields and inserts them into user_data with each attribute separate
+		linkedinleech.py:
+	.
