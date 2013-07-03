@@ -76,8 +76,8 @@ WebFootprint Documentation:
         oauth2-twitter.py: "equivalent to oauth2-facebook except for twitter"
         pgtest.py: "tests pg library in python?"
         reconcile.py:
-            comparetwogplus: returns the string comparison matching values between two profiles
-            compareallgplus: returns the string comparison matching values for all profiles of the given ids
+            comparetwogplus: returns the string-comparison-matching values between two profiles
+            compareallgplus: returns the string-comparison-matching values for all profiles of the given ids
             getgpprofile: gets the g+ profile with the google apis
             getgpsearch: searches g+ for profiles that have the given first and last names
             comparetoli: returns the string comparison matching between two linkedin profiles
@@ -92,3 +92,19 @@ WebFootprint Documentation:
             go2: processes and prints the search for the given argument name
             processliresults: gets common attributes between all search results 
             file_methods: searches for usernames in twitter that haven't been searched for yet
+        sample.py: "empty"
+        scrape.py: "scraper utility written by Ka-Ping Yee"
+        splitwitter.py: "does nothing"
+        testscript.py: "does nothing"
+        twitter.py: 
+            namesearch: >
+                searches for names on twitter and searches for each part.
+                returns the top 10 most matched names
+            file_methods: gets random users and stores them into twitter_names. sleeps while the maximum api calls refreshes
+        twitterleech.py: "equivalent to twitter.py except broken"
+        webfootprint.py: "reads in attributes from a file, allows you to change them,
+            and prints out the changed attributes without saving them"
+        xmltest.py:
+            doParse: prints out all ids found in the xml. broken
+        zillow.py: "empty"
+        
