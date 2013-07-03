@@ -1,11 +1,13 @@
-WebFootprint Documentation:
+---
+WebFootDocumentation:
   apiscripts:
     facebooksrch.py:
       getfbprofile: grabs profile data from facebook graph api
       getfbsearch: searches for a user with firstname and lastname from graph api
     fbscrape.py:
-      process_html: |
-        grabs a dictionary of attributes (name, sex, city, hometown, activities) from facebook html
+      process_html: >
+        grabs a dictionary of attributes (name, sex, city, 
+        hometown, activities) from facebook html
       _clean: removes extra whitespace
       _html_decode: decodes some html entities
     gpplusprocess.py:
@@ -61,7 +63,7 @@ WebFootprint Documentation:
       getIDsFromSearchResults: see linkedin.py
       getTokensFromSearchResults: see linkedin.py
       file_methods: |
-        calculates score of each found user by matching attribute values to known attribute values
+        calculates score of each found user by matching attr values to known attr values
         inserts the scores into experiment_score
         prints out absolute scores with respect to each attribute
     linkedinsearch.py: "equivalent to linkedinsearch_2.py"
@@ -77,7 +79,8 @@ WebFootprint Documentation:
     pgtest.py: "tests pg library in python?"
     reconcile.py:
       comparetwogplus: returns the string-comparison-matching values between two profiles
-      compareallgplus: returns the string-comparison-matching values for all profiles of the given ids
+      compareallgplus: >
+        returns the string-comparison-matching values for all profiles of the given ids
       getgpprofile: gets the g+ profile with the google apis
       getgpsearch: searches g+ for profiles that have the given first and last names
       comparetoli: returns the string comparison matching between two linkedin profiles
@@ -100,7 +103,9 @@ WebFootprint Documentation:
       namesearch: >
         searches for names on twitter and searches for each part.
         returns the top 10 most matched names
-      file_methods: gets random users and stores them into twitter_names. sleeps while the maximum api calls refreshes
+      file_methods: >
+        gets random users and stores them into twitter_names. 
+        sleeps while the maximum api calls refreshes
     twitterleech.py: "equivalent to twitter.py except broken"
     webfootprint.py: "reads in attributes from a file, allows you to change them,
       and prints out the changed attributes without saving them"
@@ -119,18 +124,23 @@ WebFootprint Documentation:
       Outputs whether the predictions were correct
     compareraw.py: |
       compares the inferences with the raw stringified data using grep to count occurrences
-    convert.py: "converts words (file) into numbers (file.nums) and pickles the dictionary (file.numdict.p)"
+    convert.py: "converts words (file) into numbers (file.nums) 
+      and pickles the dictionary (file.numdict.p)"
     countsimple.py: |
       counts the number of occurrences of the numbers
       converts the numbers back into words with the numdict.p
       outputs the counts
-    depickle.py: "takes the number-filled inference table and turns it into the human-readable inference table (.human)"
+    depickle.py: "takes the number-filled inference table and turns it 
+      into the human-readable inference table (.human)"
     getgpdistro.py: "uses data from gplus_data to create statistics about attributes"
     getlidistro.py: "repeats getgpdistro for linkedin from linkedin_data"
     getlinkedindistro.py: "unknown function. seems to be unfinished"
-    inferenceengine.py: "creates inferences file (.inferences) based on counts obtained from Apriori process"
+    inferenceengine.py: "creates inferences file (.inferences) based 
+      on counts obtained from Apriori process"
     interpret.py: "converts a file from its number form to its word form using numdict.p"
     nums2atts.py: "does nothing"
-    quickdumpmissing.py: "dumps the missing ids from linkedin_data_raw in linkedin_data into _missing.p"
+    quickdumpmissing.py: "dumps the missing ids from linkedin_data_raw 
+      in linkedin_data into _missing.p"
     totext.py: "converts gplus_data into a space-separated string of attributes for each user"
-    unconvert.py: "prints and turns a number-converted file back into a human-readable file with numdict.p"
+    unconvert.py: "prints and turns a number-converted file back 
+      into a human-readable file with numdict.p"
