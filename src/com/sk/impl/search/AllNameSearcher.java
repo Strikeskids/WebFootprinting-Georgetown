@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.sk.util.parse.search.AbstractParseSearcher;
 import com.sk.util.parse.search.NameSearcher;
+import com.sk.util.parse.search.ScrapeSearcher;
 
-public class AllNameSearcher extends AbstractParseSearcher implements NameSearcher {
+public class AllNameSearcher extends ScrapeSearcher implements NameSearcher {
 
 	private static final NameSearcher[] interior = { GoogleSearcherImpl.GOOGLE_PLUS.searcher,
 			GoogleSearcherImpl.LINKEDIN.searcher, GoogleSearcherImpl.TWITTER.searcher,

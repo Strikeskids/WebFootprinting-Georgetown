@@ -19,11 +19,18 @@ public abstract class AbstractParser implements Parser {
 	protected ThreadLocal<Document> doc = new ThreadLocal<>();
 
 	public AbstractParser() {
-		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * Method called when a new document is loaded. Resets all local variables for proper state change
+	 */
+	protected void reset() {
+
 	}
 
 	@Override
 	public void load(URL url) throws IOException {
+		reset();
 		doc.set(HttpConnection
 				.connect(url)
 				.timeout(8000)
@@ -33,6 +40,7 @@ public abstract class AbstractParser implements Parser {
 
 	@Override
 	public void load(String source, String baseURI) {
+		reset();
 		doc.set(Jsoup.parse(source, baseURI));
 	}
 

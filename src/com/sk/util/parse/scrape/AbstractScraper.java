@@ -1,8 +1,5 @@
 package com.sk.util.parse.scrape;
 
-import java.io.IOException;
-import java.net.URL;
-
 import com.sk.util.PersonalData;
 import com.sk.util.parse.AbstractParser;
 
@@ -18,15 +15,9 @@ public abstract class AbstractScraper extends AbstractParser implements Scraper 
 	}
 
 	@Override
-	public void load(URL url) throws IOException {
+	protected void reset() {
+		super.reset();
 		personalData.remove();
-		super.load(url);
-	}
-
-	@Override
-	public void load(String source, String baseURI) {
-		personalData.remove();
-		super.load(source, baseURI);
 	}
 
 	@Override

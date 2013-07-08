@@ -10,11 +10,11 @@ import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import com.sk.util.parse.search.AbstractParseSearcher;
 import com.sk.util.parse.search.AddressSearcher;
 import com.sk.util.parse.search.NameSearcher;
+import com.sk.util.parse.search.ScrapeSearcher;
 
-public class WhitepagesSearcher extends AbstractParseSearcher implements AddressSearcher, NameSearcher {
+public class WhitepagesSearcher extends ScrapeSearcher implements AddressSearcher, NameSearcher {
 
 	private static final String ADDRESS_BASE = "http://www.whitepages.com/search/FindNearby",
 			NAME_BASE = "http://www.whitepages.com/name/";
