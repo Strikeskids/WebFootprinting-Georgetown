@@ -2,9 +2,7 @@ package com.sk.util.parse.search;
 
 import java.net.URL;
 
-import com.sk.util.parse.Parser;
-
-public interface Searcher extends Parser {
+public interface Searcher {
 
 	/**
 	 * Gets the found results

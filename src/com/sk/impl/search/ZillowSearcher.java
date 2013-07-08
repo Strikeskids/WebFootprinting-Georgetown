@@ -35,13 +35,14 @@ public class ZillowSearcher extends AbstractSearcher implements AddressSearcher 
 		}
 	}
 
-	public void lookFor(String address) throws IOException {
+	public boolean lookFor(String address) throws IOException {
 		load(new URL(BASE + address.replaceAll(" ", "-") + "_rb/"));
+		return parse();
 	}
 
 	@Override
-	public void lookFor(String address, String cityStateZip) throws IOException {
-		lookFor(address + " " + cityStateZip);
+	public boolean lookForAddress(String address, String cityStateZip) throws IOException {
+		return lookFor(address + " " + cityStateZip);
 	}
 
 }

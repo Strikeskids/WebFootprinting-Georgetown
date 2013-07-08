@@ -1,6 +1,7 @@
 package com.sk.util.parse.scrape;
 
 import com.sk.util.PersonalData;
+import com.sk.util.parse.DataLoader;
 import com.sk.util.parse.Parser;
 
 /**
@@ -9,7 +10,7 @@ import com.sk.util.parse.Parser;
  * @author Strikeskids
  * 
  */
-public interface Scraper extends Parser {
+public interface Scraper extends Parser, DataLoader {
 
 	/**
 	 * Gets the {@link PersonalData} that was parsed from the loaded HTML. Use this method after
@@ -20,5 +21,6 @@ public interface Scraper extends Parser {
 	 *             if trying to get the PersonalData before any has been loaded and parsed
 	 * @see #parse()
 	 */
+	@Override
 	public PersonalData get() throws IllegalStateException;
 }

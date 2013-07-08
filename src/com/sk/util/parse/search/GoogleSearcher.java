@@ -54,13 +54,14 @@ public class GoogleSearcher extends AbstractSearcher implements NameSearcher {
 		return true;
 	}
 
-	public void lookFor(String text) throws IOException {
+	public boolean lookFor(String text) throws IOException {
 		load(new URL(this.url + URLEncoder.encode(text, "UTF-8")));
+		return parse();
 	}
 
 	@Override
-	public void lookFor(String first, String last) throws IOException {
-		lookFor(first + " " + last);
+	public boolean lookForName(String first, String last) throws IOException {
+		return lookFor(first + " " + last);
 	}
 
 }

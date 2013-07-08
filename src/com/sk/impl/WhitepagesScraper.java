@@ -9,7 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.sk.impl.search.WhitepagesNameSearcher;
+import com.sk.impl.search.WhitepagesSearcher;
 import com.sk.util.PersonalData;
 import com.sk.util.SiteScraperInfo;
 import com.sk.util.parse.scrape.BasicGrabber;
@@ -19,7 +19,7 @@ import com.sk.util.parse.scrape.GrabberSiteScraper;
 @SiteScraperInfo(siteBase = "http://www.whitepages.com/", siteId = "whitepages")
 public class WhitepagesScraper extends GrabberSiteScraper {
 
-	private static final WhitepagesNameSearcher wns = new WhitepagesNameSearcher();
+	private static final WhitepagesSearcher wns = new WhitepagesSearcher();
 	private static final Grabber[] grabbers = { new BasicGrabber("div.address.adr", "address"),
 			new BasicGrabber("span.given-name", "first-name"), new BasicGrabber("span.family-name", "last-name"),
 			new BasicGrabber("span.name.fn", "name"),

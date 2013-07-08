@@ -3,7 +3,6 @@ package com.sk.impl.search;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,37 +13,26 @@ public class AllNameSearcher extends AbstractSearcher implements NameSearcher {
 
 	private static final NameSearcher[] interior = { GoogleSearcherImpl.GOOGLE_PLUS.searcher,
 			GoogleSearcherImpl.LINKEDIN.searcher, GoogleSearcherImpl.TWITTER.searcher,
-			new WhitepagesNameSearcher() };
-
-	private static final ThreadLocal<BitSet> success = new ThreadLocal<BitSet>() {
-		@Override
-		public BitSet initialValue() {
-			return new BitSet(interior.length);
-		}
-	};
+			new WhitepagesSearcher() };
 
 	@Override
 	public boolean parse() throws IllegalStateException {
-		BitSet parses = success.get();
-		boolean ret = false;
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean lookForName(String first, String last) throws IOException {
 		List<URL> insert = new ArrayList<>();
-		for (int i = 0; i < interior.length; ++i) {
-			boolean curParse = interior[i].parse();
-			parses.set(i, curParse);
+		boolean ret = false;
+		for (final NameSearcher n : interior) {
+			boolean curParse = n.lookForName(first, last);
 			ret |= curParse;
 			if (curParse) {
-				Collections.addAll(insert, interior[i].results());
+				Collections.addAll(insert, n.results());
 			}
 		}
 		this.urls.set(insert.toArray(new URL[insert.size()]));
 		return ret;
-	}
-
-	@Override
-	public void lookFor(String first, String last) throws IOException {
-		for (NameSearcher n : interior) {
-			n.lookFor(first, last);
-		}
 	}
 
 	@Override
