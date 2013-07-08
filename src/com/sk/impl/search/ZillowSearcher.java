@@ -7,10 +7,10 @@ import java.net.URL;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import com.sk.util.parse.search.AbstractSearcher;
+import com.sk.util.parse.search.AbstractParseSearcher;
 import com.sk.util.parse.search.AddressSearcher;
 
-public class ZillowSearcher extends AbstractSearcher implements AddressSearcher {
+public class ZillowSearcher extends AbstractParseSearcher implements AddressSearcher {
 
 	private static final String BASE = "http://www.zillow.com/homes/";
 

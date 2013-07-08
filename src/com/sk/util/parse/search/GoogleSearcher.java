@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-public class GoogleSearcher extends AbstractSearcher implements NameSearcher {
+public class GoogleSearcher extends AbstractParseSearcher implements NameSearcher {
 
 	private static final String BASE = "https://www.google.com/search?q=";
 
