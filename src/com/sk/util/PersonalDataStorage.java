@@ -4,6 +4,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Stores personal data by site name. Used for json encoding <br/>
+ * <br/>
+ * <code>
+ * Gson gson = new Gson();<br/>
+ * String json = gson.toJson(PersonalData);
+ * </code>
+ * 
+ * @author Strikeskids
+ * 
+ */
 public class PersonalDataStorage extends HashMap<String, List<PersonalData>> {
 
 	private static final long serialVersionUID = 9177444068545121072L;
