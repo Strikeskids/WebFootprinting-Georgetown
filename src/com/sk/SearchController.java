@@ -11,7 +11,15 @@ import com.sk.util.parse.search.NameSearcher;
 
 /**
  * Controls searching. Just search for a name and it will return a PersonalDataStorage of all of the data
- * found
+ * found.
+ * 
+ * <br />
+ * Use: <br/>
+ * <code>
+ * SearchController cont = new SearchController();<br/>
+ * cont.lookFor(first, last);<br/>
+ * PersonalDataStorage store = cont.getDataStorage();<br/>
+ * </code>
  * 
  * @author Strikeskids
  * 
