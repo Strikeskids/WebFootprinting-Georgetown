@@ -5,9 +5,9 @@ import java.util.regex.Pattern;
 import com.sk.util.parse.search.GoogleSearcher;
 
 public enum GoogleSearcherImpl {
-	LINKEDIN("linkedin.com", Pattern.compile("https?://www.linkedin.com/(?:pub|in)/(?!dir)")),
-	TWITTER("twitter.com", Pattern.compile("https?://www.twitter.com/[^/]+$")),
-	GOOGLE_PLUS("plus.google.com", Pattern.compile("https?://plus.google.com/[0-9]+$"));
+	LINKEDIN("linkedin.com", Pattern.compile("www.linkedin.com/(?:pub|in)/(?!dir)")),
+	TWITTER("twitter.com", Pattern.compile("www.twitter.com/[^/]+$")),
+	GOOGLE_PLUS("plus.google.com", Pattern.compile("plus.google.com/[0-9]+$"));
 
 	public final GoogleSearcher searcher;
 

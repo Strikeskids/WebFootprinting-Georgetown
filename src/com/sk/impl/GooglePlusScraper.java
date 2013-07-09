@@ -15,7 +15,7 @@ public class GooglePlusScraper extends GrabberSiteScraper {
 			new BasicGrabber("span:contains(Works) + span.FG2oob", "job-title"),
 			new BasicGrabber("span:contains(Attended) + span.FG2oob", "education"),
 			new BasicGrabber("span:contains(Lives) + span.FG2oob", "location"),
-			new RegexGrabber(".g-x-Aa.ud-Aa", "token", Pattern.compile("(?<name>[0-9]+)/"), "uid") };
+			new RegexGrabber(".g-x-Aa.ud-Aa", "token", Pattern.compile("(?<r>[0-9]+)/"), "uid") };
 
 	public GooglePlusScraper() {
 		super(grabbers);
