@@ -46,7 +46,7 @@ public class GoogleSearcher extends ScrapeSearcher implements NameSearcher {
 		int loc = 0;
 		for (String s : found) {
 			try {
-				ret[loc++] = new URL(s);
+				ret[loc++] = new URL(s.startsWith("http") ? s : "http://" + s);
 			} catch (MalformedURLException e1) {
 			}
 		}
