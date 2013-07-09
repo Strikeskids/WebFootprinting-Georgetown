@@ -32,4 +32,19 @@ public class PersonalDataStorage extends HashMap<String, List<PersonalData>> {
 		}
 	}
 
+	public void addStorage(PersonalDataStorage pds) {
+		for (List<PersonalData> lds : pds.values()) {
+			for (PersonalData d : lds) {
+				add(d);
+			}
+		}
+	}
+
+	public PersonalData[] toArray() {
+		List<PersonalData> ret = new ArrayList<PersonalData>();
+		for (List<PersonalData> cur : values())
+			ret.addAll(cur);
+		return ret.toArray(new PersonalData[ret.size()]);
+	}
+
 }
