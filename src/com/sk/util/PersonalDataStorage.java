@@ -1,6 +1,7 @@
 package com.sk.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -47,6 +48,14 @@ public class PersonalDataStorage extends HashMap<String, Set<PersonalData>> {
 		for (Set<PersonalData> cur : values())
 			ret.addAll(cur);
 		return ret.toArray(new PersonalData[ret.size()]);
+	}
+
+	@Override
+	public int size() {
+		int ret = 0;
+		for (Collection<?> coll : values())
+			ret += coll.size();
+		return ret;
 	}
 
 }
