@@ -2,7 +2,9 @@ package com.sk.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Stores personal data by site name. Used for json encoding <br/>
@@ -15,7 +17,7 @@ import java.util.List;
  * @author Strikeskids
  * 
  */
-public class PersonalDataStorage extends HashMap<String, List<PersonalData>> {
+public class PersonalDataStorage extends HashMap<String, Set<PersonalData>> {
 
 	private static final long serialVersionUID = 9177444068545121072L;
 
@@ -25,7 +27,7 @@ public class PersonalDataStorage extends HashMap<String, List<PersonalData>> {
 			if (containsKey(site)) {
 				get(site).add(data);
 			} else {
-				List<PersonalData> toAdd = new ArrayList<>();
+				Set<PersonalData> toAdd = new LinkedHashSet<>();
 				toAdd.add(data);
 				put(site, toAdd);
 			}
@@ -33,7 +35,7 @@ public class PersonalDataStorage extends HashMap<String, List<PersonalData>> {
 	}
 
 	public void addStorage(PersonalDataStorage pds) {
-		for (List<PersonalData> lds : pds.values()) {
+		for (Set<PersonalData> lds : pds.values()) {
 			for (PersonalData d : lds) {
 				add(d);
 			}
@@ -42,7 +44,7 @@ public class PersonalDataStorage extends HashMap<String, List<PersonalData>> {
 
 	public PersonalData[] toArray() {
 		List<PersonalData> ret = new ArrayList<PersonalData>();
-		for (List<PersonalData> cur : values())
+		for (Set<PersonalData> cur : values())
 			ret.addAll(cur);
 		return ret.toArray(new PersonalData[ret.size()]);
 	}

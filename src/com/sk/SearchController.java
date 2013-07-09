@@ -3,6 +3,7 @@ package com.sk;
 import java.io.IOException;
 import java.net.URL;
 
+import com.sk.api.impl.LinkedinApiSearcher;
 import com.sk.impl.search.AllNameSearcher;
 import com.sk.util.PersonalData;
 import com.sk.util.PersonalDataStorage;
@@ -18,7 +19,7 @@ import com.sk.util.parse.search.NameSearcher;
 public class SearchController implements NameSearcher {
 
 	private final ThreadLocal<PersonalDataStorage> store = new ThreadLocal<>();
-	private NameSearcher[] use = { new AllNameSearcher() };
+	private NameSearcher[] use = { new AllNameSearcher(), new LinkedinApiSearcher() };
 
 	@Override
 	public URL[] results() throws IllegalStateException {
