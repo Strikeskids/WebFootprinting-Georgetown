@@ -75,13 +75,20 @@ public class ScrapeController extends AbstractScraper {
 	 * @return The {@link Scraper} setup if successful
 	 */
 	private Optional<Scraper> setupScraper(String host) {
+		Optional<Scraper> scrape = getScraper(host);
+		if (scrape.isPresent())
+			current.set(scrape.get());
+		return scrape;
+	}
+
+	private Optional<Scraper> getScraper(String host) {
 		Optional<String> siteId = WebSource.get().getSiteId(host);
 		if (siteId.isPresent() && scrapers.containsKey(siteId.get())) {
 			Scraper subScraper = scrapers.get(siteId.get());
-			current.set(subScraper);
 			return Optional.of(subScraper);
 		}
 		return Optional.absent();
+
 	}
 
 	@Override
@@ -91,6 +98,14 @@ public class ScrapeController extends AbstractScraper {
 			personalData.set(sub.get().get());
 			return true;
 		} else {
+			return false;
+		}
+	}
+
+	public boolean isValid(String url) {
+		try {
+			return setupScraper(new URL(url).getHost()).isPresent();
+		} catch (MalformedURLException e) {
 			return false;
 		}
 	}
