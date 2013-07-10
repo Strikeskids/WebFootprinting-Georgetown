@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import com.sk.api.impl.LinkedinApiSearcher;
+import com.sk.api.impl.PiplApiSearcher;
 import com.sk.impl.search.AllNameSearcher;
 import com.sk.util.PersonalData;
 import com.sk.util.PersonalDataStorage;
@@ -27,7 +28,7 @@ import com.sk.util.parse.search.NameSearcher;
 public class SearchController implements NameSearcher {
 
 	private final ThreadLocal<PersonalDataStorage> store = new ThreadLocal<>();
-	private NameSearcher[] use = { new AllNameSearcher(), new LinkedinApiSearcher() };
+	private NameSearcher[] use = { new AllNameSearcher(), new LinkedinApiSearcher(), new PiplApiSearcher() };
 
 	@Override
 	public URL[] results() throws IllegalStateException {
@@ -50,6 +51,7 @@ public class SearchController implements NameSearcher {
 	@Override
 	public boolean lookForName(String first, String last) throws IOException {
 		boolean ret = false;
+		this.store.remove();
 		PersonalDataStorage store = new PersonalDataStorage();
 		for (NameSearcher n : use) {
 			boolean success = n.lookForName(first, last);
