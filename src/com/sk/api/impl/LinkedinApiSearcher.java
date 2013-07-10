@@ -57,6 +57,8 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 		List<PersonalData> data = new ArrayList<PersonalData>();
 		for (Element person : xdoc.select("person")) {
 			String url = person.select("api-standard-profile-request url").text();
+			if (url.length() < 10)
+				continue;
 			OAuthRequest req = new OAuthRequest(Verb.GET, url + REQUEST_FIELDS);
 			for (Element httpHeader : person.select("api-standard-profile-request http-header")) {
 				req.addHeader(httpHeader.select("name").text(), httpHeader.select("value").text());
