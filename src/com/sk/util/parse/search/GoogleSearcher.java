@@ -36,8 +36,8 @@ public class GoogleSearcher extends ScrapeSearcher implements NameSearcher {
 		if (doc == null)
 			throw new IllegalStateException();
 		Set<String> found = new LinkedHashSet<>();
-		for (Element e : doc.select("li.g div.rc div.f.kv cite")) {
-			String cur = e.text();
+		for (Element e : doc.select("li.g div.rc h3.r a")) {
+			String cur = e.attr("href");
 			Matcher m = accept.matcher(cur);
 			if (m.find())
 				found.add(cur);
