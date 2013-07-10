@@ -111,6 +111,17 @@ public class ApiUtility {
 		return accessToken;
 	}
 
+	public static JsonObject getTokensFor(String site) {
+		JsonObject tokens = getTokens();
+		if (!tokens.has(site)) {
+			JsonObject ret = new JsonObject();
+			tokens.add(site, ret);
+			return ret;
+		} else {
+			return tokens.get(site).getAsJsonObject();
+		}
+	}
+
 	private static final String TOKEN_STORE = "tokens.json";
 	private static JsonObject tokens;
 
