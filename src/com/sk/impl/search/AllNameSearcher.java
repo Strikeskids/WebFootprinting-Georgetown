@@ -11,9 +11,8 @@ import com.sk.util.parse.search.ScrapeSearcher;
 
 public class AllNameSearcher extends ScrapeSearcher implements NameSearcher {
 
-	private static final NameSearcher[] interior = { GoogleSearcherImpl.GOOGLE_PLUS.searcher,
-			GoogleSearcherImpl.LINKEDIN.searcher, GoogleSearcherImpl.TWITTER.searcher,
-			new WhitepagesSearcher() };
+	private static final NameSearcher[] interior = { new GooglePlusSearcher(),
+			GoogleSearcherImpl.LINKEDIN.searcher, GoogleSearcherImpl.TWITTER.searcher, new WhitepagesSearcher() };
 
 	@Override
 	public boolean parse() throws IllegalStateException {
@@ -22,6 +21,7 @@ public class AllNameSearcher extends ScrapeSearcher implements NameSearcher {
 
 	@Override
 	public boolean lookForName(String first, String last) throws IOException {
+		reset();
 		List<URL> insert = new ArrayList<>();
 		boolean ret = false;
 		for (final NameSearcher n : interior) {
