@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import com.sk.api.impl.FourSquareApiSearcher;
+import com.sk.api.impl.GooglePlusApiSearcher;
 import com.sk.api.impl.LinkedinApiSearcher;
 import com.sk.api.impl.PiplApiSearcher;
 import com.sk.impl.search.AllNameSearcher;
@@ -30,7 +31,7 @@ public class SearchController implements NameSearcher {
 
 	private final ThreadLocal<PersonalDataStorage> store = new ThreadLocal<>();
 	private NameSearcher[] use = { new AllNameSearcher(), new LinkedinApiSearcher(), new PiplApiSearcher(),
-			new FourSquareApiSearcher() };
+			new FourSquareApiSearcher(), new GooglePlusApiSearcher() };
 
 	@Override
 	public URL[] results() throws IllegalStateException {

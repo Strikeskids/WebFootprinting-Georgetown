@@ -30,21 +30,28 @@ public class GooglePlusApiSearcher implements NameSearcher {
 			throw new RuntimeException("Failed to get key");
 	}
 
-	private final String URL = "https://www.googleapis.com/plus/v1/people/search?key=%s&fields=id%%2Cname(familyName%%2CgivenName)%%2Cgender%%2Curl%%2Cbirthday%%2CrelationshipStatus%%2CageRange&query=%s%%20%s";
+	private final String URL = "https://www.googleapis.com/plus/v1/people?key=%s&query=%s%%20%s";
+	private final String SINGLE = "https://www.googleapis.com/plus/v1/people/%s?key=%s&fields=id%%2CdisplayName%%2Cname(familyName%%2CgivenName)%%2Cgender%%2Curl%%2Cbirthday%%2CrelationshipStatus%%2CageRange";
 
 	@Override
 	public boolean lookForName(String first, String last) throws IOException {
 		List<PersonalData> data = new ArrayList<>();
 		List<URL> url = new ArrayList<>();
-		JsonObject obj = new JsonParser().parse(
-				new BufferedReader(new InputStreamReader(new URL(String.format(URL, key,
-						URLEncoder.encode(first, "UTF-8"), URLEncoder.encode(last, "UTF-8"))).openStream())))
+		String searchLoc = String.format(URL, key, URLEncoder.encode(first, "UTF-8"),
+				URLEncoder.encode(last, "UTF-8"));
+		JsonParser parser = new JsonParser();
+		JsonObject obj = parser.parse(new BufferedReader(new InputStreamReader(new URL(searchLoc).openStream())))
 				.getAsJsonObject();
 		if (obj.has("items")) {
 			for (JsonElement e : obj.get("items").getAsJsonArray()) {
-				JsonObject user = e.getAsJsonObject();
+				String uid = e.getAsJsonObject().get("id").getAsString();
+				JsonObject user = parser.parse(
+						new BufferedReader(new InputStreamReader(new URL(String.format(SINGLE, uid, key))
+								.openStream()))).getAsJsonObject();
 				PersonalData dat = new PersonalData("g+");
+
 				put(user, dat, "id", "id");
+				put(user, dat, "displayName", "name");
 				if (user.has("name")) {
 					JsonObject name = user.get("name").getAsJsonObject();
 					put(name, dat, "familyName", "last-name");
