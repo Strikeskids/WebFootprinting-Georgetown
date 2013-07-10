@@ -104,6 +104,7 @@ public class PiplApiSearcher implements NameSearcher {
 				}
 			if (scrape.isValid(possible.getSource().getUrl()))
 				url.add(new URL(possible.getSource().getUrl()));
+			data.add(cur);
 		}
 		urls.set(url.toArray(new URL[url.size()]));
 		this.data.set(data.toArray(new PersonalData[data.size()]));
