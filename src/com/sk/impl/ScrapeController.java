@@ -104,7 +104,7 @@ public class ScrapeController extends AbstractScraper {
 
 	public boolean isValid(String url) {
 		try {
-			return setupScraper(new URL(url).getHost()).isPresent();
+			return getScraper(new URL(url).getHost()).isPresent();
 		} catch (MalformedURLException e) {
 			return false;
 		}

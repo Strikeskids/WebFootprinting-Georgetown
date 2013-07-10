@@ -53,52 +53,60 @@ public class PiplApiSearcher implements NameSearcher {
 		List<URL> url = new ArrayList<>();
 		for (Record possible : resp.getRecords()) {
 			PersonalData cur = new PersonalData("pipl");
-			for (Name n : possible.getNames()) {
-				cur.put("name", n.getRaw());
-				cur.put("first-name", n.getFirst());
-				cur.put("last-name", n.getLast());
-				break;
-			}
-			for (Address a : possible.getAddresses()) {
-				cur.put("address", a.getRaw());
-				cur.put("country", a.getCountry());
-				cur.put("city", a.getCity());
-				cur.put("house", a.getHouse());
-				cur.put("apartament", a.getApartment());
-				cur.put("po_box", a.getPoBox());
-				cur.put("street", a.getStreet());
-				cur.put("state", a.getState());
-				break;
-			}
-			for (Phone ph : possible.getPhones()) {
-				cur.put(ph.getType().replaceAll("_", "-"), ph.getDisplay());
-			}
-			for (Email e : possible.getEmails()) {
-				cur.put("email", e.getAddress());
-				break;
-			}
-			for (Username u : possible.getUsernames()) {
-				cur.put("username", u.getContent());
-				break;
-			}
-			for (DOB d : possible.getDobs()) {
-				cur.put("age", d.age() + "");
-				cur.put("dob", DateFormat.getDateInstance().format(d.getDateRange().middle()));
-				break;
-			}
-			for (Job j : possible.getJobs()) {
-				cur.put("job-title", j.getTitle());
-				cur.put("industry", j.getIndustry());
-				break;
-			}
-			for (Education e : possible.getEducations()) {
-				cur.put("education", e.display());
-			}
+			if (possible.getNames() != null)
+				for (Name n : possible.getNames()) {
+					cur.put("name", n.getRaw());
+					cur.put("first-name", n.getFirst());
+					cur.put("last-name", n.getLast());
+					break;
+				}
+			if (possible.getAddresses() != null)
+				for (Address a : possible.getAddresses()) {
+					cur.put("address", a.getRaw());
+					cur.put("country", a.getCountry());
+					cur.put("city", a.getCity());
+					cur.put("house", a.getHouse());
+					cur.put("apartament", a.getApartment());
+					cur.put("po_box", a.getPoBox());
+					cur.put("street", a.getStreet());
+					cur.put("state", a.getState());
+					break;
+				}
+			if (possible.getPhones() != null)
+				for (Phone ph : possible.getPhones()) {
+					cur.put(ph.getType().replaceAll("_", "-"), ph.getDisplay());
+				}
+			if (possible.getEmails() != null)
+				for (Email e : possible.getEmails()) {
+					cur.put("email", e.getAddress());
+					break;
+				}
+			if (possible.getUsernames() != null)
+				for (Username u : possible.getUsernames()) {
+					cur.put("username", u.getContent());
+					break;
+				}
+			if (possible.getDobs() != null)
+				for (DOB d : possible.getDobs()) {
+					cur.put("age", d.age() + "");
+					cur.put("dob", DateFormat.getDateInstance().format(d.getDateRange().middle()));
+					break;
+				}
+			if (possible.getJobs() != null)
+				for (Job j : possible.getJobs()) {
+					cur.put("job-title", j.getTitle());
+					cur.put("industry", j.getIndustry());
+					break;
+				}
+			if (possible.getEducations() != null)
+				for (Education e : possible.getEducations()) {
+					cur.put("education", e.display());
+				}
 			if (scrape.isValid(possible.getSource().getUrl()))
 				url.add(new URL(possible.getSource().getUrl()));
 		}
-		urls.set((URL[]) url.toArray());
-		this.data.set((PersonalData[]) data.toArray());
+		urls.set(url.toArray(new URL[url.size()]));
+		this.data.set(data.toArray(new PersonalData[data.size()]));
 		return true;
 	}
 
