@@ -11,8 +11,8 @@ import com.sk.util.parse.search.ScrapeSearcher;
 
 public class AllNameSearcher extends ScrapeSearcher implements NameSearcher {
 
-	private static final NameSearcher[] interior = { new GooglePlusSearcher(),
-			GoogleSearcherImpl.LINKEDIN.searcher, GoogleSearcherImpl.TWITTER.searcher, new WhitepagesSearcher() };
+	private static final NameSearcher[] interior = { new GooglePlusSearcher(), new LinkedInSearcher(),
+			GoogleSearcherImpl.TWITTER.searcher, new WhitepagesSearcher() };
 
 	@Override
 	public boolean parse() throws IllegalStateException {
