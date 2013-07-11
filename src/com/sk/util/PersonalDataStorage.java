@@ -22,6 +22,12 @@ public class PersonalDataStorage extends HashMap<String, Set<PersonalData>> {
 
 	private static final long serialVersionUID = 9177444068545121072L;
 
+	/**
+	 * Adds the {@link PersonalData} to this {@link PersonalDataStorage}
+	 * 
+	 * @param input
+	 *            The {@link PersonalData} to add
+	 */
 	public void add(PersonalData... input) {
 		for (PersonalData data : input) {
 			String site = data.getWebsiteId();
@@ -35,6 +41,12 @@ public class PersonalDataStorage extends HashMap<String, Set<PersonalData>> {
 		}
 	}
 
+	/**
+	 * Adds the contents of the {@link PersonalDataStorage} to this
+	 * 
+	 * @param pds
+	 *            The {@link PersonalDataStorage} to add
+	 */
 	public void addStorage(PersonalDataStorage pds) {
 		for (Set<PersonalData> lds : pds.values()) {
 			for (PersonalData d : lds) {
@@ -43,6 +55,11 @@ public class PersonalDataStorage extends HashMap<String, Set<PersonalData>> {
 		}
 	}
 
+	/**
+	 * Converts this {@link PersonalDataStorage} to an array
+	 * 
+	 * @return An array of {@link PersonalData}
+	 */
 	public PersonalData[] toArray() {
 		List<PersonalData> ret = new ArrayList<PersonalData>();
 		for (Set<PersonalData> cur : values())
@@ -50,6 +67,11 @@ public class PersonalDataStorage extends HashMap<String, Set<PersonalData>> {
 		return ret.toArray(new PersonalData[ret.size()]);
 	}
 
+	/**
+	 * Gets the number of elements in this {@link PersonalDataStorage}
+	 * 
+	 * @return the number of elements
+	 */
 	@Override
 	public int size() {
 		int ret = 0;

@@ -1,15 +1,11 @@
 package com.sk.impl;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.sk.impl.search.WhitepagesSearcher;
 import com.sk.util.PersonalData;
 import com.sk.util.SiteScraperInfo;
 import com.sk.util.parse.scrape.BasicGrabber;
@@ -19,7 +15,6 @@ import com.sk.util.parse.scrape.GrabberSiteScraper;
 @SiteScraperInfo(siteBase = "http://www.whitepages.com/", siteId = "whitepages")
 public class WhitepagesScraper extends GrabberSiteScraper {
 
-	private static final WhitepagesSearcher wns = new WhitepagesSearcher();
 	private static final Grabber[] grabbers = { new BasicGrabber("div.address.adr", "address"),
 			new BasicGrabber("span.given-name", "first-name"), new BasicGrabber("span.family-name", "last-name"),
 			new BasicGrabber("span.name.fn", "name"),
@@ -41,24 +36,6 @@ public class WhitepagesScraper extends GrabberSiteScraper {
 					}
 					return false;
 				}
-			}, new Grabber() {
-				@Override
-				public boolean grab(Document source, PersonalData destination) {
-					boolean ret = false;
-					for (Element adjacent : source.select("td:contains(Associated) + td a")) {
-						try {
-							wns.load(new URL(adjacent.attr("abs:href")));
-						} catch (IOException ex) {
-							continue;
-						}
-						if (!wns.parse())
-							continue;
-						ret |= wns.results().length > 0;
-						destination.addAdjacent(wns.results());
-					}
-					return ret;
-				}
-
 			} };
 
 	public WhitepagesScraper() {
