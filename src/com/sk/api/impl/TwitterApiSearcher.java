@@ -54,7 +54,7 @@ public class TwitterApiSearcher extends AbstractApiSearcher {
 			put(user, add, "id_str", "id");
 			put(user, add, "location");
 			put(user, add, "name");
-			put(user, add, "screen_name", "screen-name");
+			put(user, add, "screen_name", "username");
 			put(user, add, "url", "home-page");
 			put(user, add, "profile_image_url", "profile-picture-url");
 			found.add(add);

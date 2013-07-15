@@ -49,6 +49,8 @@ public class FourSquareApiSearcher extends AbstractApiSearcher {
 				dat.put("gender", user.get("gender").getAsString());
 			if (user.has("homeCity"))
 				dat.put("location", user.get("homeCity").getAsString());
+			if (dat.containsKey("first-name") && dat.containsKey("last-name"))
+				dat.put("name", dat.get("first-name").get() + " " + dat.get("last-name").get());
 			if (dat.size() > 0)
 				ret.add(dat);
 		}
