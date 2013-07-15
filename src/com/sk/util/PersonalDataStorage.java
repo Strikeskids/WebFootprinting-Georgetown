@@ -30,17 +30,17 @@ public class PersonalDataStorage extends HashMap<String, Set<PersonalData>> {
 	 */
 	public void add(PersonalData... input) {
 		main: for (PersonalData data : input) {
-			String site = data.getWebsiteId();
-			if (containsKey(site)) {
-				get(site).add(data);
-			} else {
-				for (String attr : data.keySet()) {
-					if (!attr.contains("name")) {
+			for (String attr : data.keySet()) {
+				if (!attr.contains("name")) {
+					String site = data.getWebsiteId();
+					if (containsKey(site)) {
+						get(site).add(data);
+					} else {
 						Set<PersonalData> toAdd = new LinkedHashSet<>();
 						toAdd.add(data);
 						put(site, toAdd);
-						continue main;
 					}
+					continue main;
 				}
 			}
 		}

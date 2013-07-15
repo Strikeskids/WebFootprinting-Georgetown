@@ -95,7 +95,8 @@ public class PiplApiSearcher implements NameSearcher {
 
 		Method source = null;
 		for (Method m : recordClazz.getMethods()) {
-			if (m.getName().toUpperCase().contains(clazz.getSimpleName().toUpperCase())) {
+			if (m.getName().toUpperCase().contains(clazz.getSimpleName().toUpperCase())
+					&& m.getParameterTypes().length == 0) {
 				source = m;
 				break;
 			}
@@ -111,6 +112,7 @@ public class PiplApiSearcher implements NameSearcher {
 				builders[i] = new StringBuilder();
 			}
 		} catch (NoSuchMethodException ex) {
+			ex.printStackTrace();
 			throw new IllegalArgumentException();
 		}
 		try {
@@ -127,11 +129,11 @@ public class PiplApiSearcher implements NameSearcher {
 				}
 			}
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException();
 		}
 		for (int i = 0; i < methodNames.length; ++i) {
-
-			if (!builders.toString().matches("[|]*")) {
+			if (!builders[i].toString().matches("[|]*")) {
 				store.put(attributeNames[i], builders[i].substring(0, builders[i].length() - 1));
 			}
 		}
