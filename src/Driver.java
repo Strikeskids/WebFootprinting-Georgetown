@@ -45,5 +45,6 @@ public class Driver {
 		w.append(output.toString());
 		w.close();
 		in.close();
+		searcher.close();
 	}
 }

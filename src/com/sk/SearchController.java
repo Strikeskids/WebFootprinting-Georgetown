@@ -115,4 +115,8 @@ public class SearchController implements NameSearcher {
 		}
 	}
 
+	public void close() {
+		executor.shutdown();
+	}
+	
 }
