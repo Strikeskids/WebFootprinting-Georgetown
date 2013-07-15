@@ -130,7 +130,8 @@ public class PiplApiSearcher implements NameSearcher {
 			throw new IllegalArgumentException();
 		}
 		for (int i = 0; i < methodNames.length; ++i) {
-			if (builders[i].length() > 1) {
+
+			if (!builders.toString().matches("[|]*")) {
 				store.put(attributeNames[i], builders[i].substring(0, builders[i].length() - 1));
 			}
 		}
