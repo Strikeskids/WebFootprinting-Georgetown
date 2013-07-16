@@ -75,7 +75,7 @@ public class PiplApiSearcher implements NameSearcher {
 			grab(possible, cur, Education.class, new String[] { "display" }, new String[] { "education" });
 			grab(possible, cur, Name.class, new String[] { "display", "First", "Last" }, new String[] { "name",
 					"first-name", "last-name" });
-			grab(possible, cur, Address.class, new String[] { "Raw", "Country", "City", "House", "PoBox",
+			grab(possible, cur, Address.class, new String[] { "display", "Country", "City", "House", "PoBox",
 					"Apartment", "Street", "State" }, new String[] { "address", "country", "city", "house",
 					"po-box", "apartment", "street", "state" });
 			if (scrape.isValid(possible.getSource().getUrl()))
