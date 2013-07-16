@@ -141,6 +141,14 @@ public class PersonalData extends HashMap<String, String> {
 			return Optional.absent();
 	}
 
+	public String[] getAllValues(String attribute) {
+		if (containsKey(attribute)) {
+			return super.get(attribute).split("[|]");
+		} else {
+			return new String[0];
+		}
+	}
+
 	public void addAdjacent(URL... urls) {
 		Collections.addAll(adjacent, urls);
 	}
