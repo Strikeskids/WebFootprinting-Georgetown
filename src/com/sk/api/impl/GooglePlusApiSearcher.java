@@ -13,6 +13,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sk.api.ApiUtility;
+import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 import com.sk.util.parse.search.NameSearcher;
 
@@ -31,7 +32,7 @@ public class GooglePlusApiSearcher implements NameSearcher {
 	}
 
 	private final String URL = "https://www.googleapis.com/plus/v1/people?key=%s&query=%s%%20%s";
-	private final String SINGLE = "https://www.googleapis.com/plus/v1/people/%s?key=%s&fields=id%%2CdisplayName%%2Cname(familyName%%2CgivenName)%%2Cgender%%2Curl%%2Cbirthday%%2CrelationshipStatus%%2CageRange";
+	private final String SINGLE = "https://www.googleapis.com/plus/v1/people/%s?key=%s&fields=id%%2CdisplayName%%2Cname%%2Cgender%%2Curl%%2Cbirthday%%2CrelationshipStatus%%2CageRange%%2Corganizations%%2CaboutMe";
 
 	@Override
 	public boolean lookForName(String first, String last) throws IOException {
@@ -48,28 +49,43 @@ public class GooglePlusApiSearcher implements NameSearcher {
 				JsonObject user = parser.parse(
 						new BufferedReader(new InputStreamReader(new URL(String.format(SINGLE, uid, key))
 								.openStream()))).getAsJsonObject();
-				PersonalData dat = new PersonalData("g+");
+				FieldBuilder builder = new FieldBuilder();
 
-				put(user, dat, "id", "id");
-				put(user, dat, "displayName", "name");
+				put(user, builder, "aboutMe", "blob");
+				put(user, builder, "id", "id");
+				put(user, builder, "displayName", "name");
 				if (user.has("name")) {
 					JsonObject name = user.get("name").getAsJsonObject();
-					put(name, dat, "familyName", "last-name");
-					put(name, dat, "givenName", "first-name");
+					put(name, builder, "familyName", "last-name");
+					put(name, builder, "givenName", "first-name");
 				}
-				put(user, dat, "gender", "gender");
+				put(user, builder, "gender", "gender");
 				if (user.has("url")) {
 					try {
 						url.add(new URL(user.get("url").getAsString()));
 					} catch (MalformedURLException ign) {
 					}
 				}
-				put(user, dat, "relationshipStatus", "relationship-status");
-				put(user, dat, "birthday", "birthday");
+				put(user, builder, "relationshipStatus", "relationship-status");
+				put(user, builder, "birthday", "birthday");
 				if (user.has("ageRange")) {
 					JsonObject range = user.get("ageRange").getAsJsonObject();
-					dat.put("age", range.get("min").getAsString() + "-" + range.get("max").getAsString());
+					builder.put("age", range.get("min").getAsString() + "-" + range.get("max").getAsString());
 				}
+				if (user.has("organizations"))
+					for (JsonElement organizationElement : user.get("organizations").getAsJsonArray()) {
+						JsonObject organization = organizationElement.getAsJsonObject();
+						if (organization.get("type").getAsString().equals("work")) {
+							put(organization, builder, "name", "company");
+							put(organization, builder, "title", "job-title");
+						} else {
+							put(organization, builder, "name", "education");
+						}
+					}
+
+				PersonalData dat = new PersonalData("g+");
+				builder.addTo(dat);
+
 				data.add(dat);
 			}
 		}
@@ -79,9 +95,11 @@ public class GooglePlusApiSearcher implements NameSearcher {
 		return true;
 	}
 
-	private void put(JsonObject src, PersonalData dest, String skey, String dkey) {
+	private void put(JsonObject src, FieldBuilder dest, String skey, String dkey) {
 		if (src.has(skey))
 			dest.put(dkey, src.get(skey).getAsString());
+		else
+			dest.put(dkey, null);
 	}
 
 	@Override

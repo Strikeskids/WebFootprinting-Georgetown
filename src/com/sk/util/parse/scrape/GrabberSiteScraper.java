@@ -2,6 +2,7 @@ package com.sk.util.parse.scrape;
 
 import org.jsoup.nodes.Document;
 
+import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 
 /**
@@ -23,13 +24,16 @@ public class GrabberSiteScraper extends SpecificSiteScraper {
 		Document doc = this.doc.get();
 		if (doc == null)
 			throw new IllegalStateException();
-		PersonalData storage = newData();
+		FieldBuilder builder = new FieldBuilder();
 		boolean ret = false;
 		for (Grabber g : grabbers) {
-			ret |= g.grab(doc, storage);
+			ret |= g.grab(doc, builder);
 		}
-		if (ret)
+		if (ret) {
+			PersonalData storage = newData();
+			builder.addTo(storage);
 			personalData.set(storage);
+		}
 		return ret;
 	}
 

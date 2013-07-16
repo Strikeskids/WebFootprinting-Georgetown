@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import com.sk.util.PersonalData;
+import com.sk.util.FieldBuilder;
 import com.sk.util.SiteScraperInfo;
 import com.sk.util.parse.scrape.BasicGrabber;
 import com.sk.util.parse.scrape.Grabber;
@@ -23,7 +23,7 @@ public class WhitepagesScraper extends GrabberSiteScraper {
 						.compile("(Home|Work) \\((\\d{3})\\) (\\d{3})-(\\d{4})");
 
 				@Override
-				public boolean grab(Document source, PersonalData destination) {
+				public boolean grab(Document source, FieldBuilder destination) {
 					Elements phone = source.select("p.single_result_phone");
 					if (!phone.isEmpty()) {
 						String text = phone.first().text();

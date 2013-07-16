@@ -16,6 +16,7 @@ import org.scribe.model.Verb;
 
 import com.sk.api.AbstractApiSearcher;
 import com.sk.api.ApiUtility;
+import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 import com.sk.util.parse.scrape.BasicGrabber;
 import com.sk.util.parse.scrape.Grabber;
@@ -43,8 +44,9 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 
 	private static final Grabber[] grabbers = { new BasicGrabber("first-name", "first-name"),
 			new BasicGrabber("last-name", "last-name"), new BasicGrabber("location name", "location"),
-			new BasicGrabber("location country code", "country"), new BasicGrabber("industry", "industry"),
-			new BasicGrabber("headline", "job-title") };
+			new BasicGrabber("location country code", "country"),
+			new BasicGrabber("person > industry", "industry"), new BasicGrabber("positions title", "job-title"),
+			new BasicGrabber("positions company name", "company"), new BasicGrabber("person > summary", "blob") };
 
 	@Override
 	public boolean parseResponse(Response resp) {
@@ -67,11 +69,13 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 			String pbody = presp.getBody();
 			if (pbody == null || pbody.length() == 0)
 				continue;
-			PersonalData dat = new PersonalData("linkedin");
 			Document pdoc = Jsoup.parse(pbody, "", Parser.xmlParser());
+			FieldBuilder builder = new FieldBuilder();
 			for (Grabber g : grabbers) {
-				g.grab(pdoc, dat);
+				g.grab(pdoc, builder);
 			}
+			PersonalData dat = new PersonalData("linkedin");
+			builder.addTo(dat);
 			dat.put("name", dat.get("first-name").get() + " " + dat.get("last-name").get());
 			data.add(dat);
 		}

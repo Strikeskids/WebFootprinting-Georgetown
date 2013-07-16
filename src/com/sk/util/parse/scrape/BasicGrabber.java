@@ -4,6 +4,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 
 public class BasicGrabber implements Grabber {
@@ -43,20 +44,20 @@ public class BasicGrabber implements Grabber {
 	}
 
 	@Override
-	public boolean grab(Document source, PersonalData destination) {
-		Elements found = source.select(selector);
-		if (!found.isEmpty()) {
-			Element first = found.first();
-			String store;
-			if (attribute == null)
-				store = first.text();
-			else
-				store = first.attributes().get(attribute);
-			if (store.length() > 0) {
+	public boolean grab(Document source, FieldBuilder destination) {
+		Elements foundSet = source.select(selector);
+		boolean ret = false;
+		if (!foundSet.isEmpty()) {
+			for (Element found : foundSet) {
+				String store;
+				if (attribute == null)
+					store = found.text();
+				else
+					store = found.attributes().get(attribute);
 				destination.put(property, store);
-				return true;
+				ret |= store.length() > 0;
 			}
 		}
-		return false;
+		return ret;
 	}
 }

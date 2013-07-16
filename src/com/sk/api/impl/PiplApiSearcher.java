@@ -24,6 +24,7 @@ import com.pipl.api.search.SearchAPIRequest;
 import com.pipl.api.search.SearchAPIResponse;
 import com.sk.api.ApiUtility;
 import com.sk.impl.ScrapeController;
+import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 import com.sk.util.parse.search.NameSearcher;
 
@@ -54,7 +55,8 @@ public class PiplApiSearcher implements NameSearcher {
 		List<PersonalData> data = new ArrayList<>();
 		List<URL> url = new ArrayList<>();
 		for (Record possible : resp.getRecords()) {
-			PersonalData cur = new PersonalData("pipl");
+			PersonalData dat = new PersonalData("pipl");
+			FieldBuilder cur = new FieldBuilder();
 
 			if (possible.getPhones() != null) {
 				for (Phone ph : possible.getPhones()) {
@@ -80,14 +82,15 @@ public class PiplApiSearcher implements NameSearcher {
 					"po-box", "apartment", "street", "state" });
 			if (scrape.isValid(possible.getSource().getUrl()))
 				url.add(new URL(possible.getSource().getUrl()));
-			data.add(cur);
+			cur.addTo(dat);
+			data.add(dat);
 		}
 		urls.set(url.toArray(new URL[url.size()]));
 		this.data.set(data.toArray(new PersonalData[data.size()]));
 		return true;
 	}
 
-	private void grab(Record record, PersonalData store, Class<?> clazz, String[] methodNames,
+	private void grab(Record record, FieldBuilder store, Class<?> clazz, String[] methodNames,
 			String[] attributeNames) {
 		if (methodNames.length != attributeNames.length)
 			throw new IllegalArgumentException();
@@ -104,12 +107,10 @@ public class PiplApiSearcher implements NameSearcher {
 		if (source == null)
 			throw new IllegalArgumentException();
 		Method[] grabbers = new Method[methodNames.length];
-		StringBuilder[] builders = new StringBuilder[methodNames.length];
 		try {
 			for (int i = 0; i < methodNames.length; ++i) {
 				grabbers[i] = clazz.getDeclaredMethod(Character.isUpperCase(methodNames[i].charAt(0)) ? "get"
 						+ methodNames[i] : methodNames[i]);
-				builders[i] = new StringBuilder();
 			}
 		} catch (NoSuchMethodException ex) {
 			ex.printStackTrace();
@@ -122,20 +123,12 @@ public class PiplApiSearcher implements NameSearcher {
 
 			for (Object item : (ArrayList<?>) list) {
 				for (int j = 0; j < methodNames.length; ++j) {
-					Object grabbed = grabbers[j].invoke(item);
-					if (grabbed != null)
-						builders[j].append(grabbed);
-					builders[j].append("|");
+					store.put(attributeNames[j], grabbers[j].invoke(item));
 				}
 			}
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException();
-		}
-		for (int i = 0; i < methodNames.length; ++i) {
-			if (!builders[i].toString().matches("[|]*")) {
-				store.put(attributeNames[i], builders[i].substring(0, builders[i].length() - 1));
-			}
 		}
 	}
 

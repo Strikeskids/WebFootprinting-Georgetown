@@ -4,7 +4,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.sk.util.PersonalData;
+import com.sk.util.FieldBuilder;
 import com.sk.util.StringProcessor;
 
 public class ProcessGrabber extends BasicGrabber {
@@ -22,23 +22,23 @@ public class ProcessGrabber extends BasicGrabber {
 	}
 
 	@Override
-	public boolean grab(Document source, PersonalData destination) {
-		Elements found = source.select(selector);
-		if (!found.isEmpty()) {
-			for (Element ele : found) {
+	public boolean grab(Document source, FieldBuilder destination) {
+		Elements foundSet = source.select(selector);
+		boolean ret = false;
+		if (!foundSet.isEmpty()) {
+			for (Element found : foundSet) {
 				String store;
 				if (attribute == null)
-					store = ele.text();
+					store = found.text();
 				else
-					store = ele.attributes().get(attribute);
+					store = found.attributes().get(attribute);
 				String ans = processor.process(store);
-				if (ans != null) {
-					destination.put(property, ans);
-					return true;
-				}
+				destination.put(property, ans);
+				
+				ret |= ans != null;
 			}
 		}
-		return false;
+		return ret;
 	}
 
 }
