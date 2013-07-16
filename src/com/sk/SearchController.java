@@ -14,6 +14,7 @@ import com.sk.api.impl.FourSquareApiSearcher;
 import com.sk.api.impl.GooglePlusApiSearcher;
 import com.sk.api.impl.LinkedinApiSearcher;
 import com.sk.api.impl.PiplApiSearcher;
+import com.sk.api.impl.TwitterApiSearcher;
 import com.sk.impl.search.WhitepagesSearcher;
 import com.sk.util.PersonalData;
 import com.sk.util.PersonalDataStorage;
@@ -38,7 +39,7 @@ public class SearchController implements NameSearcher {
 
 	private final ThreadLocal<PersonalDataStorage> store = new ThreadLocal<>();
 	private NameSearcher[] use = { new WhitepagesSearcher(), new LinkedinApiSearcher(), new PiplApiSearcher(),
-			new FourSquareApiSearcher(), new GooglePlusApiSearcher() };
+			new FourSquareApiSearcher(), new GooglePlusApiSearcher(), new TwitterApiSearcher() };
 	private final ExecutorService executor;
 
 	public SearchController() {
