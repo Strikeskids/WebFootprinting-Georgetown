@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 public class FieldBuilder {
 
@@ -35,9 +37,22 @@ public class FieldBuilder {
 	}
 
 	public void put(JsonObject source, String skey, String dkey) {
-		if (source.has(skey))
-			put(dkey, source.get(skey).getAsString());
-		else
+		if (source.has(skey)) {
+			JsonElement value = source.get(skey);
+			if (!value.isJsonPrimitive())
+				put(dkey, null);
+			if (value.isJsonPrimitive()) {
+				JsonPrimitive primitiveValue = value.getAsJsonPrimitive();
+				if (primitiveValue.isBoolean())
+					put(dkey, primitiveValue.getAsBoolean());
+				else if (primitiveValue.isNumber())
+					put(dkey, primitiveValue.getAsNumber());
+				else if (primitiveValue.isString())
+					put(dkey, primitiveValue.getAsString());
+				else
+					throw new IllegalArgumentException();
+			}
+		} else
 			put(dkey, null);
 	}
 
