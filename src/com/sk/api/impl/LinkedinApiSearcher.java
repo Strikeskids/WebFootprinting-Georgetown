@@ -42,10 +42,10 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 		}
 	}
 
-	private static final Grabber[] grabbers = { new BasicGrabber("first-name", "first-name"),
-			new BasicGrabber("last-name", "last-name"), new BasicGrabber("location name", "location"),
+	private static final Grabber[] grabbers = { new BasicGrabber("first-name", "firstName"),
+			new BasicGrabber("last-name", "lastName"), new BasicGrabber("location name", "location"),
 			new BasicGrabber("location country code", "country"),
-			new BasicGrabber("person > industry", "industry"), new BasicGrabber("positions title", "job-title"),
+			new BasicGrabber("person > industry", "industry"), new BasicGrabber("positions title", "jobTitle"),
 			new BasicGrabber("positions company name", "company"), new BasicGrabber("person > summary", "blob") };
 
 	@Override

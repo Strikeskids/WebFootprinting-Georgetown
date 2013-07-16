@@ -16,7 +16,7 @@ import com.sk.util.parse.scrape.GrabberSiteScraper;
 public class WhitepagesScraper extends GrabberSiteScraper {
 
 	private static final Grabber[] grabbers = { new BasicGrabber("div.address.adr", "address"),
-			new BasicGrabber("span.given-name", "first-name"), new BasicGrabber("span.family-name", "last-name"),
+			new BasicGrabber("span.given-name", "firstName"), new BasicGrabber("span.family-name", "lastName"),
 			new BasicGrabber("span.name.fn", "name"),
 			new BasicGrabber("div.address.adr span.postal-code", "zipcode"),
 			new BasicGrabber("div.address.adr span.locality", "city"),
@@ -32,7 +32,7 @@ public class WhitepagesScraper extends GrabberSiteScraper {
 						String text = phone.first().text();
 						Matcher matcher = phonePattern.matcher(text);
 						if (matcher.find()) {
-							destination.put("phone-" + matcher.group(1).toLowerCase(),
+							destination.put("phone" + matcher.group(1).toLowerCase(),
 									matcher.group(2) + matcher.group(3) + matcher.group(4));
 							return true;
 						}

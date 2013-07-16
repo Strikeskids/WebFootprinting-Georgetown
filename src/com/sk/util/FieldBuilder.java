@@ -61,7 +61,7 @@ public class FieldBuilder {
 	}
 
 	public void joinNames() {
-		String[] first = get("first-name"), last = get("last-name");
+		String[] first = get("firstName"), last = get("lastName");
 		for (int i = 0; i < first.length && i < last.length; ++i) {
 			put("name", first[i] + " " + last[i]);
 		}

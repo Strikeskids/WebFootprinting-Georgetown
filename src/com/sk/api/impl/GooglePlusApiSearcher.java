@@ -56,8 +56,8 @@ public class GooglePlusApiSearcher implements NameSearcher {
 				builder.put(user, "displayName", "name");
 				if (user.has("name")) {
 					JsonObject name = user.get("name").getAsJsonObject();
-					builder.put(name, "familyName", "last-name");
-					builder.put(name, "givenName", "first-name");
+					builder.put(name, "familyName", "lastName");
+					builder.put(name, "givenName", "firstName");
 				}
 				builder.put(user, "gender", "gender");
 				if (user.has("url")) {
@@ -66,7 +66,7 @@ public class GooglePlusApiSearcher implements NameSearcher {
 					} catch (MalformedURLException ign) {
 					}
 				}
-				builder.put(user, "relationshipStatus", "relationship-status");
+				builder.put(user, "relationshipStatus", "relationshipStatus");
 				builder.put(user, "birthday", "birthday");
 				if (user.has("ageRange")) {
 					JsonObject range = user.get("ageRange").getAsJsonObject();
@@ -77,7 +77,7 @@ public class GooglePlusApiSearcher implements NameSearcher {
 						JsonObject organization = organizationElement.getAsJsonObject();
 						if (organization.get("type").getAsString().equals("work")) {
 							builder.put(organization, "name", "company");
-							builder.put(organization, "title", "job-title");
+							builder.put(organization, "title", "jobTitle");
 						} else {
 							builder.put(organization, "name", "education");
 						}

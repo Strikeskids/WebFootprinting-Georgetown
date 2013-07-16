@@ -9,7 +9,7 @@ import com.sk.util.parse.scrape.GrabberSiteScraper;
 public class TwitterScraper extends GrabberSiteScraper {
 
 	private static final Grabber[] grabbers = { new BasicGrabber(".fullname .profile-field", "name"),
-			new BasicGrabber(".location-and-url > span.url a", "title", "home-page"),
+			new BasicGrabber(".location-and-url > span.url a", "title", "homePage"),
 			new BasicGrabber(".location-and-url .location", "location") };
 
 	public TwitterScraper() {

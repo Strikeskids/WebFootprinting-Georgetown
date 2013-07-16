@@ -77,10 +77,10 @@ public class PiplApiSearcher implements NameSearcher {
 					"industry" });
 			grab(possible, cur, Education.class, new String[] { "display" }, new String[] { "education" });
 			grab(possible, cur, Name.class, new String[] { "display", "First", "Last" }, new String[] { "name",
-					"first-name", "last-name" });
+					"firstName", "lastName" });
 			grab(possible, cur, Address.class, new String[] { "display", "Country", "City", "House", "PoBox",
 					"Apartment", "Street", "State" }, new String[] { "address", "country", "city", "house",
-					"po-box", "apartment", "street", "state" });
+					"poBox", "apartment", "street", "state" });
 			if (scrape.isValid(possible.getSource().getUrl()))
 				url.add(new URL(possible.getSource().getUrl()));
 			cur.addTo(dat);

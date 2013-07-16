@@ -50,8 +50,8 @@ public class FourSquareApiSearcher extends AbstractApiSearcher {
 			FieldBuilder builder = new FieldBuilder();
 			if (user.has("type"))
 				continue;
-			builder.put(user, "firstName", "first-name");
-			builder.put(user, "lastName", "last-name");
+			builder.put(user, "firstName", "firstName");
+			builder.put(user, "lastName", "lastName");
 			builder.put(user, "gender");
 			builder.put(user, "homeCity", "location");
 			builder.put(user, "bio", "blob");
