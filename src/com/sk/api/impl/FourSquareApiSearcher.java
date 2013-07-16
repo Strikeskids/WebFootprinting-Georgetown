@@ -1,5 +1,7 @@
 package com.sk.api.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,13 @@ public class FourSquareApiSearcher extends AbstractApiSearcher {
 
 	@Override
 	public OAuthRequest getNameRequest(String first, String last) {
-		return new OAuthRequest(Verb.GET, String.format(URL, util.getAccessToken().getToken(), first, last));
+		try {
+			return new OAuthRequest(Verb.GET, String.format(URL, util.getAccessToken().getToken(),
+					URLEncoder.encode(first, "UTF-8"), URLEncoder.encode(last, "UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override

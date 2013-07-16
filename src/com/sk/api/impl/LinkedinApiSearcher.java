@@ -75,8 +75,8 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 				g.grab(pdoc, builder);
 			}
 			PersonalData dat = new PersonalData("linkedin");
+			builder.joinNames();
 			builder.addTo(dat);
-			dat.put("name", dat.get("first-name").get() + " " + dat.get("last-name").get());
 			data.add(dat);
 		}
 		this.data.set(data.toArray(new PersonalData[data.size()]));
