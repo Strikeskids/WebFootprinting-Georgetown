@@ -21,7 +21,7 @@ public class FieldBuilder {
 
 	public String[] get(String key) {
 		if (builders.containsKey(key))
-			return builders.get(key).toString().split("|");
+			return builders.get(key).toString().split("[|]");
 		else
 			return new String[0];
 	}
