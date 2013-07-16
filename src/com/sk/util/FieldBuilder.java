@@ -12,7 +12,7 @@ public class FieldBuilder {
 
 	private Map<String, StringBuilder> builders = new HashMap<>();
 
-	public void addTo(PersonalData data) {
+	public void addTo(Map<String, String> data) {
 		for (Entry<String, StringBuilder> entry : builders.entrySet()) {
 			StringBuilder builder = entry.getValue();
 			if (!builder.toString().matches("[|]*")) {
@@ -65,6 +65,13 @@ public class FieldBuilder {
 		for (int i = 0; i < first.length && i < last.length; ++i) {
 			put("name", first[i] + " " + last[i]);
 		}
+	}
+
+	@Override
+	public String toString() {
+		Map<String, String> tmp = new HashMap<>();
+		addTo(tmp);
+		return String.format("FieldBuilder: %s", tmp);
 	}
 
 }
