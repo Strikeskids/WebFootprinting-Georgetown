@@ -51,23 +51,23 @@ public class GooglePlusApiSearcher implements NameSearcher {
 								.openStream()))).getAsJsonObject();
 				FieldBuilder builder = new FieldBuilder();
 
-				put(user, builder, "aboutMe", "blob");
-				put(user, builder, "id", "id");
-				put(user, builder, "displayName", "name");
+				builder.put(user, "aboutMe", "blob");
+				builder.put(user, "id", "id");
+				builder.put(user, "displayName", "name");
 				if (user.has("name")) {
 					JsonObject name = user.get("name").getAsJsonObject();
-					put(name, builder, "familyName", "last-name");
-					put(name, builder, "givenName", "first-name");
+					builder.put(name, "familyName", "last-name");
+					builder.put(name, "givenName", "first-name");
 				}
-				put(user, builder, "gender", "gender");
+				builder.put(user, "gender", "gender");
 				if (user.has("url")) {
 					try {
 						url.add(new URL(user.get("url").getAsString()));
 					} catch (MalformedURLException ign) {
 					}
 				}
-				put(user, builder, "relationshipStatus", "relationship-status");
-				put(user, builder, "birthday", "birthday");
+				builder.put(user, "relationshipStatus", "relationship-status");
+				builder.put(user, "birthday", "birthday");
 				if (user.has("ageRange")) {
 					JsonObject range = user.get("ageRange").getAsJsonObject();
 					builder.put("age", range.get("min").getAsString() + "-" + range.get("max").getAsString());
@@ -76,10 +76,10 @@ public class GooglePlusApiSearcher implements NameSearcher {
 					for (JsonElement organizationElement : user.get("organizations").getAsJsonArray()) {
 						JsonObject organization = organizationElement.getAsJsonObject();
 						if (organization.get("type").getAsString().equals("work")) {
-							put(organization, builder, "name", "company");
-							put(organization, builder, "title", "job-title");
+							builder.put(organization, "name", "company");
+							builder.put(organization, "title", "job-title");
 						} else {
-							put(organization, builder, "name", "education");
+							builder.put(organization, "name", "education");
 						}
 					}
 
@@ -93,13 +93,6 @@ public class GooglePlusApiSearcher implements NameSearcher {
 		urls.set(url.toArray(new URL[url.size()]));
 		this.data.set(data.toArray(new PersonalData[data.size()]));
 		return true;
-	}
-
-	private void put(JsonObject src, FieldBuilder dest, String skey, String dkey) {
-		if (src.has(skey))
-			dest.put(dkey, src.get(skey).getAsString());
-		else
-			dest.put(dkey, null);
 	}
 
 	@Override

@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sk.api.AbstractApiSearcher;
 import com.sk.api.ApiUtility;
+import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 
 public class FourSquareApiSearcher extends AbstractApiSearcher {
@@ -38,19 +39,17 @@ public class FourSquareApiSearcher extends AbstractApiSearcher {
 		List<PersonalData> ret = new ArrayList<>();
 		for (JsonElement e : obj.get("response").getAsJsonObject().get("results").getAsJsonArray()) {
 			JsonObject user = e.getAsJsonObject();
-			PersonalData dat = new PersonalData("foursquare");
+			FieldBuilder builder = new FieldBuilder();
 			if (user.has("type"))
 				continue;
-			if (user.has("firstName"))
-				dat.put("first-name", user.get("firstName").getAsString());
-			if (user.has("lastName"))
-				dat.put("last-name", user.get("lastName").getAsString());
-			if (user.has("gender"))
-				dat.put("gender", user.get("gender").getAsString());
-			if (user.has("homeCity"))
-				dat.put("location", user.get("homeCity").getAsString());
-			if (dat.containsKey("first-name") && dat.containsKey("last-name"))
-				dat.put("name", dat.get("first-name").get() + " " + dat.get("last-name").get());
+			builder.put(user, "firstName", "first-name");
+			builder.put(user, "lastName", "last-name");
+			builder.put(user, "gender");
+			builder.put(user, "homeCity", "location");
+			builder.put(user, "bio", "blob");
+			builder.joinNames();
+			PersonalData dat = new PersonalData("foursquare");
+			builder.addTo(dat);
 			if (dat.size() > 0)
 				ret.add(dat);
 		}

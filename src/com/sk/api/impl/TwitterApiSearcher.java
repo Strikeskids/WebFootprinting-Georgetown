@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sk.api.AbstractApiSearcher;
 import com.sk.api.ApiUtility;
+import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 
 public class TwitterApiSearcher extends AbstractApiSearcher {
@@ -50,27 +51,21 @@ public class TwitterApiSearcher extends AbstractApiSearcher {
 			if (!e.isJsonObject())
 				continue;
 			JsonObject user = e.getAsJsonObject();
+			FieldBuilder builder = new FieldBuilder();
+			builder.put(user, "id_str", "id");
+			builder.put(user, "location");
+			builder.put(user, "name");
+			builder.put(user, "screen_name", "username");
+			builder.put(user, "url", "home-page");
+			builder.put(user, "profile_image_url", "profile-picture-url");
+			builder.put(user, "description", "blob");
+			
 			PersonalData add = new PersonalData("twitter");
-			put(user, add, "id_str", "id");
-			put(user, add, "location");
-			put(user, add, "name");
-			put(user, add, "screen_name", "username");
-			put(user, add, "url", "home-page");
-			put(user, add, "profile_image_url", "profile-picture-url");
+			builder.addTo(add);
 			found.add(add);
 		}
 		data.set(found.toArray(new PersonalData[found.size()]));
 		return true;
-	}
-
-	private void put(JsonObject src, PersonalData dest, String key) {
-		put(src, dest, key, key);
-	}
-
-	private void put(JsonObject src, PersonalData dest, String skey, String dkey) {
-		if (src.has(skey) && src.get(skey).isJsonPrimitive()) {
-			dest.put(dkey, src.get(skey).getAsString());
-		}
 	}
 
 }
