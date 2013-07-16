@@ -60,7 +60,8 @@ public class PiplApiSearcher implements NameSearcher {
 
 			if (possible.getPhones() != null) {
 				for (Phone ph : possible.getPhones()) {
-					cur.put(ph.getType().replaceAll("_", "-"), ph.getDisplay());
+					if (ph != null && ph.getType() != null)
+						cur.put(ph.getType().replaceAll("_", "-"), ph.getDisplay());
 				}
 			}
 			if (possible.getDobs() != null) {

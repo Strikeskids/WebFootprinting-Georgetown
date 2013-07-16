@@ -18,6 +18,9 @@ public class WhitepagesScraper extends GrabberSiteScraper {
 	private static final Grabber[] grabbers = { new BasicGrabber("div.address.adr", "address"),
 			new BasicGrabber("span.given-name", "first-name"), new BasicGrabber("span.family-name", "last-name"),
 			new BasicGrabber("span.name.fn", "name"),
+			new BasicGrabber("div.address.adr span.postal-code", "zipcode"),
+			new BasicGrabber("div.address.adr span.locality", "city"),
+			new BasicGrabber("div.address.adr span.region", "state"),
 			new BasicGrabber("tr:contains(Age) td:not(:contains(Age)) span", "age"), new Grabber() {
 				private final Pattern phonePattern = Pattern
 						.compile("(Home|Work) \\((\\d{3})\\) (\\d{3})-(\\d{4})");
