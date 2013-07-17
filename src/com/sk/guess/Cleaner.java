@@ -1,11 +1,15 @@
 package com.sk.guess;
 
+import com.sk.guess.impl.GenderCleaner;
+import com.sk.guess.impl.GenericCleaner;
 import com.sk.guess.impl.LocationCleaner;
 import com.sk.util.PersonalData;
 
 public class Cleaner {
 
-	private static final DataCleaner[] cleaners = new DataCleaner[] { new LocationCleaner() };
+	private static final String[] GENERIC_FIELDS = {};
+	private static final DataCleaner[] CLEANERS = new DataCleaner[] { new LocationCleaner(), new GenderCleaner(),
+			new GenericCleaner(GENERIC_FIELDS) };
 
 	public Cleaner() {
 		// TODO Auto-generated constructor stub
@@ -20,7 +24,7 @@ public class Cleaner {
 	 */
 	public PersonalData clean(PersonalData in) {
 		PersonalData ret = new PersonalData(in.getWebsiteId());
-		for (DataCleaner cleaner : cleaners) {
+		for (DataCleaner cleaner : CLEANERS) {
 			cleaner.clean(in, ret);
 		}
 		return ret;
