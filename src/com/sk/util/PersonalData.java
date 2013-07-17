@@ -3,7 +3,7 @@ package com.sk.util;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -110,7 +110,7 @@ import com.google.common.base.Optional;
  * @author Strikeskids
  * 
  */
-public class PersonalData extends HashMap<String, String> {
+public class PersonalData extends LinkedHashMap<String, String> {
 
 	private final String siteId;
 	private final List<URL> adjacent = new ArrayList<URL>();
