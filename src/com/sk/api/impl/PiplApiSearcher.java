@@ -73,8 +73,8 @@ public class PiplApiSearcher implements NameSearcher {
 			}
 			grab(possible, cur, Email.class, new String[] { "Address" }, new String[] { "email" });
 			grab(possible, cur, Username.class, new String[] { "Content" }, new String[] { "username" });
-			grab(possible, cur, Job.class, new String[] { "Title", "Industry" }, new String[] { "job-title",
-					"industry" });
+			grab(possible, cur, Job.class, new String[] { "Title", "Industry", "Organization" }, new String[] {
+					"jobTitle", "industry", "company" });
 			grab(possible, cur, Education.class, new String[] { "display" }, new String[] { "education" });
 			grab(possible, cur, Name.class, new String[] { "display", "First", "Last" }, new String[] { "name",
 					"firstName", "lastName" });
