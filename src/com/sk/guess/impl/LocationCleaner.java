@@ -20,6 +20,8 @@ public class LocationCleaner implements DataCleaner {
 	private static final String URL = "http://maps.googleapis.com/maps/api/geocode/json?language=en&sensor=false&address=%s";
 	private static final JsonParser parser = new JsonParser();
 	private static final Pattern nameReplace = Pattern.compile("_([a-z0-9])");
+	private static final String[] LOCATION_FIELDS = { "address", "location", "zipcode", "house", "apartment",
+			"street", "state", "country", "city", "poBox" };
 
 	@Override
 	public boolean clean(PersonalData in, PersonalData out) {
@@ -55,6 +57,9 @@ public class LocationCleaner implements DataCleaner {
 						builder.put(addressComponent, "short_name", newType.toString());
 					}
 				}
+			}
+			for (String field : LOCATION_FIELDS) {
+				in.remove(field);
 			}
 			builder.addTo(out);
 			return true;

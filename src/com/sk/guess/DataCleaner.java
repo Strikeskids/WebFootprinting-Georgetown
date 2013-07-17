@@ -5,7 +5,8 @@ import com.sk.util.PersonalData;
 public interface DataCleaner {
 
 	/**
-	 * Cleans the {@link PersonalData} input and returns a new {@link PersonalData} with the new values
+	 * Cleans the {@link PersonalData} input and returns a new {@link PersonalData} with the new values Also
+	 * removes any attributes related to allow easier cleaning in the future
 	 * 
 	 * @param in
 	 *            The {@link PersonalData} to clean
