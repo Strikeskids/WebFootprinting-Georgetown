@@ -19,8 +19,8 @@ import com.sk.util.PersonalData;
 public class LocationCleaner implements DataCleaner {
 
 	private static final String URL = "http://maps.googleapis.com/maps/api/geocode/json?language=en&sensor=false&address=%s";
-	private static final JsonParser parser = new JsonParser();
-	private static final Pattern nameReplace = Pattern.compile("_([a-z0-9])");
+	private static final JsonParser PARSER = new JsonParser();
+	private static final Pattern NAME_REPLACE = Pattern.compile("_([a-z0-9])");
 	private static final String[] LOCATION_FIELDS = { "address", "location", "zipcode", "house", "apartment",
 			"street", "state", "country", "city", "poBox" };
 
@@ -39,7 +39,7 @@ public class LocationCleaner implements DataCleaner {
 				return false;
 			for (String loc : locs) {
 				String formatUrl = String.format(URL, URLEncoder.encode(loc, "UTF-8"));
-				JsonObject value = parser.parse(
+				JsonObject value = PARSER.parse(
 						new BufferedReader(new InputStreamReader(new URL(formatUrl).openStream())))
 						.getAsJsonObject();
 				if (!value.get("status").getAsString().equals("OK"))
@@ -51,7 +51,7 @@ public class LocationCleaner implements DataCleaner {
 						JsonObject addressComponent = addressComponents.get(i).getAsJsonObject();
 						String type = addressComponent.get("types").getAsJsonArray().get(0).getAsString();
 						StringBuffer newType = new StringBuffer("L");
-						Matcher mat = nameReplace.matcher(type);
+						Matcher mat = NAME_REPLACE.matcher(type);
 						while (mat.find()) {
 							mat.appendReplacement(newType, mat.group(1).toUpperCase());
 						}
