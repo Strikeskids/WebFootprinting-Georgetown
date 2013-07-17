@@ -24,4 +24,9 @@ public class GuessedValue {
 		return value;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("%.2f%%|%s", getConfidence() * 100, getValue());
+	}
+
 }

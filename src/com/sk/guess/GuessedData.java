@@ -2,13 +2,14 @@ package com.sk.guess;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.sk.util.PersonalData;
 
-public class GuessedData extends HashMap<String, GuessedField> {
+public class GuessedData extends LinkedHashMap<String, GuessedField> {
 
 	private static final long serialVersionUID = 2510701995263580166L;
 
@@ -54,21 +55,21 @@ public class GuessedData extends HashMap<String, GuessedField> {
 	 * @param cleaned
 	 */
 	public void generateGuess(String key, PersonalData... cleaned) {
-		Map<String, Integer> values = new HashMap<>();
+		Map<String, Double> values = new HashMap<>();
 		int total = 0;
 		for (PersonalData dat : cleaned) {
 			String[] dataValues = dat.getAllValues(key);
-			total += Math.max(dataValues.length, 1);
-			for (String value : dat.getAllValues(key)) {
+			total += (dataValues.length > 0 ? 1 : 0);
+			for (String value : dataValues) {
 				if (values.containsKey(value))
-					values.put(value, values.get(value) + 1);
+					values.put(value, values.get(value) + 1d / dataValues.length);
 				else
-					values.put(value, 1);
+					values.put(value, 1d / dataValues.length);
 			}
 		}
 		List<GuessedValue> confidentValues = new ArrayList<>();
-		for (Entry<String, Integer> guess : values.entrySet()) {
-			double confidence = guess.getValue() * 1d / total;
+		for (Entry<String, Double> guess : values.entrySet()) {
+			double confidence = guess.getValue() / total;
 			if (confidence >= threshold) {
 				confidentValues.add(new GuessedValue(guess.getKey(), confidence));
 			}

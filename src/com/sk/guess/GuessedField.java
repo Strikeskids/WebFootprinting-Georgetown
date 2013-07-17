@@ -69,4 +69,16 @@ public class GuessedField {
 		return totalConfidence;
 	}
 
+	@Override
+	public String toString() {
+		if (getGuesses().length == 0)
+			return "0.0%";
+		StringBuilder ret = new StringBuilder();
+		for (GuessedValue gv : getGuesses()) {
+			ret.append(gv);
+			ret.append(" ");
+		}
+		return ret.substring(0, ret.length() - 1);
+	}
+
 }
