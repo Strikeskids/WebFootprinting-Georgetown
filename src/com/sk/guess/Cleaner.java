@@ -7,12 +7,12 @@ import com.sk.util.PersonalData;
 
 public class Cleaner {
 
-	private static final String[] GENERIC_FIELDS = {};
+	private static final String[] GENERIC_FIELDS = { "jobTitle", "industry", "company", "education",
+			"relationshipStatus" };
 	private static final DataCleaner[] CLEANERS = new DataCleaner[] { new LocationCleaner(), new GenderCleaner(),
 			new GenericCleaner(GENERIC_FIELDS) };
 
 	public Cleaner() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
