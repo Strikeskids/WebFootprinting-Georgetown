@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -44,9 +45,10 @@ public class LocationCleaner implements DataCleaner {
 				if (!value.get("status").getAsString().equals("OK"))
 					return false;
 				for (JsonElement resultElement : value.get("results").getAsJsonArray()) {
-					JsonObject result = resultElement.getAsJsonObject();
-					for (JsonElement addressComponentElement : result.get("address_components").getAsJsonArray()) {
-						JsonObject addressComponent = addressComponentElement.getAsJsonObject();
+					JsonArray addressComponents = resultElement.getAsJsonObject().get("address_components")
+							.getAsJsonArray();
+					for (int i = addressComponents.size() - 1; i >= 0; --i) {
+						JsonObject addressComponent = addressComponents.get(i).getAsJsonObject();
 						String type = addressComponent.get("types").getAsJsonArray().get(0).getAsString();
 						StringBuffer newType = new StringBuffer("L");
 						Matcher mat = nameReplace.matcher(type);
