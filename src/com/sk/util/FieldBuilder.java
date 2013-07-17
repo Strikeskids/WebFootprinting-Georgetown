@@ -74,4 +74,10 @@ public class FieldBuilder {
 		return String.format("FieldBuilder: %s", tmp);
 	}
 
+	public boolean isEmpty() {
+		Map<String, String> tmp = new HashMap<>();
+		addTo(tmp);
+		return tmp.size() == 0;
+	}
+
 }
