@@ -31,7 +31,7 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 
 	}
 
-	private static final String BASE = "http://api.linkedin.com/v1/people-search:(people:(api-standard-profile-request%%2Cfirst-name%%2Clast-name)%%2Cnumresults)?count=25&first-name=%s&last-name=%s&start=%d";
+	private static final String BASE = "http://api.linkedin.com/v1/people-search:(people:(api-standard-profile-request,first-name,last-name),num-results)?count=25&first-name=%s&last-name=%s&start=%d";
 	private static final String REQUEST_FIELDS = ":(first-name,last-name,headline,location:(name,country:(code)),industry,summary,specialties,positions)";
 
 	public OAuthRequest getNameRequest(String first, String last, int start) {

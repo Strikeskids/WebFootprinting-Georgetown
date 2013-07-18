@@ -57,6 +57,10 @@ public class PiplApiSearcher implements NameSearcher {
 		for (Record possible : resp.getRecords()) {
 			PersonalData dat = new PersonalData("pipl");
 			FieldBuilder builder = new FieldBuilder();
+			grab(possible, builder, Name.class, new String[] { "display", "First", "Last" }, new String[] {
+					"name", "firstName", "lastName" });
+			if (!builder.compareNames(first, last))
+				break;
 
 			if (possible.getPhones() != null) {
 				for (Phone ph : possible.getPhones()) {
@@ -71,10 +75,6 @@ public class PiplApiSearcher implements NameSearcher {
 					break;
 				}
 			}
-			grab(possible, builder, Name.class, new String[] { "display", "First", "Last" }, new String[] {
-					"name", "firstName", "lastName" });
-			if (!builder.compareNames(first, last))
-				break;
 			grab(possible, builder, Email.class, new String[] { "Address" }, new String[] { "email" });
 			grab(possible, builder, Username.class, new String[] { "Content" }, new String[] { "username" });
 			grab(possible, builder, Job.class, new String[] { "Title", "Industry", "Organization" }, new String[] {

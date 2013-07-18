@@ -100,7 +100,7 @@ public class GooglePlusApiSearcher implements NameSearcher {
 		List<PersonalData> data = new ArrayList<>();
 		String token = "";
 		do {
-			parse(data, first, last, token);
+			token = parse(data, first, last, token);
 		} while (token != null);
 		this.data.set(data.toArray(new PersonalData[data.size()]));
 		return true;
