@@ -77,4 +77,9 @@ public class GuessedData extends LinkedHashMap<String, GuessedField> {
 		put(key, new GuessedField(confidentValues));
 	}
 
+	@Override
+	public String toString() {
+		return "GuessedData: " + super.toString();
+	}
+
 }
