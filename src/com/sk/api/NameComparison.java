@@ -71,7 +71,7 @@ public class NameComparison {
 	}
 
 	public boolean isSameName(String[] a, String[] b) {
-		if (a.length != 2 || b.length != 2)
+		if (a == null || b == null || a.length != 2 || b.length != 2)
 			return false;
 		return format(a[1]).equals(format(b[1])) && isSameFirstName(a[0], b[0]);
 	}
