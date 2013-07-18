@@ -7,7 +7,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import com.google.gson.JsonElement;
@@ -42,9 +44,7 @@ public class NameComparison {
 	private final Map<String, JsonObject> rawObjects = new HashMap<>();
 
 	public boolean isSameFirstName(String a, String b) {
-		HashSet<String> possA = new HashSet<String>(getPossibilities(a));
-		possA.retainAll(getPossibilities(b));
-		return !possA.isEmpty();
+		return getPossibilities(a).contains(format(b));
 	}
 
 	private static final String FIRST_BASE = "http://api.pipl.com/name/v2/json/?key=%s&first_name=%s";
@@ -84,12 +84,8 @@ public class NameComparison {
 		return format(a[1]).equals(format(b[1])) && isSameFirstName(a[0], b[0]);
 	}
 
-	public Set<String> getPossibilities(String name) {
-		if (name == null)
-			return new HashSet<>();
+	private Set<String> loadPossibilities(String name) {
 		name = format(name);
-		if (gathered.containsKey(name))
-			return gathered.get(name);
 		Set<String> ret = new HashSet<>();
 		try {
 			JsonObject json = parser.parse(
@@ -103,8 +99,33 @@ public class NameComparison {
 			return ret;
 		}
 		ret.add(name);
-		gathered.put(name, ret);
 		return ret;
+	}
+
+	public Set<String> getPossibilities(String name) {
+		if (name == null)
+			return new HashSet<>();
+		name = format(name);
+		if (gathered.containsKey(name))
+			return gathered.get(name);
+		Set<String> value = loadPossibilities(name);
+		gathered.put(name, value);
+		Queue<String> lookupQueue = new LinkedList<String>(value);
+		while (!lookupQueue.isEmpty()) {
+			String lookup = lookupQueue.poll();
+			Set<String> lookupNames = (gathered.containsKey(lookup) ? gathered.get(lookup)
+					: loadPossibilities(lookup));
+			for (String foundName : lookupNames) {
+				if (value.add(foundName)) {
+					lookupQueue.add(foundName);
+				}
+			}
+			gathered.put(lookup, lookupNames);
+		}
+		for (String key : value) {
+			gathered.put(key, value);
+		}
+		return value;
 	}
 
 	private void addFrom(JsonObject wrap, String sub, Set<String> dest) {
