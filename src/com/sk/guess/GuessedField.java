@@ -15,6 +15,12 @@ public class GuessedField {
 	private final double totalConfidence;
 	private final GuessedValue[] values;
 
+	/**
+	 * Creates a guessed field with the given GuessedValues as its values
+	 * 
+	 * @param values
+	 *            The GuessedValues to store for this GuessedField
+	 */
 	public GuessedField(GuessedValue... values) {
 		if (values.length == 0) {
 			this.totalConfidence = 0;

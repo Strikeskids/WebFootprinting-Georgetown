@@ -9,6 +9,12 @@ import java.util.Set;
 import com.sk.util.PersonalData;
 import com.sk.util.PersonalDataStorage;
 
+/**
+ * Handles guessing the information about a certain person using the data from sites
+ * 
+ * @author Strikeskids
+ * 
+ */
 public class GuessController {
 
 	public GuessController() {

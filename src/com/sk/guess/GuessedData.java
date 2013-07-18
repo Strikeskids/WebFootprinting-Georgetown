@@ -9,6 +9,9 @@ import java.util.Map.Entry;
 
 import com.sk.util.PersonalData;
 
+/**
+ * Stores the guessed data as a map from String to GuessedField
+ */
 public class GuessedData extends LinkedHashMap<String, GuessedField> {
 
 	private static final long serialVersionUID = 2510701995263580166L;
