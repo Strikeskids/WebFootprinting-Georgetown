@@ -1,5 +1,6 @@
 package com.sk.api.impl;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ public class FourSquareApiSearcher extends AbstractApiSearcher {
 
 	private static final String URL = "https://api.foursquare.com/v2/users/search?v=20130710&oauth_token=%s&name=%s%%20%s";
 
-	@Override
 	public OAuthRequest getNameRequest(String first, String last) {
 		try {
 			return new OAuthRequest(Verb.GET, String.format(URL, util.getAccessToken().getToken(),
@@ -38,8 +38,7 @@ public class FourSquareApiSearcher extends AbstractApiSearcher {
 		}
 	}
 
-	@Override
-	public boolean parseResponse(Response resp) {
+	public boolean parseResponse(Response resp, String... names) {
 		String body;
 		if (resp == null || (body = resp.getBody()) == null)
 			return false;
@@ -50,8 +49,10 @@ public class FourSquareApiSearcher extends AbstractApiSearcher {
 			FieldBuilder builder = new FieldBuilder();
 			if (user.has("type"))
 				continue;
-			builder.put(user, "firstName", "firstName");
-			builder.put(user, "lastName", "lastName");
+			builder.put(user, "firstName");
+			builder.put(user, "lastName");
+			if (!builder.compareNames(names))
+				break;
 			builder.put(user, "gender");
 			builder.put(user, "homeCity", "location");
 			builder.put(user, "bio", "blob");
@@ -63,6 +64,11 @@ public class FourSquareApiSearcher extends AbstractApiSearcher {
 		}
 		this.data.set(ret.toArray(new PersonalData[ret.size()]));
 		return true;
+	}
+
+	@Override
+	public boolean lookForName(String first, String last) throws IOException {
+		return parseResponse(getResponse(getNameRequest(first, last)), first, last);
 	}
 
 }

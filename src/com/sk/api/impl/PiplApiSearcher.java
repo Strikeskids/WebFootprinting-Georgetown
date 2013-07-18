@@ -56,34 +56,37 @@ public class PiplApiSearcher implements NameSearcher {
 		List<URL> url = new ArrayList<>();
 		for (Record possible : resp.getRecords()) {
 			PersonalData dat = new PersonalData("pipl");
-			FieldBuilder cur = new FieldBuilder();
+			FieldBuilder builder = new FieldBuilder();
 
 			if (possible.getPhones() != null) {
 				for (Phone ph : possible.getPhones()) {
 					if (ph != null && ph.getType() != null)
-						cur.put(ph.getType().replaceAll("_", "-"), ph.getDisplay());
+						builder.put(ph.getType().replaceAll("_", "-"), ph.getDisplay());
 				}
 			}
 			if (possible.getDobs() != null) {
 				for (DOB d : possible.getDobs()) {
-					cur.put("age", d.age() + "");
-					cur.put("dob", DateFormat.getDateInstance().format(d.getDateRange().middle()));
+					builder.put("age", d.age() + "");
+					builder.put("dob", DateFormat.getDateInstance().format(d.getDateRange().middle()));
 					break;
 				}
 			}
-			grab(possible, cur, Email.class, new String[] { "Address" }, new String[] { "email" });
-			grab(possible, cur, Username.class, new String[] { "Content" }, new String[] { "username" });
-			grab(possible, cur, Job.class, new String[] { "Title", "Industry", "Organization" }, new String[] {
+			grab(possible, builder, Name.class, new String[] { "display", "First", "Last" }, new String[] {
+					"name", "firstName", "lastName" });
+			if (!builder.compareNames(first, last))
+				break;
+			grab(possible, builder, Email.class, new String[] { "Address" }, new String[] { "email" });
+			grab(possible, builder, Username.class, new String[] { "Content" }, new String[] { "username" });
+			grab(possible, builder, Job.class, new String[] { "Title", "Industry", "Organization" }, new String[] {
 					"jobTitle", "industry", "company" });
-			grab(possible, cur, Education.class, new String[] { "display" }, new String[] { "education" });
-			grab(possible, cur, Name.class, new String[] { "display", "First", "Last" }, new String[] { "name",
-					"firstName", "lastName" });
-			grab(possible, cur, Address.class, new String[] { "display", "Country", "City", "House", "PoBox",
+			grab(possible, builder, Education.class, new String[] { "display" }, new String[] { "education" });
+
+			grab(possible, builder, Address.class, new String[] { "display", "Country", "City", "House", "PoBox",
 					"Apartment", "Street", "State" }, new String[] { "address", "country", "city", "house",
 					"poBox", "apartment", "street", "state" });
 			if (scrape.isValid(possible.getSource().getUrl()))
 				url.add(new URL(possible.getSource().getUrl()));
-			cur.addTo(dat);
+			builder.addTo(dat);
 			data.add(dat);
 		}
 		urls.set(url.toArray(new URL[url.size()]));

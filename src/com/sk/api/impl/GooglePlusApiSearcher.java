@@ -3,16 +3,17 @@ package com.sk.api.impl;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sk.api.ApiUtility;
+import com.sk.api.NameComparison;
 import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 import com.sk.util.parse.search.NameSearcher;
@@ -31,21 +32,30 @@ public class GooglePlusApiSearcher implements NameSearcher {
 			throw new RuntimeException("Failed to get key");
 	}
 
-	private final String URL = "https://www.googleapis.com/plus/v1/people?key=%s&query=%s%%20%s";
+	private final String URL = "https://www.googleapis.com/plus/v1/people?key=%s&query=%s%%20%s&pageToken=%s&fields=items(id%%2CdisplayName)%%2CnextPageToken&maxResults=50";
 	private final String SINGLE = "https://www.googleapis.com/plus/v1/people/%s?key=%s&fields=id%%2CdisplayName%%2Cname%%2Cgender%%2Curl%%2Cbirthday%%2CrelationshipStatus%%2CageRange%%2Corganizations%%2CaboutMe";
 
-	@Override
-	public boolean lookForName(String first, String last) throws IOException {
-		List<PersonalData> data = new ArrayList<>();
-		List<URL> url = new ArrayList<>();
-		String searchLoc = String.format(URL, key, URLEncoder.encode(first, "UTF-8"),
-				URLEncoder.encode(last, "UTF-8"));
+	private String parse(List<PersonalData> found, String first, String last, String token) throws IOException {
+		if (token == null)
+			return null;
 		JsonParser parser = new JsonParser();
+		String searchLoc = String.format(URL, key, URLEncoder.encode(first, "UTF-8"),
+				URLEncoder.encode(last, "UTF-8"), token);
 		JsonObject obj = parser.parse(new BufferedReader(new InputStreamReader(new URL(searchLoc).openStream())))
 				.getAsJsonObject();
+		NameComparison nameUtil = NameComparison.get();
+		String retToken = (obj.has("nextPageToken") ? obj.get("nextPageToken").getAsString() : null);
+		String[] names = { first, last };
 		if (obj.has("items")) {
-			for (JsonElement e : obj.get("items").getAsJsonArray()) {
-				String uid = e.getAsJsonObject().get("id").getAsString();
+			JsonArray items = obj.get("items").getAsJsonArray();
+			if (items.size() == 0)
+				return null;
+			for (JsonElement personResultElement : items) {
+				JsonObject personResult = personResultElement.getAsJsonObject();
+				if (!nameUtil.isSameName(names, nameUtil.parseName(personResult.get("displayName").getAsString())))
+					return null;
+
+				String uid = personResult.get("id").getAsString();
 				JsonObject user = parser.parse(
 						new BufferedReader(new InputStreamReader(new URL(String.format(SINGLE, uid, key))
 								.openStream()))).getAsJsonObject();
@@ -60,12 +70,6 @@ public class GooglePlusApiSearcher implements NameSearcher {
 					builder.put(name, "givenName", "firstName");
 				}
 				builder.put(user, "gender", "gender");
-				if (user.has("url")) {
-					try {
-						url.add(new URL(user.get("url").getAsString()));
-					} catch (MalformedURLException ign) {
-					}
-				}
 				builder.put(user, "relationshipStatus", "relationshipStatus");
 				builder.put(user, "birthday", "birthday");
 				if (user.has("ageRange")) {
@@ -83,14 +87,21 @@ public class GooglePlusApiSearcher implements NameSearcher {
 						}
 					}
 
-				PersonalData dat = new PersonalData("g+");
-				builder.addTo(dat);
-
-				data.add(dat);
+				PersonalData data = new PersonalData("g+");
+				builder.addTo(data);
+				found.add(data);
 			}
 		}
+		return retToken;
+	}
 
-		urls.set(url.toArray(new URL[url.size()]));
+	@Override
+	public boolean lookForName(String first, String last) throws IOException {
+		List<PersonalData> data = new ArrayList<>();
+		String token = "";
+		do {
+			parse(data, first, last, token);
+		} while (token != null);
 		this.data.set(data.toArray(new PersonalData[data.size()]));
 		return true;
 	}

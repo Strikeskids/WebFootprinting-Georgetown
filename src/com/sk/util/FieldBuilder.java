@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.sk.api.NameComparison;
 
 public class FieldBuilder {
 
@@ -65,6 +66,25 @@ public class FieldBuilder {
 		for (int i = 0; i < first.length && i < last.length; ++i) {
 			put("name", first[i] + " " + last[i]);
 		}
+	}
+
+	public boolean compareNames(String... names) {
+		if (names.length != 2)
+			return false;
+		NameComparison nameUtil = NameComparison.get();
+		String[] firsts = get("firstName"), lasts = get("lastName"), boths = get("name");
+		if (firsts.length == 0 || lasts.length == 0) {
+			for (String both : boths) {
+				if (nameUtil.isSameName(nameUtil.parseName(both), names))
+					return true;
+			}
+		} else {
+			for (int i = 0; i < firsts.length && i < lasts.length; ++i) {
+				if (nameUtil.isSameName(new String[] { firsts[i], lasts[i] }, names))
+					return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

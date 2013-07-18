@@ -1,5 +1,6 @@
 package com.sk.api.impl;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import org.scribe.model.Verb;
 
 import com.sk.api.AbstractApiSearcher;
 import com.sk.api.ApiUtility;
+import com.sk.api.NameComparison;
 import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 import com.sk.util.parse.scrape.BasicGrabber;
@@ -29,14 +31,13 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 
 	}
 
-	private static final String BASE = "http://api.linkedin.com/v1/people-search:(people:(api-standard-profile-request))?count=25";
+	private static final String BASE = "http://api.linkedin.com/v1/people-search:(people:(api-standard-profile-request%%2Cfirst-name%%2Clast-name)%%2Cnumresults)?count=25&first-name=%s&last-name=%s&start=%d";
 	private static final String REQUEST_FIELDS = ":(first-name,last-name,headline,location:(name,country:(code)),industry,summary,specialties,positions)";
 
-	@Override
-	public OAuthRequest getNameRequest(String first, String last) {
+	public OAuthRequest getNameRequest(String first, String last, int start) {
 		try {
-			return new OAuthRequest(Verb.GET, BASE + "&first-name=" + URLEncoder.encode(first, "UTF-8")
-					+ "&last-name=" + URLEncoder.encode(last, "UTF-8"));
+			return new OAuthRequest(Verb.GET, String.format(BASE, URLEncoder.encode(first, "UTF-8"),
+					URLEncoder.encode(last, "UTF-8"), start));
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException();
 		}
@@ -48,16 +49,22 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 			new BasicGrabber("person > industry", "industry"), new BasicGrabber("positions title", "jobTitle"),
 			new BasicGrabber("positions company name", "company"), new BasicGrabber("person > summary", "blob") };
 
-	@Override
-	public boolean parseResponse(Response resp) {
+	public int parseResponse(Response resp, int start, List<PersonalData> data, String... names) {
 		if (resp == null)
-			return false;
+			return -1;
 		String body = resp.getBody();
 		if (body == null || body.length() == 0)
-			return false;
+			return -1;
 		Document xdoc = Jsoup.parse(body, "", Parser.xmlParser());
-		List<PersonalData> data = new ArrayList<PersonalData>();
+		int total = Integer.parseInt(xdoc.select("num-results").text());
+
+		NameComparison nameUtil = NameComparison.get();
 		for (Element person : xdoc.select("person")) {
+			FieldBuilder builder = new FieldBuilder();
+
+			String first = person.select("first-name").text(), last = person.select("last-name").text();
+			if (!nameUtil.isSameName(names, new String[] { first, last }))
+				return -1;
 			String url = person.select("api-standard-profile-request url").text();
 			if (url.length() < 10)
 				continue;
@@ -70,7 +77,6 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 			if (pbody == null || pbody.length() == 0)
 				continue;
 			Document pdoc = Jsoup.parse(pbody, "", Parser.xmlParser());
-			FieldBuilder builder = new FieldBuilder();
 			for (Grabber g : grabbers) {
 				g.grab(pdoc, builder);
 			}
@@ -79,7 +85,19 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 			builder.addTo(dat);
 			data.add(dat);
 		}
-		this.data.set(data.toArray(new PersonalData[data.size()]));
-		return true;
+		if (total <= start + 25)
+			return -1;
+		return start + 25;
+	}
+
+	@Override
+	public boolean lookForName(String first, String last) throws IOException {
+		int start = 0;
+		List<PersonalData> found = new ArrayList<>();
+		do {
+			start = parseResponse(getResponse(getNameRequest(first, last, start)), start, found, first, last);
+		} while (start != -1);
+		this.data.set(found.toArray(new PersonalData[found.size()]));
+		return !found.isEmpty();
 	}
 }
