@@ -39,6 +39,7 @@ public class NameComparison {
 	}
 
 	private final Map<String, Set<String>> gathered = new HashMap<>();
+	private final Map<String, JsonObject> rawObjects = new HashMap<>();
 
 	public boolean isSameFirstName(String a, String b) {
 		HashSet<String> possA = new HashSet<String>(getPossibilities(a));
@@ -52,9 +53,16 @@ public class NameComparison {
 	private static final JsonParser parser = new JsonParser();
 
 	private JsonObject getForName(String raw) throws IOException {
-		return parser.parse(
-				new BufferedReader(new InputStreamReader(new URL(String.format(RAW_BASE, key,
-						URLEncoder.encode(raw, "UTF-8"))).openStream()))).getAsJsonObject();
+		raw = raw.toLowerCase();
+		if (rawObjects.containsKey(raw))
+			return rawObjects.get(raw);
+		else {
+			JsonObject ret = parser.parse(
+					new BufferedReader(new InputStreamReader(new URL(String.format(RAW_BASE, key,
+							URLEncoder.encode(raw, "UTF-8"))).openStream()))).getAsJsonObject();
+			rawObjects.put(raw, ret);
+			return ret;
+		}
 	}
 
 	public String[] parseName(String raw) {
