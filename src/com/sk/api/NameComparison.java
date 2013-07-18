@@ -16,9 +16,22 @@ import com.google.gson.JsonParser;
 
 public class NameComparison {
 
+	private static NameComparison singleton;
+
+	public static NameComparison get() {
+		if (singleton == null) {
+			synchronized (NameComparison.class) {
+				if (singleton == null) {
+					singleton = new NameComparison();
+				}
+			}
+		}
+		return singleton;
+	}
+
 	private final String key;
 
-	public NameComparison() {
+	private NameComparison() {
 		JsonObject tokens = ApiUtility.getTokensFor("PiplApi");
 		if (tokens == null || !tokens.has("name_key"))
 			throw new IllegalArgumentException();
@@ -57,7 +70,15 @@ public class NameComparison {
 		return null;
 	}
 
+	public boolean isSameName(String[] a, String[] b) {
+		if (a.length != 2 || b.length != 2)
+			return false;
+		return format(a[1]).equals(format(b[1])) && isSameFirstName(a[0], b[0]);
+	}
+
 	public Set<String> getPossibilities(String name) {
+		if (name == null)
+			return new HashSet<>();
 		name = format(name);
 		if (gathered.containsKey(name))
 			return gathered.get(name);
@@ -92,6 +113,8 @@ public class NameComparison {
 	}
 
 	public String format(String input) {
+		if (input == null)
+			return "";
 		return input.toLowerCase().replaceAll("[^A-Za-z]", "");
 	}
 
