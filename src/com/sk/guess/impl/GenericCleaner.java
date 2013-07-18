@@ -20,7 +20,7 @@ public class GenericCleaner implements DataCleaner {
 				String[] values = in.getAllValues(field);
 				in.remove(field);
 				for (String value : values) {
-					builder.put(field, value.toLowerCase().replaceAll("\\s", ""));
+					builder.put(field, value.toLowerCase().replaceAll("[^a-z0-9]", ""));
 				}
 			}
 		}
