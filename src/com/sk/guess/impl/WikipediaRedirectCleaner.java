@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sk.guess.DataCleaner;
@@ -32,9 +33,7 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 		Map<String, String> allValues = new TreeMap<>();
 		for (String attributeName : attr) {
 			if (in.containsKey(attributeName)) {
-				String[] values = in.getAllValues(attributeName);
-				in.remove(attributeName);
-				for (String value : values) {
+				for (String value : in.getAllValues(attributeName)) {
 					allValues.put(value, value);
 				}
 			}
@@ -50,7 +49,39 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 			queryMap.put("titles", titles.substring(0, titles.length() - 1));
 			queryMap.put("prop", "");
 			queryMap.put("redirects", "");
-			
+			JsonObject result = readWiki(queryMap);
+			JsonObject query = result.get("query").getAsJsonObject();
+			if (query.has("normalized")) {
+				for (JsonElement normalizedElement : query.get("normalized").getAsJsonArray()) {
+					JsonObject normal = normalizedElement.getAsJsonObject();
+					String from = normal.get("from").getAsString();
+					String to = normal.get("to").getAsString();
+					allValues.put(from, to);
+					allValues.put(to, to);
+				}
+			}
+			if (query.has("redirects")) {
+				for (JsonElement redirElement : query.get("redirects").getAsJsonArray()) {
+					JsonObject redir = redirElement.getAsJsonObject();
+					String from = redir.get("from").getAsString();
+					String to = redir.get("to").getAsString();
+					allValues.put(from, to);
+					allValues.put(to, to);
+				}
+			}
+		}
+		for (String attributeName : attr) {
+			for (String value : in.getAllValues(attributeName)) {
+				String cur = value;
+				while (true) {
+					String next = allValues.get(cur);
+					if (next == null || next.equals(cur))
+						break;
+					cur = next;
+				}
+				builder.put(attributeName, cur);
+			}
+			in.remove(attributeName);
 		}
 		builder.addTo(out);
 		return !builder.isEmpty();
