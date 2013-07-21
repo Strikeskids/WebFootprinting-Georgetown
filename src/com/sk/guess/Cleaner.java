@@ -3,6 +3,7 @@ package com.sk.guess;
 import com.sk.guess.impl.GenderCleaner;
 import com.sk.guess.impl.GenericCleaner;
 import com.sk.guess.impl.LocationCleaner;
+import com.sk.guess.impl.WikipediaRedirectCleaner;
 import com.sk.util.PersonalData;
 
 /**
@@ -13,10 +14,10 @@ import com.sk.util.PersonalData;
  */
 public class Cleaner {
 
-	private static final String[] GENERIC_FIELDS = { "jobTitle", "industry", "company", "education",
-			"relationshipStatus" };
+	private static final String[] GENERIC_FIELDS = { "company", "education", "relationshipStatus" },
+			WIKIPEDIA_FIELDS = { "jobTitle", "industry" };
 	private static final DataCleaner[] CLEANERS = new DataCleaner[] { new LocationCleaner(), new GenderCleaner(),
-			new GenericCleaner(GENERIC_FIELDS) };
+			new GenericCleaner(GENERIC_FIELDS), new WikipediaRedirectCleaner(WIKIPEDIA_FIELDS) };
 
 	public Cleaner() {
 	}
