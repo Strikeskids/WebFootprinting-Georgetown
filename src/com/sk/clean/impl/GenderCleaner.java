@@ -1,6 +1,6 @@
-package com.sk.guess.impl;
+package com.sk.clean.impl;
 
-import com.sk.guess.DataCleaner;
+import com.sk.clean.DataCleaner;
 import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 

@@ -1,4 +1,4 @@
-package com.sk.guess.impl;
+package com.sk.clean.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.util.TreeMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sk.guess.DataCleaner;
+import com.sk.clean.DataCleaner;
 import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 

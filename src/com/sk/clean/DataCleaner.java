@@ -1,4 +1,4 @@
-package com.sk.guess;
+package com.sk.clean;
 
 import com.sk.util.PersonalData;
 

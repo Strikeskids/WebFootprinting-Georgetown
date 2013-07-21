@@ -1,9 +1,9 @@
-package com.sk.guess;
+package com.sk.clean;
 
-import com.sk.guess.impl.GenderCleaner;
-import com.sk.guess.impl.GenericCleaner;
-import com.sk.guess.impl.LocationCleaner;
-import com.sk.guess.impl.WikipediaRedirectCleaner;
+import com.sk.clean.impl.GenderCleaner;
+import com.sk.clean.impl.GenericCleaner;
+import com.sk.clean.impl.LocationCleaner;
+import com.sk.clean.impl.WikipediaRedirectCleaner;
 import com.sk.util.PersonalData;
 
 /**

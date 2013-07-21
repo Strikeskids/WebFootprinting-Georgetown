@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.sk.clean.Cleaner;
 import com.sk.util.PersonalData;
 import com.sk.util.PersonalDataStorage;
 
