@@ -56,7 +56,13 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 		if (body == null || body.length() == 0)
 			return -1;
 		Document xdoc = Jsoup.parse(body, "", Parser.xmlParser());
-		int total = Integer.parseInt(xdoc.select("num-results").text());
+		int total;
+		try {
+			total = Integer.parseInt(xdoc.select("num-results").text());
+		} catch (NumberFormatException ex) {
+			System.out.println(body);
+			return -1;
+		}
 
 		NameComparison nameUtil = NameComparison.get();
 		for (Element person : xdoc.select("person")) {
