@@ -54,7 +54,7 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 			new BasicGrabber("positions company name", "company"), new BasicGrabber("person > summary", "blob"),
 			new BasicGrabber("picture-url", "profilePictureUrl"), new BasicGrabber("main-address", "address"),
 			new BasicGrabber("phone-number > phone-number", "phone"),
-			new BasicGrabber("twitter-account > provider-account-id", "twitter") };
+			new BasicGrabber("twitter-account > provider-account-name", "twitter") };
 
 	public int parseResponse(Response resp, int start, List<PersonalData> data, String... names) {
 		if (resp == null)
