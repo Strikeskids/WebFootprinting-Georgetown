@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -15,9 +16,11 @@ import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;
 import org.scribe.model.Verb;
 
+import com.sk.Driver;
 import com.sk.api.AbstractApiSearcher;
 import com.sk.api.ApiUtility;
 import com.sk.api.NameComparison;
+import com.sk.threading.TaskGroup;
 import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 import com.sk.util.parse.scrape.BasicGrabber;
@@ -31,9 +34,10 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 
 	}
 
+	private static final int STEP_AMOUNT = 25;
 	private static final String BASE = "http://api.linkedin.com/v1/people-search:(people:"
-			+ "(api-standard-profile-request,first-name,last-name),num-results)?count=25&"
-			+ "first-name=%s&last-name=%s&start=%d";
+			+ "(api-standard-profile-request,first-name,last-name),num-results)?count=" + STEP_AMOUNT
+			+ "&first-name=%s&last-name=%s&start=%d";
 	private static final String REQUEST_FIELDS = ":(first-name,last-name,headline,"
 			+ "location:(name,country:(code)),industry,summary,specialties,positions,"
 			+ "picture-url,main-address,phone-numbers,twitter-accounts)";
@@ -56,7 +60,7 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 			new BasicGrabber("phone-number > phone-number", "phone"),
 			new BasicGrabber("twitter-account > provider-account-name", "twitter") };
 
-	public int parseResponse(Response resp, int start, List<PersonalData> data, String... names) {
+	public int parseResponse(Response resp, int start, final List<PersonalData> data, String... names) {
 		if (resp == null)
 			return -1;
 		String body = resp.getBody();
@@ -71,42 +75,54 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 			return -1;
 		}
 
+		TaskGroup tasks = new TaskGroup();
 		NameComparison nameUtil = NameComparison.get();
-		for (Element person : xdoc.select("person")) {
-			FieldBuilder builder = new FieldBuilder();
+		for (final Element person : xdoc.select("person")) {
 
 			String first = person.select("first-name").text(), last = person.select("last-name").text();
-			if (!nameUtil.isSameName(names, new String[] { first, last }))
-				return -1;
-			String url = person.select("api-standard-profile-request url").text();
+			if (!nameUtil.isSameName(names, new String[] { first, last })) {
+				start = -STEP_AMOUNT - 1;
+				break;
+			}
+			final String url = person.select("api-standard-profile-request url").text();
 			if (url.length() < 10)
 				continue;
-			OAuthRequest req = new OAuthRequest(Verb.GET, url + REQUEST_FIELDS);
-			for (Element httpHeader : person.select("api-standard-profile-request http-header")) {
-				req.addHeader(httpHeader.select("name").text(), httpHeader.select("value").text());
-			}
-			Response presp = util.send(req);
-			String pbody = presp.getBody();
-			if (pbody == null || pbody.length() == 0)
-				continue;
-			Document pdoc = Jsoup.parse(pbody, "", Parser.xmlParser());
-			for (Grabber g : grabbers) {
-				g.grab(pdoc, builder);
-			}
-			PersonalData dat = new PersonalData("linkedin");
-			builder.joinNames();
-			builder.addTo(dat);
-			data.add(dat);
+			tasks.add(new Runnable() {
+				@Override
+				public void run() {
+					FieldBuilder builder = new FieldBuilder();
+
+					OAuthRequest req = new OAuthRequest(Verb.GET, url + REQUEST_FIELDS);
+					for (Element httpHeader : person.select("api-standard-profile-request http-header")) {
+						req.addHeader(httpHeader.select("name").text(), httpHeader.select("value").text());
+					}
+					Response presp = util.send(req);
+					String pbody = presp.getBody();
+					if (pbody == null || pbody.length() == 0)
+						return;
+					Document pdoc = Jsoup.parse(pbody, "", Parser.xmlParser());
+					for (Grabber g : grabbers) {
+						g.grab(pdoc, builder);
+					}
+					PersonalData dat = new PersonalData("linkedin");
+					builder.joinNames();
+					builder.addTo(dat);
+					data.add(dat);
+				}
+			});
 		}
-		if (total <= start + 25)
+		tasks.submit(Driver.EXECUTOR);
+		if (!tasks.waitFor())
 			return -1;
-		return start + 25;
+		if (total <= start + STEP_AMOUNT)
+			return -1;
+		return start + STEP_AMOUNT;
 	}
 
 	@Override
 	public boolean lookForName(String first, String last) throws IOException {
 		int start = 0;
-		List<PersonalData> found = new ArrayList<>();
+		List<PersonalData> found = Collections.synchronizedList(new ArrayList<PersonalData>());
 		do {
 			start = parseResponse(getResponse(getNameRequest(first, last, start)), start, found, first, last);
 		} while (start != -1);
