@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.sk.api.impl.FourSquareApiSearcher;
@@ -40,11 +38,6 @@ public class SearchController implements NameSearcher {
 	private final ThreadLocal<PersonalDataStorage> store = new ThreadLocal<>();
 	private NameSearcher[] use = { new WhitepagesSearcher(), new LinkedinApiSearcher(), new PiplApiSearcher(),
 			new FourSquareApiSearcher(), new GooglePlusApiSearcher(), new TwitterApiSearcher() };
-	private final ExecutorService executor;
-
-	public SearchController() {
-		executor = Executors.newCachedThreadPool();
-	}
 
 	@Override
 	public URL[] results() throws IllegalStateException {
@@ -71,7 +64,7 @@ public class SearchController implements NameSearcher {
 		PersonalDataStorage store = new PersonalDataStorage();
 		List<Future<PersonalData[]>> futures = new ArrayList<>();
 		for (NameSearcher n : use) {
-			futures.add(executor.submit(new SearchRunnable(n, first, last)));
+			futures.add(Driver.EXECUTOR.submit(new SearchRunnable(n, first, last)));
 		}
 		for (int i = 0; i < futures.size(); ++i) {
 			try {
@@ -112,10 +105,6 @@ public class SearchController implements NameSearcher {
 			else
 				return new PersonalData[0];
 		}
-	}
-
-	public void close() {
-		executor.shutdown();
 	}
 
 }
