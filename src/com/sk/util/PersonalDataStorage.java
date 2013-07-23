@@ -1,20 +1,14 @@
 package com.sk.util;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 
 /**
  * Stores personal data by site name. Used for json encoding <br/>
@@ -101,40 +95,10 @@ public class PersonalDataStorage extends HashMap<String, Set<PersonalData>> {
 		if (singleGson == null) {
 			synchronized (gsonLock) {
 				singleGson = new GsonBuilder().registerTypeAdapter(PersonalData.class,
-						new PersonalDataAdapter().nullSafe()).create();
+						PersonalData.getAdapter().nullSafe()).create();
 			}
 		}
 		return singleGson;
-	}
-
-	private static class PersonalDataAdapter extends TypeAdapter<PersonalData> {
-
-		private static final String siteToken = "XXSiteId";
-
-		@Override
-		public PersonalData read(JsonReader in) throws IOException {
-			in.beginObject();
-			Map<String, String> values = new HashMap<>();
-			while (in.hasNext()) {
-				values.put(in.nextName(), in.nextString());
-			}
-			in.endObject();
-
-			if (!values.containsKey(siteToken))
-				throw new IllegalArgumentException();
-			return new PersonalData(values.remove(siteToken), values);
-		}
-
-		@Override
-		public void write(JsonWriter out, PersonalData value) throws IOException {
-			out.beginObject();
-			out.name(siteToken).value(value.getWebsiteId());
-			for (Entry<String, String> entry : value.entrySet()) {
-				out.name(entry.getKey()).value(entry.getValue());
-			}
-			out.endObject();
-		}
-
 	}
 
 }
