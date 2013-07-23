@@ -1,3 +1,4 @@
+package com.sk;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -6,9 +7,10 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.google.gson.JsonObject;
-import com.sk.SearchController;
 import com.sk.util.PersonalDataStorage;
 
 /**
@@ -18,6 +20,16 @@ import com.sk.util.PersonalDataStorage;
  * 
  */
 public class Driver {
+
+	public static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
+	static {
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+			@Override
+			public void run() {
+				EXECUTOR.shutdown();
+			}
+		}));
+	}
 
 	public static void main(String[] args) throws IllegalStateException, IOException {
 		SearchController searcher = new SearchController();
@@ -45,7 +57,6 @@ public class Driver {
 		BufferedWriter w = new BufferedWriter(new FileWriter(file));
 		w.append(output.toString());
 		w.close();
-		searcher.close();
 	}
 
 	private static int count = 0;
