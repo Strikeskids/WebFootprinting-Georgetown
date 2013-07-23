@@ -59,6 +59,7 @@ public class Driver {
 		BufferedWriter w = new BufferedWriter(new FileWriter(file));
 		w.append(output.toString());
 		w.close();
+		System.exit(0);
 	}
 
 	private static int count = 0;
