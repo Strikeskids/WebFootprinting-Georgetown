@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Scanner;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.sk.SearchController;
 import com.sk.util.PersonalDataStorage;
@@ -22,7 +21,6 @@ public class Driver {
 
 	public static void main(String[] args) throws IllegalStateException, IOException {
 		SearchController searcher = new SearchController();
-		Gson gson = new Gson();
 		JsonObject output = new JsonObject();
 		while (true) {
 			String[] names = nextName();
@@ -33,7 +31,7 @@ public class Driver {
 			System.out.printf("Searching for %s %s...%n", first, last);
 			if (searcher.lookForName(first, last)) {
 				PersonalDataStorage pds = searcher.getDataStorage();
-				output.add(first + " " + last, gson.toJsonTree(pds));
+				output.add(first + " " + last, PersonalDataStorage.getStorageGson().toJsonTree(pds));
 				System.out.printf("Found %d possible results%n", pds.size());
 			} else {
 				System.out.println("None found");
@@ -53,7 +51,7 @@ public class Driver {
 	private static int count = 0;
 
 	public static String[] nextName() {
-		if (++count >= 25)
+		if (++count > 25)
 			return null;
 		if (firsts == null) {
 			try {
