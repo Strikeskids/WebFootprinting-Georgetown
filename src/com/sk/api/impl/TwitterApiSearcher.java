@@ -72,6 +72,7 @@ public class TwitterApiSearcher extends AbstractApiSearcher {
 			builder.put(user, "url", "homePage");
 			builder.put(user, "profile_image_url", "profilePictureUrl");
 			builder.put(user, "description", "blob");
+			builder.put(user, "screen_name", "twitter");
 
 			PersonalData add = new PersonalData("twitter");
 			builder.addTo(add);
