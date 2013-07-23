@@ -30,7 +30,7 @@ public class Cleaner {
 	 * @return The {@link PersonalData} new instance with cleaned values
 	 */
 	public PersonalData clean(PersonalData in) {
-		PersonalData ret = new PersonalData(in.getWebsiteId());
+		PersonalData ret = new PersonalData(false, in);
 		for (DataCleaner cleaner : CLEANERS) {
 			cleaner.clean(in, ret);
 		}
