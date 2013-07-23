@@ -38,8 +38,12 @@ public class AttributeStatistics {
 
 	@Override
 	public String toString() {
-		return String.format("AttributeStat: %s @ %.2f%% %.2f%% %d", Arrays.toString(getBestValues()),
-				getConfidence() * 100, getCoverage() * 100, getTotalValues());
+		if (getTotalValues() == getBestValues().length)
+			return String.format("AttributeStat: %s %d %.2f", Arrays.toString(getBestValues()), getTotalValues(),
+					getCoverage() * 100);
+		else
+			return String.format("AttributeStat: %s @ %.2f%% %.2f%% %d", Arrays.toString(getBestValues()),
+					getConfidence() * 100, getCoverage() * 100, getTotalValues());
 	}
 
 }
