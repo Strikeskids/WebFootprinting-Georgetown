@@ -142,7 +142,7 @@ public class PersonalData extends LinkedHashMap<String, String> {
 	public PersonalData(boolean copyAttr, PersonalData source) {
 		super(copyAttr ? source : new TreeMap<String, String>());
 		this.siteId = source.siteId;
-		this.dataId = source.dataId;
+		this.dataId = source.getId();
 	}
 
 	private PersonalData(String site, int id, Map<? extends String, ? extends String> map) {
@@ -192,6 +192,10 @@ public class PersonalData extends LinkedHashMap<String, String> {
 		return new PersonalDataAdapter();
 	}
 
+	public int getId() {
+		return dataId;
+	}
+
 	private static class PersonalDataAdapter extends TypeAdapter<PersonalData> {
 
 		private static final String siteToken = "xxs";
@@ -222,7 +226,7 @@ public class PersonalData extends LinkedHashMap<String, String> {
 		public void write(JsonWriter out, PersonalData value) throws IOException {
 			out.beginObject();
 			out.name(siteToken).value(value.getWebsiteId());
-			out.name(dataToken).value(value.dataId);
+			out.name(dataToken).value(value.getId());
 			for (Entry<String, String> entry : value.entrySet()) {
 				out.name(entry.getKey()).value(entry.getValue());
 			}
