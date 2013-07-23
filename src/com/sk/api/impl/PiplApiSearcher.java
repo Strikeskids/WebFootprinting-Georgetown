@@ -62,12 +62,6 @@ public class PiplApiSearcher implements NameSearcher {
 			if (!builder.compareNames(first, last))
 				break;
 
-			if (possible.getPhones() != null) {
-				for (Phone ph : possible.getPhones()) {
-					if (ph != null && ph.getType() != null)
-						builder.put(ph.getType().replaceAll("_", "-"), ph.getDisplay());
-				}
-			}
 			if (possible.getDobs() != null) {
 				for (DOB d : possible.getDobs()) {
 					builder.put("age", d.age() + "");
@@ -75,6 +69,7 @@ public class PiplApiSearcher implements NameSearcher {
 					break;
 				}
 			}
+			grab(possible, builder, Phone.class, new String[] { "Display" }, new String[] { "phone" });
 			grab(possible, builder, Email.class, new String[] { "Address" }, new String[] { "email" });
 			grab(possible, builder, Username.class, new String[] { "Content" }, new String[] { "username" });
 			grab(possible, builder, Job.class, new String[] { "Title", "Industry", "Organization" }, new String[] {

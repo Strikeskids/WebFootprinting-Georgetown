@@ -47,16 +47,8 @@ import com.google.common.base.Optional;
  * <td>The individual's location</td>
  * </tr>
  * <tr>
- * <td>phone-home</td>
- * <td>Individual's home phone</td>
- * </tr>
- * <tr>
- * <td>phone-work</td>
- * <td>Individuals' work phone</td>
- * </tr>
- * <tr>
- * <td>phone-mobile</td>
- * <td>Individual's mobile phone</td>
+ * <td>phone</td>
+ * <td>Individual's phone</td>
  * </tr>
  * <tr>
  * <td>address</td>
