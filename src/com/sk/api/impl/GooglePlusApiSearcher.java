@@ -36,7 +36,7 @@ public class GooglePlusApiSearcher implements NameSearcher {
 			+ "pageToken=%s&fields=items(id%%2CdisplayName)%%2CnextPageToken&maxResults=50";
 	private final String SINGLE = "https://www.googleapis.com/plus/v1/people/%s?key=%s&fields=id%%2C"
 			+ "displayName%%2Cname%%2Cgender%%2Curl%%2Cbirthday%%2CrelationshipStatus%%2CageRange%%2C"
-			+ "organizations%%2CaboutMe%%2Cimage%%2Cemails";
+			+ "organizations%%2CaboutMe%%2Cimage";
 
 	private String parse(List<PersonalData> found, String first, String last, String token) throws IOException {
 		if (token == null)
