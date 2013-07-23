@@ -32,8 +32,11 @@ public class GooglePlusApiSearcher implements NameSearcher {
 			throw new RuntimeException("Failed to get key");
 	}
 
-	private final String URL = "https://www.googleapis.com/plus/v1/people?key=%s&query=%s%%20%s&pageToken=%s&fields=items(id%%2CdisplayName)%%2CnextPageToken&maxResults=50";
-	private final String SINGLE = "https://www.googleapis.com/plus/v1/people/%s?key=%s&fields=id%%2CdisplayName%%2Cname%%2Cgender%%2Curl%%2Cbirthday%%2CrelationshipStatus%%2CageRange%%2Corganizations%%2CaboutMe";
+	private final String URL = "https://www.googleapis.com/plus/v1/people?key=%s&query=%s%%20%s&"
+			+ "pageToken=%s&fields=items(id%%2CdisplayName)%%2CnextPageToken&maxResults=50";
+	private final String SINGLE = "https://www.googleapis.com/plus/v1/people/%s?key=%s&fields=id%%2C"
+			+ "displayName%%2Cname%%2Cgender%%2Curl%%2Cbirthday%%2CrelationshipStatus%%2CageRange%%2C"
+			+ "organizations%%2CaboutMe%%2Cimage%%2Cemails";
 
 	private String parse(List<PersonalData> found, String first, String last, String token) throws IOException {
 		if (token == null)
@@ -86,7 +89,14 @@ public class GooglePlusApiSearcher implements NameSearcher {
 							builder.put(organization, "name", "education");
 						}
 					}
-
+				if (user.has("image")) {
+					builder.put(user.get("image").getAsJsonObject(), "url", "profilePictureUrl");
+				}
+				if (user.has("emails")) {
+					for (JsonElement emailElement : user.get("emails").getAsJsonArray()) {
+						builder.put(emailElement.getAsJsonObject(), "value", "email");
+					}
+				}
 				PersonalData data = new PersonalData("g+");
 				builder.addTo(data);
 				found.add(data);

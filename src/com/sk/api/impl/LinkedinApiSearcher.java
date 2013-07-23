@@ -31,8 +31,12 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 
 	}
 
-	private static final String BASE = "http://api.linkedin.com/v1/people-search:(people:(api-standard-profile-request,first-name,last-name),num-results)?count=25&first-name=%s&last-name=%s&start=%d";
-	private static final String REQUEST_FIELDS = ":(first-name,last-name,headline,location:(name,country:(code)),industry,summary,specialties,positions)";
+	private static final String BASE = "http://api.linkedin.com/v1/people-search:(people:"
+			+ "(api-standard-profile-request,first-name,last-name),num-results)?count=25&"
+			+ "first-name=%s&last-name=%s&start=%d";
+	private static final String REQUEST_FIELDS = ":(first-name,last-name,headline,"
+			+ "location:(name,country:(code)),industry,summary,specialties,positions,"
+			+ "picture-url,main-address,phone-numbers,twitter-accounts)";
 
 	public OAuthRequest getNameRequest(String first, String last, int start) {
 		try {
@@ -47,7 +51,10 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 			new BasicGrabber("last-name", "lastName"), new BasicGrabber("location name", "location"),
 			new BasicGrabber("location country code", "country"),
 			new BasicGrabber("person > industry", "industry"), new BasicGrabber("positions title", "jobTitle"),
-			new BasicGrabber("positions company name", "company"), new BasicGrabber("person > summary", "blob") };
+			new BasicGrabber("positions company name", "company"), new BasicGrabber("person > summary", "blob"),
+			new BasicGrabber("picture-url", "profilePictureUrl"), new BasicGrabber("main-address", "address"),
+			new BasicGrabber("phone-number > phone-number", "phone"),
+			new BasicGrabber("twitter-account > provider-account-id", "twitter") };
 
 	public int parseResponse(Response resp, int start, List<PersonalData> data, String... names) {
 		if (resp == null)

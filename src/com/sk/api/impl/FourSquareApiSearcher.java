@@ -56,6 +56,12 @@ public class FourSquareApiSearcher extends AbstractApiSearcher {
 			builder.put(user, "gender");
 			builder.put(user, "homeCity", "location");
 			builder.put(user, "bio", "blob");
+			if (user.has("contact")) {
+				JsonObject contact = user.get("contact").getAsJsonObject();
+				builder.put(contact, "email");
+				builder.put(contact, "twitter");
+				builder.put(contact, "phone");
+			}
 			builder.joinNames();
 			PersonalData dat = new PersonalData("foursquare");
 			builder.addTo(dat);
