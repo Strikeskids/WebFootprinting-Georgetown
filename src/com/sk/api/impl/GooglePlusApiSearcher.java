@@ -6,14 +6,19 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.sk.Driver;
 import com.sk.api.ApiUtility;
 import com.sk.api.NameComparison;
+import com.sk.threading.TaskGroup;
 import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 import com.sk.util.parse.search.NameSearcher;
@@ -38,10 +43,11 @@ public class GooglePlusApiSearcher implements NameSearcher {
 			+ "displayName%%2Cname%%2Cgender%%2Curl%%2Cbirthday%%2CrelationshipStatus%%2CageRange%%2C"
 			+ "organizations%%2CaboutMe%%2Cimage";
 
-	private String parse(List<PersonalData> found, String first, String last, String token) throws IOException {
+	private String parse(final List<PersonalData> found, String first, String last, String token)
+			throws IOException {
 		if (token == null)
 			return null;
-		JsonParser parser = new JsonParser();
+		final JsonParser parser = new JsonParser();
 		String searchLoc = String.format(URL, key, URLEncoder.encode(first, "UTF-8"),
 				URLEncoder.encode(last, "UTF-8"), token);
 		JsonObject obj = parser.parse(new BufferedReader(new InputStreamReader(new URL(searchLoc).openStream())))
@@ -49,65 +55,83 @@ public class GooglePlusApiSearcher implements NameSearcher {
 		NameComparison nameUtil = NameComparison.get();
 		String retToken = (obj.has("nextPageToken") ? obj.get("nextPageToken").getAsString() : null);
 		String[] names = { first, last };
+		TaskGroup group = new TaskGroup();
 		if (obj.has("items")) {
 			JsonArray items = obj.get("items").getAsJsonArray();
 			if (items.size() == 0)
 				return null;
 			for (JsonElement personResultElement : items) {
 				JsonObject personResult = personResultElement.getAsJsonObject();
-				if (!nameUtil.isSameName(names, nameUtil.parseName(personResult.get("displayName").getAsString())))
-					return null;
-
-				String uid = personResult.get("id").getAsString();
-				JsonObject user = parser.parse(
-						new BufferedReader(new InputStreamReader(new URL(String.format(SINGLE, uid, key))
-								.openStream()))).getAsJsonObject();
-				FieldBuilder builder = new FieldBuilder();
-
-				builder.put(user, "aboutMe", "blob");
-				builder.put(user, "id", "id");
-				builder.put(user, "displayName", "name");
-				if (user.has("name")) {
-					JsonObject name = user.get("name").getAsJsonObject();
-					builder.put(name, "familyName", "lastName");
-					builder.put(name, "givenName", "firstName");
+				if (!nameUtil.isSameName(names, nameUtil.parseName(personResult.get("displayName").getAsString()))) {
+					retToken = null;
+					break;
 				}
-				builder.put(user, "gender", "gender");
-				builder.put(user, "relationshipStatus", "relationshipStatus");
-				builder.put(user, "birthday", "birthday");
-				if (user.has("ageRange")) {
-					JsonObject range = user.get("ageRange").getAsJsonObject();
-					builder.put("age", range.get("min").getAsString() + "-" + range.get("max").getAsString());
-				}
-				if (user.has("organizations"))
-					for (JsonElement organizationElement : user.get("organizations").getAsJsonArray()) {
-						JsonObject organization = organizationElement.getAsJsonObject();
-						if (organization.get("type").getAsString().equals("work")) {
-							builder.put(organization, "name", "company");
-							builder.put(organization, "title", "jobTitle");
-						} else {
-							builder.put(organization, "name", "education");
+
+				final String uid = personResult.get("id").getAsString();
+				group.add(new Runnable() {
+					@Override
+					public void run() {
+
+						JsonObject user;
+						try {
+							user = parser.parse(
+									new BufferedReader(new InputStreamReader(new URL(String.format(SINGLE, uid,
+											key)).openStream()))).getAsJsonObject();
+						} catch (JsonIOException | JsonSyntaxException | IOException e) {
+							return;
 						}
+						FieldBuilder builder = new FieldBuilder();
+
+						builder.put(user, "aboutMe", "blob");
+						builder.put(user, "id", "id");
+						builder.put(user, "displayName", "name");
+						if (user.has("name")) {
+							JsonObject name = user.get("name").getAsJsonObject();
+							builder.put(name, "familyName", "lastName");
+							builder.put(name, "givenName", "firstName");
+						}
+						builder.put(user, "gender", "gender");
+						builder.put(user, "relationshipStatus", "relationshipStatus");
+						builder.put(user, "birthday", "birthday");
+						if (user.has("ageRange")) {
+							JsonObject range = user.get("ageRange").getAsJsonObject();
+							builder.put("age", range.get("min").getAsString() + "-"
+									+ range.get("max").getAsString());
+						}
+						if (user.has("organizations"))
+							for (JsonElement organizationElement : user.get("organizations").getAsJsonArray()) {
+								JsonObject organization = organizationElement.getAsJsonObject();
+								if (organization.get("type").getAsString().equals("work")) {
+									builder.put(organization, "name", "company");
+									builder.put(organization, "title", "jobTitle");
+								} else {
+									builder.put(organization, "name", "education");
+								}
+							}
+						if (user.has("image")) {
+							builder.put(user.get("image").getAsJsonObject(), "url", "profilePictureUrl");
+						}
+						if (user.has("emails")) {
+							for (JsonElement emailElement : user.get("emails").getAsJsonArray()) {
+								builder.put(emailElement.getAsJsonObject(), "value", "email");
+							}
+						}
+						PersonalData data = new PersonalData("g+");
+						builder.addTo(data);
+						found.add(data);
 					}
-				if (user.has("image")) {
-					builder.put(user.get("image").getAsJsonObject(), "url", "profilePictureUrl");
-				}
-				if (user.has("emails")) {
-					for (JsonElement emailElement : user.get("emails").getAsJsonArray()) {
-						builder.put(emailElement.getAsJsonObject(), "value", "email");
-					}
-				}
-				PersonalData data = new PersonalData("g+");
-				builder.addTo(data);
-				found.add(data);
+				});
 			}
 		}
+		group.submit(Driver.EXECUTOR);
+		if (!group.waitFor())
+			return null;
 		return retToken;
 	}
 
 	@Override
 	public boolean lookForName(String first, String last) throws IOException {
-		List<PersonalData> data = new ArrayList<>();
+		List<PersonalData> data = Collections.synchronizedList(new ArrayList<PersonalData>());
 		String token = "";
 		do {
 			token = parse(data, first, last, token);
