@@ -26,12 +26,14 @@ public class StatisticsController {
 		List<String> maxCont = new ArrayList<>(), minCont = new ArrayList<>();
 		for (Multiset.Entry<String> ent : counts.entrySet()) {
 			if (ent.getCount() > max) {
+				max = ent.getCount();
 				maxCont.clear();
 				maxCont.add(ent.getElement());
 			} else if (max == ent.getCount()) {
 				maxCont.add(ent.getElement());
 			}
 			if (ent.getCount() < min) {
+				min = ent.getCount();
 				minCont.clear();
 				minCont.add(ent.getElement());
 			} else if (min == ent.getCount()) {
