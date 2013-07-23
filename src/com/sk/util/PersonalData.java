@@ -1,10 +1,7 @@
 package com.sk.util;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Optional;
@@ -113,7 +110,6 @@ import com.google.common.base.Optional;
 public class PersonalData extends LinkedHashMap<String, String> {
 
 	private final String siteId;
-	private final List<URL> adjacent = new ArrayList<URL>();
 
 	public PersonalData(String source) {
 		this.siteId = source;
@@ -149,14 +145,6 @@ public class PersonalData extends LinkedHashMap<String, String> {
 		}
 	}
 
-	public void addAdjacent(URL... urls) {
-		Collections.addAll(adjacent, urls);
-	}
-
-	public List<URL> getAdjacent() {
-		return adjacent;
-	}
-
 	/**
 	 * Get the website id of the source of the {@link PersonalData}
 	 * 
@@ -173,10 +161,6 @@ public class PersonalData extends LinkedHashMap<String, String> {
 		ret.append(siteId);
 		ret.append(", ");
 		ret.append(super.toString());
-		if (adjacent.size() > 0) {
-			ret.append(", ");
-			ret.append(adjacent);
-		}
 		ret.append(")");
 		return ret.toString();
 	}
