@@ -16,9 +16,9 @@ import com.sk.util.PersonalData;
 
 public class StatisticsController {
 
-	private static final Cleaner cleaner = new Cleaner();
+	private final Cleaner cleaner;
 
-	private static AttributeStatistics generateStringStat(double coverage, String... values) {
+	private AttributeStatistics generateStringStat(double coverage, String... values) {
 		Multiset<String> counts = HashMultiset.create();
 		int totalCount = values.length;
 		Collections.addAll(counts, values);
@@ -43,7 +43,7 @@ public class StatisticsController {
 				.elementSet().size(), minCont.toArray(new String[minCont.size()]));
 	}
 
-	private static AttributeStatistics generateAttributeStat(String attribute, PersonalData... cleaned) {
+	private AttributeStatistics generateAttributeStat(String attribute, PersonalData... cleaned) {
 		List<String> values = new ArrayList<>();
 		int containCount = 0;
 		for (PersonalData clean : cleaned) {
@@ -56,7 +56,7 @@ public class StatisticsController {
 	}
 
 	@SuppressWarnings("unused")
-	public static PersonStatistics generateStatClean(String first, String last, PersonalData... cleaned) {
+	public PersonStatistics generateStatClean(String first, String last, PersonalData... cleaned) {
 		PersonStatistics ret = new PersonStatistics(first, last);
 		Set<String> attributeSkip = new HashSet<>();
 		cleanLocation: {
@@ -92,7 +92,7 @@ public class StatisticsController {
 		return ret;
 	}
 
-	public static PersonStatistics generateStat(String first, String last, PersonalData... dirty) {
+	public PersonStatistics generateStat(String first, String last, PersonalData... dirty) {
 		PersonalData[] clean = new PersonalData[dirty.length];
 		for (int i = 0; i < dirty.length; ++i)
 			clean[i] = cleaner.clean(dirty[i]);
@@ -114,6 +114,7 @@ public class StatisticsController {
 	}
 
 	private StatisticsController() {
+		cleaner = new Cleaner();
 	}
 
 }
