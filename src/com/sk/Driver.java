@@ -1,4 +1,5 @@
 package com.sk;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -20,6 +21,7 @@ import com.sk.util.PersonalDataStorage;
  * 
  */
 public class Driver {
+	private static final int total = 25;
 
 	public static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
 	static {
@@ -62,7 +64,7 @@ public class Driver {
 	private static int count = 0;
 
 	public static String[] nextName() {
-		if (++count > 25)
+		if (++count > total)
 			return null;
 		if (firsts == null) {
 			try {
