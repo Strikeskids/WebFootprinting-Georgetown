@@ -31,7 +31,7 @@ import com.google.common.base.Optional;
  * <td>The industry where the individual works</td>
  * </tr>
  * <tr>
- * <td>profile-picture-url</td>
+ * <td>profilePictureUrl</td>
  * <td>A {@link URL} to the individual's profile picture</td>
  * </tr>
  * <tr>
