@@ -31,7 +31,7 @@ public class Driver {
 			System.out.printf("Searching for %s %s...%n", first, last);
 			if (searcher.lookForName(first, last)) {
 				PersonalDataStorage pds = searcher.getDataStorage();
-				output.add(first + " " + last, PersonalDataStorage.getStorageGson().toJsonTree(pds));
+				output.add(first + "|" + last, PersonalDataStorage.getStorageGson().toJsonTree(pds));
 				System.out.printf("Found %d possible results%n", pds.size());
 			} else {
 				System.out.println("None found");
