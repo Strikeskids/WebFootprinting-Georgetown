@@ -185,6 +185,11 @@ public class PersonalData extends LinkedHashMap<String, String> {
 		ret.append(")");
 		return ret.toString();
 	}
+	
+	@Override
+	public int hashCode() {
+		return dataId;
+	}
 
 	private static final long serialVersionUID = 4259139787451939836L;
 
