@@ -5,9 +5,9 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,7 +21,7 @@ import com.sk.util.PersonalDataStorage;
  * 
  */
 public class Driver {
-	private static final int total = 25;
+	private static int total = 25;
 
 	public static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
 	static {
@@ -35,30 +35,35 @@ public class Driver {
 
 	public static void main(String[] args) throws IllegalStateException, IOException {
 		SearchController searcher = new SearchController();
-		JsonObject output = new JsonObject();
-		while (true) {
-			String[] names = nextName();
-			if (names == null)
-				break;
-			String first = names[0], last = names[1];
-			long start = System.currentTimeMillis();
-			System.out.printf("Searching for %s %s...%n", first, last);
-			if (searcher.lookForName(first, last)) {
-				PersonalDataStorage pds = searcher.getDataStorage();
-				output.add(first + "|" + last, PersonalDataStorage.getStorageGson().toJsonTree(pds));
-				System.out.printf("Found %d possible results%n", pds.size());
-			} else {
-				System.out.println("None found");
+		if (Arrays.asList(args).contains("-gt")) {
+			if (args.length < 3) {
+				System.out.println("Usage: -gt number file");
 			}
-			System.out.printf("Query took %.3f seconds%n", (System.currentTimeMillis() - start) / 1000d);
+			total = Integer.parseInt(args[1]);
+			JsonObject output = new JsonObject();
+			while (true) {
+				String[] names = nextName();
+				if (names == null)
+					break;
+				String first = names[0], last = names[1];
+				long start = System.currentTimeMillis();
+				System.out.printf("Searching for %s %s...%n", first, last);
+				if (searcher.lookForName(first, last)) {
+					PersonalDataStorage pds = searcher.getDataStorage();
+					output.add(first + "|" + last, PersonalDataStorage.getStorageGson().toJsonTree(pds));
+					System.out.printf("Found %d possible results%n", pds.size());
+				} else {
+					System.out.println("None found");
+				}
+				System.out.printf("Query took %.3f seconds%n", (System.currentTimeMillis() - start) / 1000d);
+			}
+			String file = args[2];
+			BufferedWriter w = new BufferedWriter(new FileWriter(file));
+			w.append(output.toString());
+			w.close();
+		} else {
+			
 		}
-		System.out.print("Output file location: ");
-		Scanner in = new Scanner(System.in);
-		String file = in.nextLine();
-		in.close();
-		BufferedWriter w = new BufferedWriter(new FileWriter(file));
-		w.append(output.toString());
-		w.close();
 		System.exit(0);
 	}
 
