@@ -31,8 +31,9 @@ public class Cleaner {
 	 */
 	public PersonalData clean(PersonalData in) {
 		PersonalData ret = new PersonalData(false, in);
+		PersonalData dirty = new PersonalData(true, in);
 		for (DataCleaner cleaner : CLEANERS) {
-			cleaner.clean(in, ret);
+			cleaner.clean(in, dirty);
 		}
 		return ret;
 	}

@@ -26,8 +26,7 @@ public class GuessController {
 		List<PersonalData> cleaned = new ArrayList<>();
 		Set<String> attributes = new LinkedHashSet<>();
 		for (PersonalData dirty : input.toArray()) {
-			PersonalData copy = new PersonalData(dirty.getWebsiteId(), dirty);
-			PersonalData clean = cleaner.clean(copy);
+			PersonalData clean = cleaner.clean(dirty);
 			if (clean.size() == 0)
 				continue;
 			cleaned.add(clean);
