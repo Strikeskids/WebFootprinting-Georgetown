@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -40,6 +42,7 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 		}
 		StringBuilder titles = new StringBuilder();
 		Iterator<String> valueIterator = allValues.keySet().iterator();
+		Set<String> disambiguationTitles = new TreeSet<>();
 		Map<String, String> queryMap = new HashMap<>();
 		while (valueIterator.hasNext()) {
 			for (int i = 0; i < 50 && valueIterator.hasNext(); ++i) {
@@ -47,7 +50,7 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 				titles.append("|");
 			}
 			queryMap.put("titles", titles.substring(0, titles.length() - 1));
-			queryMap.put("prop", "");
+			queryMap.put("prop", "pageprops");
 			queryMap.put("redirects", "");
 			JsonObject result = readWiki(queryMap);
 			JsonObject query = result.get("query").getAsJsonObject();
@@ -68,6 +71,60 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 					allValues.put(from, to);
 					allValues.put(to, to);
 				}
+			}
+			if (query.has("pages")) {
+				for (Entry<String, JsonElement> page : query.get("pages").getAsJsonObject().entrySet()) {
+					JsonObject pageObject = page.getValue().getAsJsonObject();
+					if (pageObject.has("pageprops")) {
+						JsonObject props = pageObject.get("pageprops").getAsJsonObject();
+						if (props.has("disambiguation"))
+							disambiguationTitles.add(pageObject.get("title").getAsString());
+					}
+				}
+			}
+		}
+		valueIterator = disambiguationTitles.iterator();
+
+		queryMap.clear();
+		queryMap.put("pllimit", "500");
+		queryMap.put("prop", "links");
+		while (valueIterator.hasNext()) {
+			FieldBuilder extendedTitleBuilder = new FieldBuilder();
+			for (int i = 0; i < 50 && valueIterator.hasNext(); ++i) {
+				titles.append(valueIterator.next());
+				titles.append("|");
+			}
+			queryMap.put("titles", titles.substring(0, titles.length() - 1));
+			queryMap.remove("plcontinue");
+			JsonObject result;
+			while (true) {
+				result = readWiki(queryMap);
+				for (Entry<String, JsonElement> pageEntry : result.get("query").getAsJsonObject().get("pages")
+						.getAsJsonObject().entrySet()) {
+					JsonObject page = pageEntry.getValue().getAsJsonObject();
+					String title = page.get("title").getAsString();
+					if (page.has("links")) {
+						for (JsonElement linkElement : page.get("links").getAsJsonArray()) {
+							JsonObject link = linkElement.getAsJsonObject();
+							if (link.get("ns").getAsInt() == 0) {
+								extendedTitleBuilder.put(link, "title", title);
+							}
+						}
+					}
+				}
+
+				if (result.has("query-continue")) {
+					queryMap.put("plcontinue", result.get("query-continue").getAsJsonObject().get("links")
+							.getAsJsonObject().get("plcontinue").getAsString());
+				} else {
+					break;
+				}
+			}
+			Map<String, String> extendedTitles = new HashMap<>();
+			extendedTitleBuilder.addTo(extendedTitles);
+			for (Entry<String, String> title : extendedTitles.entrySet()) {
+				allValues.put(title.getKey(), title.getValue());
+				allValues.put(title.getValue(), title.getValue());
 			}
 		}
 		for (String attributeName : attr) {
