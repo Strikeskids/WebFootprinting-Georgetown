@@ -3,7 +3,6 @@ package com.sk.image;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -75,11 +74,6 @@ public class ImageHasher {
 				ret[x * sectionsY + y + 5] = (byte) getAverageColor(dest.getSubimage(x * sectionWidth, y
 						* sectionHeight, sectionWidth, sectionHeight));
 			}
-		}
-		try {
-			ImageIO.write(dest, "png", new File("transformed" + ret + ".png"));
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return Base64.encodeBase64String(ret);
 	}
