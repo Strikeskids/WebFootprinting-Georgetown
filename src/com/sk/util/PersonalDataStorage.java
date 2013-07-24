@@ -7,9 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 /**
  * Stores personal data by site name. Used for json encoding <br/>
  * <br/>
@@ -86,19 +83,6 @@ public class PersonalDataStorage extends HashMap<String, Set<PersonalData>> {
 		for (Collection<?> coll : values())
 			ret += coll.size();
 		return ret;
-	}
-
-	private static Gson singleGson;
-	private static final Object gsonLock = new Object();
-
-	public static Gson getStorageGson() {
-		if (singleGson == null) {
-			synchronized (gsonLock) {
-				singleGson = new GsonBuilder().registerTypeAdapter(PersonalData.class,
-						PersonalData.getAdapter().nullSafe()).create();
-			}
-		}
-		return singleGson;
 	}
 
 }

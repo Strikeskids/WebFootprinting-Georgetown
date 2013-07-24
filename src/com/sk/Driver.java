@@ -11,7 +11,10 @@ import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.sk.util.PersonalData;
 import com.sk.util.PersonalDataStorage;
 
 /**
@@ -50,7 +53,7 @@ public class Driver {
 				System.out.printf("Searching for %s %s...%n", first, last);
 				if (searcher.lookForName(first, last)) {
 					PersonalDataStorage pds = searcher.getDataStorage();
-					output.add(first + "|" + last, PersonalDataStorage.getStorageGson().toJsonTree(pds));
+					output.add(first + "|" + last, Driver.getGson().toJsonTree(pds));
 					System.out.printf("Found %d possible results%n", pds.size());
 				} else {
 					System.out.println("None found");
@@ -62,7 +65,7 @@ public class Driver {
 			w.append(output.toString());
 			w.close();
 		} else {
-			
+
 		}
 		System.exit(0);
 	}
@@ -121,4 +124,17 @@ public class Driver {
 	// return line.split(" ");
 	// }
 	// }
+
+	private static Gson singleGson;
+	private static final Object gsonLock = new Object();
+
+	public static Gson getGson() {
+		if (singleGson == null) {
+			synchronized (gsonLock) {
+				singleGson = new GsonBuilder().registerTypeAdapter(PersonalData.class,
+						PersonalData.getAdapter().nullSafe()).create();
+			}
+		}
+		return singleGson;
+	}
 }

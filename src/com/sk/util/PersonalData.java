@@ -188,7 +188,7 @@ public class PersonalData extends LinkedHashMap<String, String> {
 
 	private static final long serialVersionUID = 4259139787451939836L;
 
-	static TypeAdapter<PersonalData> getAdapter() {
+	public static TypeAdapter<PersonalData> getAdapter() {
 		return new PersonalDataAdapter();
 	}
 
