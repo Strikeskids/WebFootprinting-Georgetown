@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -39,6 +41,8 @@ public class SearchController implements NameSearcher {
 	private NameSearcher[] use = { new WhitepagesSearcher(), new LinkedinApiSearcher(), new PiplApiSearcher(),
 			new FourSquareApiSearcher(), new GooglePlusApiSearcher(), new TwitterApiSearcher() };
 
+	private final Map<String, PersonalDataStorage> cache = new WeakHashMap<>();
+
 	@Override
 	public URL[] results() throws IllegalStateException {
 		throw new UnsupportedOperationException();
@@ -59,29 +63,38 @@ public class SearchController implements NameSearcher {
 
 	@Override
 	public boolean lookForName(String first, String last) throws IOException {
+		String joined = first + "|" + last;
+		PersonalDataStorage store;
 		boolean ret = false;
-		this.store.remove();
-		PersonalDataStorage store = new PersonalDataStorage();
-		List<Future<PersonalData[]>> futures = new ArrayList<>();
-		for (NameSearcher n : use) {
-			futures.add(Driver.EXECUTOR.submit(new SearchRunnable(n, first, last)));
-		}
-		for (int i = 0; i < futures.size(); ++i) {
-			try {
-				Future<PersonalData[]> fut = futures.get(i);
-				PersonalData[] dat = fut.get();
-				if (dat.length > 0) {
-					ret = true;
-					store.add(dat);
+
+		if ((store = cache.get(joined)) != null) {
+			ret = true;
+		} else {
+			this.store.remove();
+			store = new PersonalDataStorage();
+			List<Future<PersonalData[]>> futures = new ArrayList<>();
+			for (NameSearcher n : use) {
+				futures.add(Driver.EXECUTOR.submit(new SearchRunnable(n, first, last)));
+			}
+			for (int i = 0; i < futures.size(); ++i) {
+				try {
+					Future<PersonalData[]> fut = futures.get(i);
+					PersonalData[] dat = fut.get();
+					if (dat.length > 0) {
+						ret = true;
+						store.add(dat);
+					}
+				} catch (InterruptedException e) {
+					--i;
+					continue;
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+					continue;
 				}
-			} catch (InterruptedException e) {
-				--i;
-				continue;
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-				continue;
 			}
 		}
+		cache.put(joined, store);
+
 		if (ret)
 			this.store.set(store);
 		return ret;

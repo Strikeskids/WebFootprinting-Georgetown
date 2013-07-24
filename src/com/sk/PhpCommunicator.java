@@ -60,7 +60,7 @@ public class PhpCommunicator implements Runnable {
 			if (!Arrays.equals(digest.digest((parts[0] + receiveShake).getBytes()), Base64.decodeBase64(parts[1])))
 				return;
 			String curTime = System.currentTimeMillis() + "";
-			out.println(curTime + "|" + Base64.encodeBase64String((curTime + sendShake).getBytes()));
+			out.println(curTime + "|" + Base64.encodeBase64String(digest.digest((curTime + sendShake).getBytes())));
 			out.flush();
 			String request = read.readLine();
 			System.out.println("Received names " + request);
@@ -72,6 +72,7 @@ public class PhpCommunicator implements Runnable {
 			}
 			JsonObject result = new JsonObject();
 			String first = URLDecoder.decode(names[0], "UTF-8"), last = URLDecoder.decode(names[1], "UTF-8");
+			long start = System.currentTimeMillis();
 			if (!searcher.lookForName(first, last)) {
 				result.addProperty("error", "Could not find names");
 			} else {
@@ -79,6 +80,8 @@ public class PhpCommunicator implements Runnable {
 				if (store == null) {
 					result.addProperty("error", "Failed to get data storage");
 				} else {
+					System.out.printf("Found %d results in %d millis%n", store.size(), System.currentTimeMillis()
+							- start);
 					PersonStatistics stat = StatisticsController.get().generateStat(first, last, store.toArray());
 					if (stat == null) {
 						result.addProperty("error", "Failed to generate statistics");
@@ -88,6 +91,8 @@ public class PhpCommunicator implements Runnable {
 				}
 			}
 			out.println(result);
+			out.flush();
+			out.close();
 			sock.close();
 		} catch (IOException ex) {
 			ex.printStackTrace();
