@@ -5,6 +5,9 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -14,6 +17,7 @@ import java.util.concurrent.Executors;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.sk.stat.PersonStatistics;
 import com.sk.util.PersonalData;
 import com.sk.util.PersonalDataStorage;
 
@@ -24,6 +28,7 @@ import com.sk.util.PersonalDataStorage;
  * 
  */
 public class Driver {
+
 	private static int total = 25;
 
 	public static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
@@ -64,8 +69,20 @@ public class Driver {
 			BufferedWriter w = new BufferedWriter(new FileWriter(file));
 			w.append(output.toString());
 			w.close();
-		} else {
-
+		} else if (Arrays.asList(args).contains("-s") && args.length >= 2) {
+			ServerSocket server = new ServerSocket(Integer.parseInt(args[1]), 3);
+			while (true) {
+				try {
+					final Socket nextSock = server.accept();
+					System.out.println("Received socket");
+					Driver.EXECUTOR.submit(new PhpCommunicator(nextSock, searcher));
+				} catch (SocketTimeoutException ex) {
+					break;
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			}
+			server.close();
 		}
 		System.exit(0);
 	}
@@ -131,8 +148,8 @@ public class Driver {
 	public static Gson getGson() {
 		if (singleGson == null) {
 			synchronized (gsonLock) {
-				singleGson = new GsonBuilder().registerTypeAdapter(PersonalData.class,
-						PersonalData.getAdapter().nullSafe()).create();
+				singleGson = new GsonBuilder().registerTypeAdapter(PersonalData.class, PersonalData.getAdapter())
+						.registerTypeAdapter(PersonStatistics.class, PersonStatistics.getAdapter()).create();
 			}
 		}
 		return singleGson;
