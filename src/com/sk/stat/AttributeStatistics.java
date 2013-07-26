@@ -9,11 +9,19 @@ public class AttributeStatistics {
 	private final int total;
 
 	public AttributeStatistics(String[] best, double confidence, double coverage, int total, String[] distinguished) {
-		this.best = best;
+		this.best = limit(4, best);
 		this.confidence = confidence;
 		this.coverage = coverage;
 		this.total = total;
-		this.distinguished = distinguished;
+		this.distinguished = limit(4, distinguished);
+	}
+
+	private String[] limit(int len, String... input) {
+		if (input.length <= len)
+			return input;
+		input = Arrays.copyOf(input, len);
+		input[len - 1] = "...";
+		return input;
 	}
 
 	public String[] getBestValues() {
