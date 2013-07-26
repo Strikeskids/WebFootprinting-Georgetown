@@ -2,7 +2,7 @@
 	$port = 6666;
 	$sendShake = "GrabName";
 	$receiveShake = "NameGrabber";
-	// header("Content-Type: text/json");
+	header("Content-Type: text/json");
 
 	$first = $_GET["first"];
 	$last  = $_GET["last"];

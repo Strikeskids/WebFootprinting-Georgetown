@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Webfootprinting Personal Statistics</title>
+		
+		<style type="text/css">
+			div.ajax {
+				display: inline;
+			}
+			td.scroll {
+				overflow-y: auto;
+			}
+		</style>
+	</head>
+	<body>
+		<form action="#" id="mainform">
+			<input type="text" placeholder="First name" id="firstName" />
+			<input type="text" placeholder="Last name" id="lastName" />
+			<input type="submit" />
+			<div class="ajax">Loading...</div>
+		</form>
+
+		<br />
+
+		<div id="status">
+			Waiting for submission
+		</div>
+
+		<table border="1">
+			<tbody>
+			</tbody>
+		</table>
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script src="main.js"></script>
+	</body>
+</html>
