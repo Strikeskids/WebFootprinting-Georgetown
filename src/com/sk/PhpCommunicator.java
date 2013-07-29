@@ -92,7 +92,6 @@ public class PhpCommunicator implements Runnable {
 			}
 			out.println(result);
 			out.flush();
-			out.close();
 			sock.close();
 		} catch (IOException ex) {
 			ex.printStackTrace();
