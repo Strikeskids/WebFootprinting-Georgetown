@@ -80,6 +80,12 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 						if (props.has("disambiguation"))
 							disambiguationTitles.add(pageObject.get("title").getAsString());
 					}
+					if (pageObject.has("missing")) {
+						String from = allValues.get(pageObject.get("title"));
+						String to = GenericCleaner.cleanValue(from);
+						allValues.put(from, to);
+						allValues.put(to, to);
+					}
 				}
 			}
 		}
