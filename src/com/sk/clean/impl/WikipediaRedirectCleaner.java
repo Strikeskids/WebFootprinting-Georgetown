@@ -81,7 +81,7 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 							disambiguationTitles.add(pageObject.get("title").getAsString());
 					}
 					if (pageObject.has("missing")) {
-						String from = allValues.get(pageObject.get("title"));
+						String from = allValues.get(pageObject.get("title").getAsString());
 						String to = GenericCleaner.cleanValue(from);
 						allValues.put(from, to);
 						allValues.put(to, to);
