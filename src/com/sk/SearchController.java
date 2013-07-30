@@ -10,6 +10,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import com.sk.api.impl.FacebookApiSearcher;
 import com.sk.api.impl.FourSquareApiSearcher;
 import com.sk.api.impl.GooglePlusApiSearcher;
 import com.sk.api.impl.LinkedinApiSearcher;
@@ -39,7 +40,8 @@ public class SearchController implements NameSearcher {
 
 	private final ThreadLocal<PersonalDataStorage> store = new ThreadLocal<>();
 	private NameSearcher[] use = { new WhitepagesSearcher(), new LinkedinApiSearcher(), new PiplApiSearcher(),
-			new FourSquareApiSearcher(), new GooglePlusApiSearcher(), new TwitterApiSearcher() };
+			new FourSquareApiSearcher(), new GooglePlusApiSearcher(), new TwitterApiSearcher(),
+			new FacebookApiSearcher() };
 
 	private final Map<String, PersonalDataStorage> cache = new WeakHashMap<>();
 
