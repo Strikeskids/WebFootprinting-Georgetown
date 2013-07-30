@@ -31,11 +31,15 @@ public abstract class AbstractParser implements Parser {
 	@Override
 	public void load(URL url) throws IOException {
 		reset();
-		doc.set(HttpConnection
+		doc.set(getDocument(url.toExternalForm()));
+	}
+
+	public static Document getDocument(String url) throws IOException {
+		return HttpConnection
 				.connect(url)
 				.timeout(8000)
 				.header("User-Agent",
-						"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0").get());
+						"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0").get();
 	}
 
 	@Override
