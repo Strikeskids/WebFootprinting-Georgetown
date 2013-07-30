@@ -60,7 +60,7 @@ public class LinkedinApiSearcher extends AbstractApiSearcher {
 			new BasicGrabber("phone-number > phone-number", "phone"),
 			new BasicGrabber("twitter-account > provider-account-name", "twitter") };
 
-	public int parseResponse(Response resp, int start, final List<PersonalData> data, String... names) {
+	private int parseResponse(Response resp, int start, final List<PersonalData> data, String... names) {
 		if (resp == null)
 			return -1;
 		String body = resp.getBody();
