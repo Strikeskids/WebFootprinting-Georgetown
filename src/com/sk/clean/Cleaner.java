@@ -1,5 +1,6 @@
 package com.sk.clean;
 
+import com.sk.clean.impl.ContactCleaner;
 import com.sk.clean.impl.GenderCleaner;
 import com.sk.clean.impl.GenericCleaner;
 import com.sk.clean.impl.LocationCleaner;
@@ -17,7 +18,8 @@ public class Cleaner {
 	private static final String[] GENERIC_FIELDS = { "company", "education", "relationshipStatus" },
 			WIKIPEDIA_FIELDS = { "jobTitle", "industry" };
 	private static final DataCleaner[] CLEANERS = new DataCleaner[] { new LocationCleaner(), new GenderCleaner(),
-			new GenericCleaner(GENERIC_FIELDS), new WikipediaRedirectCleaner(WIKIPEDIA_FIELDS) };
+			new GenericCleaner(GENERIC_FIELDS), new WikipediaRedirectCleaner(WIKIPEDIA_FIELDS),
+			new ContactCleaner() };
 
 	public Cleaner() {
 	}
