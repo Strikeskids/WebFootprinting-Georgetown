@@ -29,7 +29,9 @@ public class GenericCleaner implements DataCleaner {
 	}
 
 	public static String cleanValue(String input) {
-		return input.toLowerCase().replaceAll("[^a-z0-9]", "");
+		return input.toLowerCase().replaceAll(companyParts, "").replaceAll("[^a-z0-9]", "");
 	}
+
+	private static String companyParts = "inc|ltd|co";
 
 }
