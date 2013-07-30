@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.awt.Desktop.Action;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -85,6 +86,7 @@ public class ApiUtility {
 				tokenStore.addProperty("token", accessToken.getToken());
 				tokenStore.addProperty("secret", accessToken.getSecret());
 				tokens.get("users").getAsJsonObject().add(user, tokenStore);
+				saveTokens();
 			} else {
 				throw new RuntimeException("Invalid API Details");
 			}
@@ -139,12 +141,17 @@ public class ApiUtility {
 		return tokens;
 	}
 
+	private static long lastModified = System.currentTimeMillis();
+
 	private static void saveTokens() {
 		synchronized (ApiUtility.class) {
 			try {
+				if (new File(TOKEN_STORE).lastModified() > lastModified)
+					return;
 				PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(TOKEN_STORE)));
 				pw.println(getTokens());
 				pw.close();
+				lastModified = System.currentTimeMillis();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
