@@ -2,7 +2,6 @@ package com.sk;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -93,7 +92,7 @@ public class PhpCommunicator implements Runnable {
 			out.println(result);
 			out.flush();
 			sock.close();
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
 			System.out.println("Done talking");
