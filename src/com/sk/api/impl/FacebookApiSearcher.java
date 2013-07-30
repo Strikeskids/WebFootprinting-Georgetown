@@ -66,7 +66,9 @@ public class FacebookApiSearcher extends AbstractApiSearcher {
 		TaskGroup tasks = new TaskGroup();
 		NameComparison nameUtil = NameComparison.get();
 		int badCount = 0;
+		int count = 0;
 		for (JsonElement basicElement : responseObject.get("data").getAsJsonArray()) {
+			count++;
 			JsonObject base = basicElement.getAsJsonObject();
 			if (!nameUtil.isSameName(nameUtil.parseName(base.get("name").getAsString()), names)) {
 				if (badCount++ < BAD_THRESHOLD)
@@ -103,7 +105,7 @@ public class FacebookApiSearcher extends AbstractApiSearcher {
 		tasks.submit(Driver.EXECUTOR);
 		if (!tasks.waitFor())
 			return -1;
-		if (responseObject.has("paging") && badCount < BAD_THRESHOLD)
+		if (responseObject.has("paging") && badCount < BAD_THRESHOLD && count == STEP_AMOUNT)
 			return start + STEP_AMOUNT;
 		else
 			return -1;
