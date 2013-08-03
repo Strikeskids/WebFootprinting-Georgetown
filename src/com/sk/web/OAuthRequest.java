@@ -1,4 +1,4 @@
-package com.sk.parse;
+package com.sk.web;
 
 import java.net.MalformedURLException;
 import java.net.URLConnection;

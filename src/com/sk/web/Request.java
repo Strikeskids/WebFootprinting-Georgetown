@@ -1,4 +1,4 @@
-package com.sk.parse;
+package com.sk.web;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

@@ -1,4 +1,4 @@
-package com.sk.parse;
+package com.sk.web;
 
 public class OAuthToken extends Token {
 
