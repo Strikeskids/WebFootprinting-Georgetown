@@ -40,7 +40,7 @@ public class Request {
 		return baseUrl;
 	}
 
-	public URLConnection openConnection(boolean b) throws IOException {
+	public URLConnection openConnection() throws IOException {
 		finalizeUrl();
 		URLConnection conn = url.openConnection();
 		setRequestMethod(conn);
@@ -101,6 +101,10 @@ public class Request {
 		String data = IOUtil.joinParams(query);
 		conn.getOutputStream().write(data.getBytes());
 		conn.getOutputStream().close();
+	}
+	
+	public boolean needsToPostQuery() {
+		return isPostRequest() && getQuery().size() > 0;
 	}
 
 }
