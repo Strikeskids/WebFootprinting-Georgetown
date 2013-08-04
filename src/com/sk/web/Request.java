@@ -69,7 +69,7 @@ public class Request {
 
 	private URL addParamsToBaseUrl(Map<String, String> params) {
 		try {
-			return new URL(baseUrl, "?" + IOUtil.joinParams(params));
+			return new URL(baseUrl, baseUrl.getPath() + "?" + IOUtil.joinParams(params));
 		} catch (MalformedURLException ignored) {
 			throw new RuntimeException("Bad parameters");
 		}
@@ -102,7 +102,7 @@ public class Request {
 		conn.getOutputStream().write(data.getBytes());
 		conn.getOutputStream().close();
 	}
-	
+
 	public boolean needsToPostQuery() {
 		return isPostRequest() && getQuery().size() > 0;
 	}
