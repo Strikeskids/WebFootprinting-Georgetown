@@ -77,7 +77,6 @@ public class FourSquareApiLoader extends PagingLoader {
 	protected Request getRequest() {
 		try {
 			Request request = new Request(url, "GET");
-			request.addRandomUserAgent();
 			request.addQuery("oauth_token", ApiUtility.getAccessToken(SITE_KEY).getKey());
 			return request;
 		} catch (MalformedURLException ex) {

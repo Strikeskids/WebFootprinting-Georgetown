@@ -73,7 +73,6 @@ public class GooglePlusApiLoader extends OuterLoader {
 	protected Request getRequest() {
 		try {
 			Request request = new Request(url, "GET");
-			request.addRandomUserAgent();
 			request.addQuery("key", ApiUtility.getAccessToken(SITE_KEY).getKey());
 			return request;
 		} catch (MalformedURLException ignored) {

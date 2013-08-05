@@ -32,7 +32,6 @@ public class FacebookPersonLoader extends IndividualExtractor {
 		try {
 			OAuthRequest request = new OAuthRequest(url, "GET");
 			request.signOAuth(ApiUtility.getConsumerToken(SITE_KEY), ApiUtility.getOAuthToken(SITE_KEY));
-			request.addRandomUserAgent();
 			return request;
 		} catch (MalformedURLException ignored) {
 			return null;

@@ -113,7 +113,6 @@ public class LinkedinApiLoader extends OuterLoader {
 		try {
 			OAuthRequest ret = new OAuthRequest(url, "GET");
 			ret.signOAuth(ApiUtility.getConsumerToken(SITE_KEY), ApiUtility.getOAuthToken(SITE_KEY));
-			ret.addRandomUserAgent();
 			return ret;
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("Failed to make URL");
