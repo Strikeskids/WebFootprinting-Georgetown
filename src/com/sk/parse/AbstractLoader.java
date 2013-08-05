@@ -17,6 +17,10 @@ public abstract class AbstractLoader {
 			return loadAndParse();
 		}
 	});
+	
+	protected void init() {
+		rawData.get();
+	}
 
 	private String loadAndParse() {
 		Request request = getRequest();
