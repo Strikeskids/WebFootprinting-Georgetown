@@ -63,6 +63,7 @@ public class LinkedinPersonLoader extends AbstractLoader implements Extractor {
 		for (DocNavigator grabber : navigators) {
 			grabber.navigate(document, builder);
 		}
+		builder.joinNames();
 		PersonalData data = new PersonalData(SITE_KEY);
 		builder.addTo(data);
 		return Arrays.asList(data);
