@@ -14,6 +14,7 @@ import com.sk.parse.Parsers;
 import com.sk.util.DocNavigator;
 import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
+import com.sk.web.IOUtil;
 import com.sk.web.Request;
 
 public class FourSquareApiLoader extends PagingLoader {
@@ -27,7 +28,7 @@ public class FourSquareApiLoader extends PagingLoader {
 
 	public FourSquareApiLoader(String first, String last) {
 		this.names = new String[] { first, last };
-		this.url = String.format(BASE_URL, first, last);
+		this.url = String.format(BASE_URL, IOUtil.urlEncode(first), IOUtil.urlEncode(last));
 	}
 
 	@Override

@@ -13,6 +13,7 @@ import com.sk.parse.Extractor;
 import com.sk.parse.OuterLoader;
 import com.sk.parse.PagingLoader;
 import com.sk.parse.Parsers;
+import com.sk.web.IOUtil;
 import com.sk.web.Request;
 
 public class GooglePlusApiLoader extends OuterLoader {
@@ -34,7 +35,7 @@ public class GooglePlusApiLoader extends OuterLoader {
 		this.first = names[0];
 		this.last = names[1];
 		this.names = names;
-		this.url = String.format(URL, first, last, token);
+		this.url = String.format(URL, IOUtil.urlEncode(first), IOUtil.urlEncode(last), token);
 	}
 
 	@Override
@@ -86,7 +87,7 @@ public class GooglePlusApiLoader extends OuterLoader {
 	}
 
 	@Override
-	protected boolean hasBadNames() {
+	protected boolean loadStopSearching() {
 		for (JsonElement personElement : getPeople()) {
 			if (!checkName(personElement.getAsJsonObject()))
 				return true;

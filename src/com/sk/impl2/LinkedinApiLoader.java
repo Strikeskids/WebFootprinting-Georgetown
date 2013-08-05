@@ -77,7 +77,7 @@ public class LinkedinApiLoader extends OuterLoader {
 	}
 
 	@Override
-	protected boolean hasBadNames() {
+	protected boolean loadStopSearching() {
 		for (Element person : getPeople()) {
 			if (!checkNames(person))
 				return true;
