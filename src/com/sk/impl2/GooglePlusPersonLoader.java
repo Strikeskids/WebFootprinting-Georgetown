@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import com.sk.parse.AbstractLoader;
 import com.sk.parse.Extractor;
 import com.sk.parse.Parsers;
+import com.sk.util.DocNavigator;
 import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 import com.sk.web.Request;
@@ -45,32 +46,10 @@ public class GooglePlusPersonLoader extends AbstractLoader implements Extractor 
 	}
 
 	private void addDataTo(FieldBuilder builder) {
-		builder.put(json, "aboutMe", "blob");
-		builder.put(json, "id", "id");
-		builder.put(json, "displayName", "name");
-		addNameTo(builder);
-		builder.put(json, "gender", "gender");
-		builder.put(json, "relationshipStatus", "relationshipStatus");
-		builder.put(json, "birthday", "birthday");
-		addAgeTo(builder);
+		for (DocNavigator navigator : navigators) {
+			navigator.navigate(json, builder);
+		}
 		addOrganizationsTo(builder);
-		addProfilePictureTo(builder);
-		addEmailsTo(builder);
-	}
-
-	private void addNameTo(FieldBuilder builder) {
-		if (json.has("name")) {
-			JsonObject name = json.get("name").getAsJsonObject();
-			builder.put(name, "familyName", "lastName");
-			builder.put(name, "givenName", "firstName");
-		}
-	}
-
-	private void addAgeTo(FieldBuilder builder) {
-		if (json.has("ageRange")) {
-			JsonObject range = json.get("ageRange").getAsJsonObject();
-			builder.put("age", range.get("min").getAsString() + "-" + range.get("max").getAsString());
-		}
 	}
 
 	private void addOrganizationsTo(FieldBuilder builder) {
@@ -91,20 +70,6 @@ public class GooglePlusPersonLoader extends AbstractLoader implements Extractor 
 		}
 	}
 
-	private void addProfilePictureTo(FieldBuilder builder) {
-		if (json.has("image")) {
-			builder.put(json.get("image").getAsJsonObject(), "url", "profilePictureUrl");
-		}
-	}
-
-	private void addEmailsTo(FieldBuilder builder) {
-		if (json.has("emails")) {
-			for (JsonElement emailElement : json.get("emails").getAsJsonArray()) {
-				builder.put(emailElement.getAsJsonObject(), "value", "email");
-			}
-		}
-	}
-
 	@Override
 	protected Request getRequest() {
 		return request;
@@ -114,5 +79,13 @@ public class GooglePlusPersonLoader extends AbstractLoader implements Extractor 
 	protected void parse(URL source, String data) {
 		json = Parsers.parseJSON(data).getAsJsonObject();
 	}
+
+	private static final DocNavigator[] navigators = { new DocNavigator("blob", "aboutMe"),
+			new DocNavigator("id", "id"), new DocNavigator("name", "displayName"),
+			new DocNavigator("firstName", "name", "givenName"),
+			new DocNavigator("lastName", "name", "familyName"), new DocNavigator("gender", "gender"),
+			new DocNavigator("relationshipStatus", "relationshipStatus"),
+			new DocNavigator("birthday", "birthday"), new DocNavigator("age", "ageRange"),
+			new DocNavigator("profilePictureUrl", "image", "url"), new DocNavigator("email", "emails", "value") };
 
 }

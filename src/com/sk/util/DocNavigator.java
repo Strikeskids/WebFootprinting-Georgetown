@@ -37,6 +37,8 @@ public class DocNavigator {
 				JsonObject sourceObject = source.getAsJsonObject();
 				String key = navigation[loc++];
 				navigate(sourceObject.get(key), destination, loc);
+			} else {
+				addText(destination, Objects.toString(source));
 			}
 		} else if (source.isJsonArray()) {
 			for (JsonElement element : source.getAsJsonArray()) {
