@@ -13,10 +13,10 @@ import org.jsoup.nodes.Element;
 import com.sk.parse.AbstractLoader;
 import com.sk.parse.Extractor;
 import com.sk.parse.Parsers;
+import com.sk.util.DocNavigator;
 import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
-import com.sk.util.parse.scrape.BasicGrabber;
-import com.sk.util.parse.scrape.Grabber;
+import com.sk.util.UniversalDocNavigator;
 import com.sk.web.OAuthRequest;
 import com.sk.web.Request;
 
@@ -60,8 +60,8 @@ public class LinkedinPersonLoader extends AbstractLoader implements Extractor {
 	@Override
 	public List<PersonalData> getResults() {
 		FieldBuilder builder = new FieldBuilder();
-		for (Grabber grabber : grabbers) {
-			grabber.grab(document, builder);
+		for (DocNavigator grabber : navigators) {
+			grabber.navigate(document, builder);
 		}
 		PersonalData data = new PersonalData(SITE_KEY);
 		builder.addTo(data);
@@ -78,13 +78,17 @@ public class LinkedinPersonLoader extends AbstractLoader implements Extractor {
 		document = Parsers.parseXML(data);
 	}
 
-	private static final Grabber[] grabbers = { new BasicGrabber("first-name", "firstName"),
-			new BasicGrabber("last-name", "lastName"), new BasicGrabber("location name", "location"),
-			new BasicGrabber("location country code", "country"),
-			new BasicGrabber("person > industry", "industry"), new BasicGrabber("positions title", "jobTitle"),
-			new BasicGrabber("positions company name", "company"), new BasicGrabber("person > summary", "blob"),
-			new BasicGrabber("picture-url", "profilePictureUrl"), new BasicGrabber("main-address", "address"),
-			new BasicGrabber("phone-number > phone-number", "phone"),
-			new BasicGrabber("twitter-account > provider-account-name", "twitter") };
+	private static final DocNavigator[] navigators = { new UniversalDocNavigator("firstName", "first-name"),
+			new UniversalDocNavigator("lastName", "last-name"),
+			new UniversalDocNavigator("location", "location", "name"),
+			new UniversalDocNavigator("country", "location", "country", "code"),
+			new UniversalDocNavigator("industry", "person", "industry"),
+			new UniversalDocNavigator("jobTitle", "positions", "title"),
+			new UniversalDocNavigator("company", "positions", "company", "name"),
+			new UniversalDocNavigator("blob", "person", "summary"),
+			new UniversalDocNavigator("profilePictureUrl", "picture-url"),
+			new UniversalDocNavigator("address", "main-address"),
+			new UniversalDocNavigator("phone", "phone-number", "phone-number"),
+			new UniversalDocNavigator("twitter", "twitter-account", "provider-account-name"), };
 
 }
