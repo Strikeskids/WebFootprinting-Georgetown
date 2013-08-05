@@ -107,4 +107,9 @@ public class Request {
 		return isPostRequest() && getQuery().size() > 0;
 	}
 
+	public URL getFinalizedURL() {
+		finalizeUrl();
+		return url;
+	}
+
 }
