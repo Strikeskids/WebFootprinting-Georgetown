@@ -43,13 +43,13 @@ public class LinkedinApiLoader extends OuterLoader {
 	private Document document;
 
 	public LinkedinApiLoader(String first, String last) {
-		this(first, last, 0);
+		this(new String[] { first, last }, 0);
 	}
 
-	private LinkedinApiLoader(String first, String last, int startIndex) {
-		this.first = first;
-		this.last = last;
-		this.names = new String[] { first, last };
+	private LinkedinApiLoader(String[] names, int startIndex) {
+		this.first = names[0];
+		this.last = names[1];
+		this.names = names;
 		this.startIndex = startIndex;
 		this.url = String.format(BASE_URL, IOUtil.urlEncode(first), IOUtil.urlEncode(last), startIndex);
 	}
@@ -81,7 +81,7 @@ public class LinkedinApiLoader extends OuterLoader {
 			return null;
 		if (!checkNames())
 			return null;
-		return new LinkedinApiLoader(first, last, nextStart);
+		return new LinkedinApiLoader(names, nextStart);
 	}
 
 	private boolean checkNames() {

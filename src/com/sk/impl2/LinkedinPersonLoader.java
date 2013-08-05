@@ -21,6 +21,10 @@ import com.sk.web.Request;
 
 public class LinkedinPersonLoader extends AbstractLoader implements Extractor {
 
+	private static final String REQUEST_FIELDS = ":(first-name,last-name,headline,"
+			+ "location:(name,country:(code)),industry,summary,specialties,positions,"
+			+ "picture-url,main-address,phone-numbers,twitter-accounts)";
+
 	private final Request request;
 	private Document document;
 
@@ -41,7 +45,7 @@ public class LinkedinPersonLoader extends AbstractLoader implements Extractor {
 		for (Element urlElement : apiProfileRequest.select("url")) {
 			String ret = urlElement.text();
 			if (ret.length() > 10)
-				return ret;
+				return ret + REQUEST_FIELDS;
 		}
 		return "";
 	}
