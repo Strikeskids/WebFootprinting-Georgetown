@@ -4,14 +4,11 @@ import static com.sk.impl2.LinkedinApiLoader.SITE_KEY;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import com.sk.parse.AbstractLoader;
-import com.sk.parse.Extractor;
+import com.sk.parse.IndividualExtractor;
 import com.sk.parse.Parsers;
 import com.sk.util.DocNavigator;
 import com.sk.util.FieldBuilder;
@@ -20,7 +17,7 @@ import com.sk.util.UniversalDocNavigator;
 import com.sk.web.OAuthRequest;
 import com.sk.web.Request;
 
-public class LinkedinPersonLoader extends AbstractLoader implements Extractor {
+public class LinkedinPersonLoader extends IndividualExtractor {
 
 	private static final String REQUEST_FIELDS = ":(first-name,last-name,headline,"
 			+ "location:(name,country:(code)),industry,summary,specialties,positions,"
@@ -53,12 +50,7 @@ public class LinkedinPersonLoader extends AbstractLoader implements Extractor {
 	}
 
 	@Override
-	public List<PersonalData> call() throws Exception {
-		return getResults();
-	}
-
-	@Override
-	public List<PersonalData> getResults() {
+	protected PersonalData getResult() {
 		FieldBuilder builder = new FieldBuilder();
 		for (DocNavigator grabber : navigators) {
 			grabber.navigate(document, builder);
@@ -66,7 +58,7 @@ public class LinkedinPersonLoader extends AbstractLoader implements Extractor {
 		builder.joinNames();
 		PersonalData data = new PersonalData(SITE_KEY);
 		builder.addTo(data);
-		return Arrays.asList(data);
+		return data;
 	}
 
 	@Override

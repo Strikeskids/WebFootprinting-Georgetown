@@ -4,20 +4,17 @@ import static com.sk.impl2.GooglePlusApiLoader.SITE_KEY;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.sk.parse.AbstractLoader;
-import com.sk.parse.Extractor;
+import com.sk.parse.IndividualExtractor;
 import com.sk.parse.Parsers;
 import com.sk.util.DocNavigator;
 import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 import com.sk.web.Request;
 
-public class GooglePlusPersonLoader extends AbstractLoader implements Extractor {
+public class GooglePlusPersonLoader extends IndividualExtractor {
 
 	private final String BASE_URL = "https://www.googleapis.com/plus/v1/people/%s?fields=id%%2C"
 			+ "displayName%%2Cname%%2Cgender%%2Curl%%2Cbirthday%%2CrelationshipStatus%%2CageRange%%2C"
@@ -32,17 +29,12 @@ public class GooglePlusPersonLoader extends AbstractLoader implements Extractor 
 	}
 
 	@Override
-	public List<PersonalData> call() throws Exception {
-		return getResults();
-	}
-
-	@Override
-	public List<PersonalData> getResults() {
+	protected PersonalData getResult() {
 		FieldBuilder builder = new FieldBuilder();
 		addDataTo(builder);
 		PersonalData ret = new PersonalData(SITE_KEY);
 		builder.addTo(ret);
-		return Arrays.asList(ret);
+		return ret;
 	}
 
 	private void addDataTo(FieldBuilder builder) {
