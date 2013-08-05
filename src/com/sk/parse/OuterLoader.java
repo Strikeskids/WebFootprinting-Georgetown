@@ -12,17 +12,17 @@ import com.sk.util.PersonalData;
 
 public abstract class OuterLoader extends PagingLoader {
 
+	@Override
+	public List<PersonalData> getOwnResults() {
+		return ownResults.get();
+	}
+
 	private LazyField<List<PersonalData>> ownResults = new LazyField<>(new Callable<List<PersonalData>>() {
 		@Override
 		public List<PersonalData> call() throws Exception {
 			return loadOwnResults();
 		}
 	});
-
-	@Override
-	public List<PersonalData> getOwnResults() {
-		return ownResults.get();
-	}
 
 	private List<PersonalData> loadOwnResults() {
 		List<PersonalData> ret = new ArrayList<>();
@@ -36,5 +36,15 @@ public abstract class OuterLoader extends PagingLoader {
 		return ret;
 	}
 
+	protected LazyField<Boolean> stopPaging = new LazyField<>(new Callable<Boolean>() {
+		@Override
+		public Boolean call() throws Exception {
+			return hasBadNames();
+		}
+	});
+
+	protected abstract boolean hasBadNames();
+
 	protected abstract List<Extractor> getExtractors();
+
 }

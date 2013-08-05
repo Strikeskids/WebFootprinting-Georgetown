@@ -17,6 +17,7 @@ import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 import com.sk.util.parse.scrape.BasicGrabber;
 import com.sk.util.parse.scrape.Grabber;
+import com.sk.web.OAuthRequest;
 import com.sk.web.Request;
 
 public class LinkedinPersonLoader extends AbstractLoader implements Extractor {
@@ -25,11 +26,12 @@ public class LinkedinPersonLoader extends AbstractLoader implements Extractor {
 			+ "location:(name,country:(code)),industry,summary,specialties,positions,"
 			+ "picture-url,main-address,phone-numbers,twitter-accounts)";
 
-	private final Request request;
+	private final OAuthRequest request;
 	private Document document;
 
 	LinkedinPersonLoader(Element apiProfileRequest) throws MalformedURLException {
-		this.request = new Request(getUrl(apiProfileRequest), "GET");
+		this.request = new OAuthRequest(getUrl(apiProfileRequest), "GET");
+		this.request.signOAuth(ApiUtility.getConsumerToken(SITE_KEY), ApiUtility.getOAuthToken(SITE_KEY));
 		addHeaders(apiProfileRequest);
 	}
 
@@ -62,6 +64,7 @@ public class LinkedinPersonLoader extends AbstractLoader implements Extractor {
 			grabber.grab(document, builder);
 		}
 		PersonalData data = new PersonalData(SITE_KEY);
+		builder.addTo(data);
 		return Arrays.asList(data);
 	}
 

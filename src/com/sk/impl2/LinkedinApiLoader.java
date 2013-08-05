@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,7 +14,6 @@ import com.sk.parse.Extractor;
 import com.sk.parse.OuterLoader;
 import com.sk.parse.PagingLoader;
 import com.sk.parse.Parsers;
-import com.sk.util.LazyField;
 import com.sk.web.IOUtil;
 import com.sk.web.OAuthRequest;
 import com.sk.web.Request;
@@ -33,12 +31,6 @@ public class LinkedinApiLoader extends OuterLoader {
 	private final String first, last, names[];
 	private final int startIndex;
 	private final String url;
-	private LazyField<Boolean> hasBadName = new LazyField<>(new Callable<Boolean>() {
-		@Override
-		public Boolean call() throws Exception {
-			return loadBadNames();
-		}
-	});
 
 	private Document document;
 
@@ -68,7 +60,7 @@ public class LinkedinApiLoader extends OuterLoader {
 			} catch (MalformedURLException ignored) {
 			}
 		}
-		hasBadName.set(stop);
+		stopPaging.set(stop);
 		return ret;
 	}
 
@@ -79,16 +71,13 @@ public class LinkedinApiLoader extends OuterLoader {
 		int nextStart = startIndex + STEP_AMOUNT;
 		if (nextStart >= numResults)
 			return null;
-		if (!checkNames())
+		if (stopPaging.get())
 			return null;
 		return new LinkedinApiLoader(names, nextStart);
 	}
 
-	private boolean checkNames() {
-		return !hasBadName.get();
-	}
-
-	private boolean loadBadNames() {
+	@Override
+	protected boolean hasBadNames() {
 		for (Element person : getPeople()) {
 			if (!checkNames(person))
 				return true;
