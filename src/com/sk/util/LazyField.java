@@ -27,6 +27,16 @@ public class LazyField<T> {
 		return value;
 	}
 
+	public void set(T value) {
+		try {
+			initializing.lock();
+			this.value = value;
+			this.initialized = true;
+		} finally {
+			initializing.unlock();
+		}
+	}
+
 	private void initialize() {
 		try {
 			value = initializer.call();
