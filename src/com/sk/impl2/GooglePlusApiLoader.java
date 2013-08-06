@@ -18,8 +18,9 @@ import com.sk.web.Request;
 
 public class GooglePlusApiLoader extends OuterLoader {
 
+	private static final int NUM_RESULTS = 50;
 	private static final String URL = "https://www.googleapis.com/plus/v1/people?query=%s%%20%s&"
-			+ "pageToken=%s&fields=items(id,displayName),nextPageToken&maxResults=50";
+			+ "pageToken=%s&fields=items(id,displayName),nextPageToken&maxResults=" + NUM_RESULTS;
 	private static final String NEXT_PAGE_KEY = "nextPageToken";
 
 	static final String SITE_KEY = "g+";
@@ -41,21 +42,18 @@ public class GooglePlusApiLoader extends OuterLoader {
 	@Override
 	protected List<Extractor> getExtractors() {
 		List<Extractor> ret = new ArrayList<>();
-		boolean stop = true;
 		for (JsonElement personElement : getPeople()) {
 			JsonObject person = personElement.getAsJsonObject();
 			if (!checkName(person)) {
-				stop = true;
 				break;
 			}
-			stop = false;
 			String id = person.get("id").getAsString();
 			try {
 				ret.add(new GooglePlusPersonLoader(id));
 			} catch (MalformedURLException e) {
 			}
 		}
-		stopPaging.set(stop);
+		stopPaging.set(ret.size() < NUM_RESULTS);
 		return ret;
 	}
 
@@ -64,9 +62,9 @@ public class GooglePlusApiLoader extends OuterLoader {
 		init();
 		if (!json.has(NEXT_PAGE_KEY))
 			return null;
-		String nextToken = json.get(NEXT_PAGE_KEY).getAsString();
 		if (stopPaging.get())
 			return null;
+		String nextToken = json.get(NEXT_PAGE_KEY).getAsString();
 		return new GooglePlusApiLoader(names, nextToken);
 	}
 
@@ -88,11 +86,7 @@ public class GooglePlusApiLoader extends OuterLoader {
 
 	@Override
 	protected boolean loadStopSearching() {
-		for (JsonElement personElement : getPeople()) {
-			if (!checkName(personElement.getAsJsonObject()))
-				return true;
-		}
-		return false;
+		return getExtractors().size() < NUM_RESULTS;
 	}
 
 	private boolean checkName(JsonObject person) {
