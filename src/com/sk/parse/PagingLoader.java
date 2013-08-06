@@ -28,7 +28,21 @@ public abstract class PagingLoader extends AbstractLoader implements ChainingExt
 		}
 	});
 
+	private LazyField<List<PersonalData>> ownResults = new LazyField<>(new Callable<List<PersonalData>>() {
+		@Override
+		public List<PersonalData> call() throws Exception {
+			return loadOwnResults();
+		}
+	});
+
 	protected abstract boolean loadStopPaging();
+
+	protected abstract List<PersonalData> loadOwnResults();
+
+	@Override
+	public List<PersonalData> getOwnResults() {
+		return ownResults.get();
+	}
 
 	@Override
 	public List<PersonalData> getResults() {
