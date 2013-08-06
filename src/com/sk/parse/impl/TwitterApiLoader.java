@@ -11,10 +11,10 @@ import com.google.gson.JsonObject;
 import com.sk.parse.util.PagingLoader;
 import com.sk.parse.util.Parsers;
 import com.sk.util.ApiUtility;
-import com.sk.util.DocNavigator;
-import com.sk.util.FieldBuilder;
 import com.sk.util.NameComparison;
-import com.sk.util.PersonalData;
+import com.sk.util.data.FieldBuilder;
+import com.sk.util.data.PersonalData;
+import com.sk.util.navigate.FieldNavigator;
 import com.sk.web.IOUtil;
 import com.sk.web.OAuthRequest;
 import com.sk.web.Request;
@@ -83,7 +83,7 @@ public class TwitterApiLoader extends PagingLoader {
 		NameComparison nameUtil = NameComparison.get();
 		String name = getName(userElement);
 		String[] parsed = nameUtil.parseName(name);
-		return nameUtil.isSameName(parsed, names);
+		return nameUtil.isSameFullName(parsed, names);
 	}
 
 	private String getName(JsonElement userElement) {
@@ -115,7 +115,7 @@ public class TwitterApiLoader extends PagingLoader {
 		if (!checkName(userElement))
 			return null;
 		FieldBuilder builder = new FieldBuilder();
-		for (DocNavigator navigator : navigators) {
+		for (FieldNavigator navigator : navigators) {
 			navigator.navigate(userElement, builder);
 		}
 		PersonalData ret = new PersonalData(SITE_KEY);
@@ -123,9 +123,9 @@ public class TwitterApiLoader extends PagingLoader {
 		return ret;
 	}
 
-	private static final DocNavigator[] navigators = { new DocNavigator("id", "id_str"),
-			new DocNavigator("location", "location"), new DocNavigator("username", "screen_name"),
-			new DocNavigator("homePage", "url"), new DocNavigator("profilePictureUrl", "profile_image_url"),
-			new DocNavigator("blob", "description"), new DocNavigator("twitter", "screen_name") };
+	private static final FieldNavigator[] navigators = { new FieldNavigator("id", "id_str"),
+			new FieldNavigator("location", "location"), new FieldNavigator("username", "screen_name"),
+			new FieldNavigator("homePage", "url"), new FieldNavigator("profilePictureUrl", "profile_image_url"),
+			new FieldNavigator("blob", "description"), new FieldNavigator("twitter", "screen_name") };
 
 }

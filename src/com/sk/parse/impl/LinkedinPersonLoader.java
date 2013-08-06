@@ -11,10 +11,10 @@ import org.jsoup.nodes.Element;
 import com.sk.parse.util.IndividualExtractor;
 import com.sk.parse.util.Parsers;
 import com.sk.util.ApiUtility;
-import com.sk.util.DocNavigator;
-import com.sk.util.FieldBuilder;
-import com.sk.util.PersonalData;
-import com.sk.util.UniversalDocNavigator;
+import com.sk.util.data.FieldBuilder;
+import com.sk.util.data.PersonalData;
+import com.sk.util.navigate.FieldNavigator;
+import com.sk.util.navigate.DomNavigator;
 import com.sk.web.OAuthRequest;
 import com.sk.web.Request;
 
@@ -54,7 +54,7 @@ public class LinkedinPersonLoader extends IndividualExtractor {
 	protected PersonalData getResult() {
 		init();
 		FieldBuilder builder = new FieldBuilder();
-		for (DocNavigator grabber : navigators) {
+		for (FieldNavigator grabber : navigators) {
 			grabber.navigate(document, builder);
 		}
 		builder.joinNames();
@@ -73,17 +73,17 @@ public class LinkedinPersonLoader extends IndividualExtractor {
 		document = Parsers.parseXML(data);
 	}
 
-	private static final DocNavigator[] navigators = { new UniversalDocNavigator("firstName", "first-name"),
-			new UniversalDocNavigator("lastName", "last-name"),
-			new UniversalDocNavigator("location", "location", "name"),
-			new UniversalDocNavigator("country", "location", "country", "code"),
-			new UniversalDocNavigator("industry", "person", "industry"),
-			new UniversalDocNavigator("jobTitle", "positions", "title"),
-			new UniversalDocNavigator("company", "positions", "company", "name"),
-			new UniversalDocNavigator("blob", "person", "summary"),
-			new UniversalDocNavigator("profilePictureUrl", "picture-url"),
-			new UniversalDocNavigator("address", "main-address"),
-			new UniversalDocNavigator("phone", "phone-number", "phone-number"),
-			new UniversalDocNavigator("twitter", "twitter-account", "provider-account-name"), };
+	private static final FieldNavigator[] navigators = { new DomNavigator("firstName", "first-name"),
+			new DomNavigator("lastName", "last-name"),
+			new DomNavigator("location", "location", "name"),
+			new DomNavigator("country", "location", "country", "code"),
+			new DomNavigator("industry", "person", "industry"),
+			new DomNavigator("jobTitle", "positions", "title"),
+			new DomNavigator("company", "positions", "company", "name"),
+			new DomNavigator("blob", "person", "summary"),
+			new DomNavigator("profilePictureUrl", "picture-url"),
+			new DomNavigator("address", "main-address"),
+			new DomNavigator("phone", "phone-number", "phone-number"),
+			new DomNavigator("twitter", "twitter-account", "provider-account-name"), };
 
 }

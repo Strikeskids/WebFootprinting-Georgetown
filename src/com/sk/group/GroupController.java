@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sk.group.image.DCTHash;
-import com.sk.util.PersonalData;
+import com.sk.util.data.PersonalData;
 
 public class GroupController {
 

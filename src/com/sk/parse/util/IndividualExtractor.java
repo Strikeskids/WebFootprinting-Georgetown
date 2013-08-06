@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import com.sk.util.LazyField;
-import com.sk.util.PersonalData;
+import com.sk.util.data.PersonalData;
 
 public abstract class IndividualExtractor extends AbstractLoader implements Extractor {
 

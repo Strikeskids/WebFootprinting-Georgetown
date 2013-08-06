@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 
 import com.sk.threading.TaskGroup;
 import com.sk.threading.UniversalExecutor;
-import com.sk.util.PersonalData;
+import com.sk.util.data.PersonalData;
 import com.sk.web.Base64Util;
 
 public class DCTHash {

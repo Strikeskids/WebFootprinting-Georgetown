@@ -11,10 +11,10 @@ import com.google.gson.JsonObject;
 import com.sk.parse.util.PagingLoader;
 import com.sk.parse.util.Parsers;
 import com.sk.util.ApiUtility;
-import com.sk.util.DocNavigator;
-import com.sk.util.FieldBuilder;
 import com.sk.util.NameComparison;
-import com.sk.util.PersonalData;
+import com.sk.util.data.FieldBuilder;
+import com.sk.util.data.PersonalData;
+import com.sk.util.navigate.FieldNavigator;
 import com.sk.web.IOUtil;
 import com.sk.web.Request;
 
@@ -56,7 +56,7 @@ public class FourSquareApiLoader extends PagingLoader {
 
 	private PersonalData getResult(JsonObject person) {
 		FieldBuilder builder = new FieldBuilder();
-		for (DocNavigator navigator : navigators) {
+		for (FieldNavigator navigator : navigators) {
 			navigator.navigate(person, builder);
 		}
 		PersonalData ret = new PersonalData(SITE_KEY);
@@ -67,7 +67,7 @@ public class FourSquareApiLoader extends PagingLoader {
 
 	private boolean checkName(JsonObject person) {
 		String[] personNames = { person.get("firstName").getAsString(), person.get("lastName").getAsString() };
-		return NameComparison.get().isSameName(names, personNames);
+		return NameComparison.get().isSameFullName(names, personNames);
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class FourSquareApiLoader extends PagingLoader {
 	@Override
 	protected Request getRequest() {
 		try {
-			Request request = new Request(url, "GET");
+			Request request = new Request(url);
 			request.addQuery("oauth_token", ApiUtility.getAccessToken(SITE_KEY).getKey());
 			return request;
 		} catch (MalformedURLException ex) {
@@ -91,11 +91,11 @@ public class FourSquareApiLoader extends PagingLoader {
 		json = Parsers.parseJSON(data).getAsJsonObject();
 	}
 
-	private static final DocNavigator[] navigators = { new DocNavigator("firstName", "firstName"),
-			new DocNavigator("lastName", "lastName"), new DocNavigator("gender", "gender"),
-			new DocNavigator("location", "homeCity"), new DocNavigator("blob", "bio"),
-			new DocNavigator("email", "contact", "email"), new DocNavigator("twitter", "contact", "twitter"),
-			new DocNavigator("phone", "contact", "phone"), };
+	private static final FieldNavigator[] navigators = { new FieldNavigator("firstName", "firstName"),
+			new FieldNavigator("lastName", "lastName"), new FieldNavigator("gender", "gender"),
+			new FieldNavigator("location", "homeCity"), new FieldNavigator("blob", "bio"),
+			new FieldNavigator("email", "contact", "email"), new FieldNavigator("twitter", "contact", "twitter"),
+			new FieldNavigator("phone", "contact", "phone"), };
 
 	@Override
 	protected boolean loadStopPaging() {

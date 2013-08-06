@@ -11,8 +11,8 @@ import java.util.TreeSet;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.sk.clean.Cleaner;
-import com.sk.util.OrderTable;
-import com.sk.util.PersonalData;
+import com.sk.util.data.OrderTable;
+import com.sk.util.data.PersonalData;
 
 public class StatisticsController {
 

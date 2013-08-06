@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.sk.group.image.DCTHash;
-import com.sk.util.PersonalData;
+import com.sk.util.data.PersonalData;
 
 public class DataGroup extends HashSet<PersonalData> {
 

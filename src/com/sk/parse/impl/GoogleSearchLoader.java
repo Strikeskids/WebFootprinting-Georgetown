@@ -91,7 +91,7 @@ public class GoogleSearchLoader extends OuterLoader {
 	@Override
 	protected Request getRequest() {
 		try {
-			Request request = new Request(url, "GET");
+			Request request = new Request(url);
 			request.addRandomUserAgent();
 			return request;
 		} catch (MalformedURLException ignored) {

@@ -96,7 +96,7 @@ public class ApiUtility {
 		@Override
 		public JsonObject call() throws Exception {
 			InputStream tokenStream = new FileInputStream(TOKEN_STORE);
-			JsonObject ret = Parsers.parseJSON(IOUtil.readFrom(tokenStream)).getAsJsonObject();
+			JsonObject ret = Parsers.parseJSON(IOUtil.read(tokenStream)).getAsJsonObject();
 			tokenStream.close();
 			return ret;
 		}

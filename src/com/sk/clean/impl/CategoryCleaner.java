@@ -26,8 +26,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sk.clean.DataCleaner;
-import com.sk.util.FieldBuilder;
-import com.sk.util.PersonalData;
+import com.sk.util.data.FieldBuilder;
+import com.sk.util.data.PersonalData;
 
 public class CategoryCleaner implements DataCleaner {
 

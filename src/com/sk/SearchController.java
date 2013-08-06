@@ -14,7 +14,7 @@ import com.sk.parse.impl.WhitepagesLoader;
 import com.sk.parse.util.Extractor;
 import com.sk.parse.util.OuterLoader;
 import com.sk.parse.util.PagingLoader;
-import com.sk.util.PersonalDataStorage;
+import com.sk.util.data.PersonalDataStorage;
 import com.sk.web.Request;
 
 /**

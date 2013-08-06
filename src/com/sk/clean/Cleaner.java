@@ -5,7 +5,7 @@ import com.sk.clean.impl.GenderCleaner;
 import com.sk.clean.impl.GenericCleaner;
 import com.sk.clean.impl.LocationCleaner;
 import com.sk.clean.impl.WikipediaRedirectCleaner;
-import com.sk.util.PersonalData;
+import com.sk.util.data.PersonalData;
 
 /**
  * Class that provides cleaning capabilities to clean up data garnered via API or scraping.

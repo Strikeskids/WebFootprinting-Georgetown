@@ -86,7 +86,7 @@ public class WhitepagesLoader extends OuterLoader {
 		NameComparison nameUtil = NameComparison.get();
 		String name = getName(resultContainer);
 		String[] parts = nameUtil.parseName(name);
-		return nameUtil.isSameName(parts, names);
+		return nameUtil.isSameFullName(parts, names);
 	}
 
 	private Elements getResultContainers() {
@@ -107,7 +107,7 @@ public class WhitepagesLoader extends OuterLoader {
 	@Override
 	protected Request getRequest() {
 		try {
-			Request request = new Request(url, "GET");
+			Request request = new Request(url);
 			request.addRandomUserAgent();
 			return request;
 		} catch (MalformedURLException ignored) {

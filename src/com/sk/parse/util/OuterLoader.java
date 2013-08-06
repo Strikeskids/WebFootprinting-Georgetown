@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import com.sk.threading.UniversalExecutor;
-import com.sk.util.PersonalData;
+import com.sk.util.data.PersonalData;
 
 public abstract class OuterLoader extends PagingLoader {
 

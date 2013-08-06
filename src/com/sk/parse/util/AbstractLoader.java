@@ -2,7 +2,6 @@ package com.sk.parse.util;
 
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.concurrent.Callable;
 
 import com.sk.util.LazyField;
@@ -31,10 +30,7 @@ public abstract class AbstractLoader {
 
 	protected String loadData(Request request) {
 		try {
-			URLConnection conn = request.openConnection();
-			conn.setDoInput(true);
-			conn.connect();
-			return IOUtil.readFrom(conn.getInputStream());
+			return IOUtil.read(request);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			return "";

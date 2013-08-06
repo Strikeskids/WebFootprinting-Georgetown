@@ -1,6 +1,6 @@
 package com.sk.clean;
 
-import com.sk.util.PersonalData;
+import com.sk.util.data.PersonalData;
 
 public interface DataCleaner {
 

@@ -1,8 +1,8 @@
 package com.sk.clean.impl;
 
 import com.sk.clean.DataCleaner;
-import com.sk.util.FieldBuilder;
-import com.sk.util.PersonalData;
+import com.sk.util.data.FieldBuilder;
+import com.sk.util.data.PersonalData;
 
 public class ContactCleaner implements DataCleaner {
 

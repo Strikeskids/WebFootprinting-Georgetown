@@ -17,8 +17,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.sk.stat.PersonStatistics;
 import com.sk.threading.UniversalExecutor;
-import com.sk.util.PersonalData;
-import com.sk.util.PersonalDataStorage;
+import com.sk.util.data.PersonalData;
+import com.sk.util.data.PersonalDataStorage;
 
 /**
  * Main class. Run this to search for people.

@@ -75,12 +75,12 @@ public class FieldBuilder {
 		String[] firsts = get("firstName"), lasts = get("lastName"), boths = get("name");
 		if (firsts.length == 0 || lasts.length == 0) {
 			for (String both : boths) {
-				if (nameUtil.isSameName(nameUtil.parseName(both), names))
+				if (nameUtil.isSameFullName(nameUtil.parseName(both), names))
 					return true;
 			}
 		} else {
 			for (int i = 0; i < firsts.length && i < lasts.length; ++i) {
-				if (nameUtil.isSameName(new String[] { firsts[i], lasts[i] }, names))
+				if (nameUtil.isSameFullName(new String[] { firsts[i], lasts[i] }, names))
 					return true;
 			}
 		}

@@ -10,9 +10,9 @@ import com.google.gson.JsonObject;
 import com.sk.parse.util.IndividualExtractor;
 import com.sk.parse.util.Parsers;
 import com.sk.util.ApiUtility;
-import com.sk.util.DocNavigator;
-import com.sk.util.FieldBuilder;
-import com.sk.util.PersonalData;
+import com.sk.util.data.FieldBuilder;
+import com.sk.util.data.PersonalData;
+import com.sk.util.navigate.FieldNavigator;
 import com.sk.web.Request;
 
 public class GooglePlusPersonLoader extends IndividualExtractor {
@@ -25,7 +25,7 @@ public class GooglePlusPersonLoader extends IndividualExtractor {
 	private JsonObject json;
 
 	GooglePlusPersonLoader(String id) throws MalformedURLException {
-		request = new Request(String.format(BASE_URL, id), "GET");
+		request = new Request(String.format(BASE_URL, id));
 		request.addQuery("key", ApiUtility.getAccessToken(SITE_KEY).getKey());
 	}
 
@@ -40,7 +40,7 @@ public class GooglePlusPersonLoader extends IndividualExtractor {
 
 	private void addDataTo(FieldBuilder builder) {
 		init();
-		for (DocNavigator navigator : navigators) {
+		for (FieldNavigator navigator : navigators) {
 			navigator.navigate(json, builder);
 		}
 		addOrganizationsTo(builder);
@@ -75,12 +75,12 @@ public class GooglePlusPersonLoader extends IndividualExtractor {
 		json = Parsers.parseJSON(data).getAsJsonObject();
 	}
 
-	private static final DocNavigator[] navigators = { new DocNavigator("blob", "aboutMe"),
-			new DocNavigator("id", "id"), new DocNavigator("name", "displayName"),
-			new DocNavigator("firstName", "name", "givenName"),
-			new DocNavigator("lastName", "name", "familyName"), new DocNavigator("gender", "gender"),
-			new DocNavigator("relationshipStatus", "relationshipStatus"),
-			new DocNavigator("birthday", "birthday"), new DocNavigator("age", "ageRange"),
-			new DocNavigator("profilePictureUrl", "image", "url"), new DocNavigator("email", "emails", "value") };
+	private static final FieldNavigator[] navigators = { new FieldNavigator("blob", "aboutMe"),
+			new FieldNavigator("id", "id"), new FieldNavigator("name", "displayName"),
+			new FieldNavigator("firstName", "name", "givenName"),
+			new FieldNavigator("lastName", "name", "familyName"), new FieldNavigator("gender", "gender"),
+			new FieldNavigator("relationshipStatus", "relationshipStatus"),
+			new FieldNavigator("birthday", "birthday"), new FieldNavigator("age", "ageRange"),
+			new FieldNavigator("profilePictureUrl", "image", "url"), new FieldNavigator("email", "emails", "value") };
 
 }

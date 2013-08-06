@@ -17,7 +17,7 @@ import org.apache.commons.codec.binary.Base64;
 import com.google.gson.JsonObject;
 import com.sk.stat.PersonStatistics;
 import com.sk.stat.StatisticsController;
-import com.sk.util.PersonalDataStorage;
+import com.sk.util.data.PersonalDataStorage;
 
 public class PhpCommunicator implements Runnable {
 

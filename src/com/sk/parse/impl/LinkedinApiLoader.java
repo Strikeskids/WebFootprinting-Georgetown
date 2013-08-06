@@ -92,7 +92,7 @@ public class LinkedinApiLoader extends OuterLoader {
 	}
 
 	private boolean checkNames(Element person) {
-		return NameComparison.get().isSameName(getNames(person), names);
+		return NameComparison.get().isSameFullName(getNames(person), names);
 	}
 
 	private String[] getNames(Element person) {

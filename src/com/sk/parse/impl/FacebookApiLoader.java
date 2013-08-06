@@ -24,7 +24,7 @@ public class FacebookApiLoader extends GoogleSearchLoader {
 				if (id == null)
 					return null;
 				String[] currentNames = getNames(result);
-				if (currentNames == null || !NameComparison.get().isSameName(names, currentNames))
+				if (currentNames == null || !NameComparison.get().isSameFullName(names, currentNames))
 					return null;
 				try {
 					return new FacebookPersonLoader(id);

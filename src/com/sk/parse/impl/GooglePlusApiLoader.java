@@ -72,7 +72,7 @@ public class GooglePlusApiLoader extends OuterLoader {
 	@Override
 	protected Request getRequest() {
 		try {
-			Request request = new Request(url, "GET");
+			Request request = new Request(url);
 			request.addQuery("key", ApiUtility.getAccessToken(SITE_KEY).getKey());
 			return request;
 		} catch (MalformedURLException ignored) {
@@ -94,7 +94,7 @@ public class GooglePlusApiLoader extends OuterLoader {
 		NameComparison nameUtil = NameComparison.get();
 		String displayName = person.get("displayName").getAsString();
 		String[] parsedNames = nameUtil.parseName(displayName);
-		return nameUtil.isSameName(names, parsedNames);
+		return nameUtil.isSameFullName(names, parsedNames);
 	}
 
 	private JsonArray getPeople() {

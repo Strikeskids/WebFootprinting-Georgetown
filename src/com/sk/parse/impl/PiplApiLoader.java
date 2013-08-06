@@ -11,9 +11,9 @@ import com.google.gson.JsonObject;
 import com.sk.parse.util.PagingLoader;
 import com.sk.parse.util.Parsers;
 import com.sk.util.ApiUtility;
-import com.sk.util.DocNavigator;
-import com.sk.util.FieldBuilder;
-import com.sk.util.PersonalData;
+import com.sk.util.data.FieldBuilder;
+import com.sk.util.data.PersonalData;
+import com.sk.util.navigate.FieldNavigator;
 import com.sk.web.IOUtil;
 import com.sk.web.Request;
 
@@ -55,7 +55,7 @@ public class PiplApiLoader extends PagingLoader {
 
 	private PersonalData getData(JsonObject record) {
 		FieldBuilder builder = new FieldBuilder();
-		for (DocNavigator navigator : navigators) {
+		for (FieldNavigator navigator : navigators) {
 			navigator.navigate(record, builder);
 		}
 		if (!builder.compareNames(names))
@@ -73,7 +73,7 @@ public class PiplApiLoader extends PagingLoader {
 	@Override
 	protected Request getRequest() {
 		try {
-			Request request = new Request(url, "GET");
+			Request request = new Request(url);
 			request.addQuery("key", ApiUtility.getAccessToken(SITE_KEY).getKey());
 			return request;
 		} catch (MalformedURLException ex) {
@@ -86,13 +86,13 @@ public class PiplApiLoader extends PagingLoader {
 		json = Parsers.parseJSON(data).getAsJsonObject();
 	}
 
-	private static final DocNavigator[] navigators = { new DocNavigator("name", "names", "display"),
-			new DocNavigator("firstName", "names", "first"), new DocNavigator("lastName", "names", "last"),
-			new DocNavigator("address", "addresses", "display"), new DocNavigator("phone", "phones", "display"),
-			new DocNavigator("email", "emails", "address"), new DocNavigator("age", "dobs", "display"),
-			new DocNavigator("profilePictureUrl", "images", "url"), new DocNavigator("jobTitle", "jobs", "title"),
-			new DocNavigator("company", "jobs", "organization"), new DocNavigator("industry", "jobs", "industry"),
-			new DocNavigator("education", "educations", "display"),
-			new DocNavigator("username", "usernames", "content"), };
+	private static final FieldNavigator[] navigators = { new FieldNavigator("name", "names", "display"),
+			new FieldNavigator("firstName", "names", "first"), new FieldNavigator("lastName", "names", "last"),
+			new FieldNavigator("address", "addresses", "display"), new FieldNavigator("phone", "phones", "display"),
+			new FieldNavigator("email", "emails", "address"), new FieldNavigator("age", "dobs", "display"),
+			new FieldNavigator("profilePictureUrl", "images", "url"), new FieldNavigator("jobTitle", "jobs", "title"),
+			new FieldNavigator("company", "jobs", "organization"), new FieldNavigator("industry", "jobs", "industry"),
+			new FieldNavigator("education", "educations", "display"),
+			new FieldNavigator("username", "usernames", "content"), };
 
 }
