@@ -53,7 +53,7 @@ public class LinkedinApiLoader extends OuterLoader {
 		for (Element person : getPeople()) {
 			if (!checkNames(person)) {
 				stop = true;
-				break;
+				continue;
 			}
 			try {
 				ret.add(new LinkedinPersonLoader(person.select(PROFILE_REQUEST_ELEMENT).first()));

@@ -62,7 +62,7 @@ public class WhitepagesLoader extends OuterLoader {
 		for (Element resultContainer : getResultContainers()) {
 			if (!checkName(resultContainer)) {
 				stop = true;
-				break;
+				continue;
 			}
 			String url = getUrl(resultContainer);
 			try {

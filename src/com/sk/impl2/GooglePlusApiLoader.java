@@ -45,7 +45,7 @@ public class GooglePlusApiLoader extends OuterLoader {
 		for (JsonElement personElement : getPeople()) {
 			JsonObject person = personElement.getAsJsonObject();
 			if (!checkName(person)) {
-				break;
+				continue;
 			}
 			String id = person.get("id").getAsString();
 			try {

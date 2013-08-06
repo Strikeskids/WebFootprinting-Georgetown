@@ -32,7 +32,7 @@ public class FourSquareApiLoader extends PagingLoader {
 	}
 
 	@Override
-	public List<PersonalData> getOwnResults() {
+	protected List<PersonalData> loadOwnResults() {
 		List<PersonalData> ret = new ArrayList<>();
 		for (JsonElement personElement : getPeople()) {
 			JsonObject person = personElement.getAsJsonObject();
@@ -40,7 +40,7 @@ public class FourSquareApiLoader extends PagingLoader {
 				continue;
 			}
 			if (!checkName(person))
-				break;
+				continue;
 			PersonalData found = getResult(personElement.getAsJsonObject());
 			ret.add(found);
 		}
