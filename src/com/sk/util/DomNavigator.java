@@ -2,13 +2,13 @@ package com.sk.util;
 
 import com.google.gson.JsonElement;
 
-public class UniversalDocNavigator extends DocNavigator {
+public class DomNavigator extends DocNavigator {
 
-	public UniversalDocNavigator(String field, String... navigation) {
+	public DomNavigator(String field, String... navigation) {
 		super(field, navigation);
 	}
 
-	public UniversalDocNavigator(String field, StringProcessor processor, String... navigation) {
+	public DomNavigator(String field, StringProcessor processor, String... navigation) {
 		super(field, processor, navigation);
 	}
 
