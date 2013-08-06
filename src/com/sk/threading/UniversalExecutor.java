@@ -10,4 +10,9 @@ public class UniversalExecutor {
 	public static ExecutorService search = Executors.newFixedThreadPool(SEARCH_THREAD_COUNT);
 	public static ExecutorService communicate = Executors.newFixedThreadPool(COMMUNICATION_THREAD_COUNT);
 
+	public static void shutdown() {
+		search.shutdown();
+		communicate.shutdown();
+	}
+
 }
