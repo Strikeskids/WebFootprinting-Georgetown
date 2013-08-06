@@ -22,37 +22,35 @@ public class PersonalDataStorage extends HashMap<String, Set<PersonalData>> {
 
 	private static final long serialVersionUID = 9177444068545121072L;
 
-	/**
-	 * Adds the {@link PersonalData} to this {@link PersonalDataStorage}
-	 * 
-	 * @param input
-	 *            The {@link PersonalData} to add
-	 */
-	public void add(PersonalData... input) {
-		main: for (PersonalData data : input) {
-			for (String attr : data.keySet()) {
-				if (!attr.contains("name")) {
-					String site = data.getWebsiteId();
-					if (containsKey(site)) {
-						get(site).add(data);
-					} else {
-						Set<PersonalData> toAdd = new LinkedHashSet<>();
-						toAdd.add(data);
-						put(site, toAdd);
-					}
-					continue main;
+	public void addAll(PersonalData... input) {
+		for (PersonalData data : input) {
+			add(data);
+		}
+	}
+
+	public void add(PersonalData data) {
+		for (String attr : data.keySet()) {
+			if (!attr.contains("name")) {
+				String site = data.getWebsiteId();
+				if (containsKey(site)) {
+					get(site).add(data);
+				} else {
+					Set<PersonalData> toAdd = new LinkedHashSet<>();
+					toAdd.add(data);
+					put(site, toAdd);
 				}
+				return;
 			}
 		}
 	}
 
-	/**
-	 * Adds the contents of the {@link PersonalDataStorage} to this
-	 * 
-	 * @param pds
-	 *            The {@link PersonalDataStorage} to add
-	 */
-	public void addStorage(PersonalDataStorage pds) {
+	public void addAll(Collection<? extends PersonalData> values) {
+		for (PersonalData data : values) {
+			add(data);
+		}
+	}
+
+	public void addAll(PersonalDataStorage pds) {
 		for (Set<PersonalData> lds : pds.values()) {
 			for (PersonalData d : lds) {
 				add(d);
