@@ -25,7 +25,7 @@ public class DocNavigator {
 		this.selector = buildCssSelector();
 	}
 
-	public void navigate(JsonObject source, FieldBuilder destination) {
+	public void navigate(JsonElement source, FieldBuilder destination) {
 		navigate(source, destination, 0);
 	}
 
@@ -69,13 +69,18 @@ public class DocNavigator {
 
 	protected String buildCssSelector() {
 		StringBuilder ret = new StringBuilder(":root");
+		ret.append(" > ");
 		ret = appendNavigation(ret);
 		return ret.toString();
 	}
 
 	protected StringBuilder appendNavigation(StringBuilder ret) {
+		boolean started = false;
 		for (String navigate : navigation) {
-			ret.append(" > ");
+			if (started)
+				ret.append(" > ");
+			else
+				started = true;
 			ret.append(navigate);
 		}
 		return ret;

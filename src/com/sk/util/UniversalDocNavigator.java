@@ -1,6 +1,6 @@
 package com.sk.util;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 
 public class UniversalDocNavigator extends DocNavigator {
 
@@ -13,7 +13,7 @@ public class UniversalDocNavigator extends DocNavigator {
 	}
 
 	@Override
-	public void navigate(JsonObject source, FieldBuilder destination) {
+	public void navigate(JsonElement source, FieldBuilder destination) {
 		throw new UnsupportedOperationException();
 	}
 
