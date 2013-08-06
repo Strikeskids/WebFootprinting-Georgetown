@@ -38,7 +38,7 @@ public class WhitepagesLoader extends OuterLoader {
 		this.names = names;
 		this.page = page;
 		this.url = String.format(BASE_URL, formatNameForSearchString(names[0]),
-				formatNameForSearchString(names[1]));
+				formatNameForSearchString(names[1]), page);
 	}
 
 	private String formatNameForSearchString(String name) {
