@@ -7,17 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Stores personal data by site name. Used for json encoding <br/>
- * <br/>
- * <code>
- * Gson gson = new Gson();<br/>
- * String json = gson.toJson(PersonalData);
- * </code>
- * 
- * @author Strikeskids
- * 
- */
 public class PersonalDataStorage extends HashMap<String, Set<PersonalData>> {
 
 	private static final long serialVersionUID = 9177444068545121072L;
@@ -45,9 +34,10 @@ public class PersonalDataStorage extends HashMap<String, Set<PersonalData>> {
 	}
 
 	public void addAll(Collection<? extends PersonalData> values) {
-		for (PersonalData data : values) {
-			add(data);
-		}
+		if (values != null)
+			for (PersonalData data : values) {
+				add(data);
+			}
 	}
 
 	public void addAll(PersonalDataStorage pds) {
