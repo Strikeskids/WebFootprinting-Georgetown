@@ -132,12 +132,16 @@ public class NameComparison {
 	}
 
 	private Set<String> loadNamePossibilities(String name) {
-		Set<String> ret = new HashSet<>();
+		Set<String> foundNames = new HashSet<>();
 		JsonElement json = getAndParseJson(FIRST_NAME_BASE_URL, name);
 		for (DocNavigator navigator : firstNameNavigators) {
-			ret.addAll(navigator.navigate(json));
+			foundNames.addAll(navigator.navigate(json));
 		}
-		ret.add(name);
+		foundNames.add(name);
+		Set<String> ret = new HashSet<>();
+		for (String found : foundNames) {
+			ret.add(format(found));
+		}
 		return ret;
 	}
 
