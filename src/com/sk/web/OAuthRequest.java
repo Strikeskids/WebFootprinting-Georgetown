@@ -6,8 +6,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import javax.crypto.Mac;
@@ -21,6 +21,10 @@ public class OAuthRequest extends Request {
 
 	public OAuthRequest(String url, String method) throws MalformedURLException {
 		super(url, method);
+	}
+
+	public OAuthRequest(String url) throws MalformedURLException {
+		this(url, "GET");
 	}
 
 	public void addOAuthParam(String key, String value) {

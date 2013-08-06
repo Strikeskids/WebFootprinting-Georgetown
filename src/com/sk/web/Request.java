@@ -24,6 +24,10 @@ public class Request {
 		baseUrl = new URL(startUrl, startUrl.getPath());
 	}
 
+	public Request(String url) throws MalformedURLException {
+		this(url, "GET");
+	}
+
 	public void addHeader(String key, String value) {
 		headers.put(key, value);
 	}
