@@ -7,7 +7,7 @@ import java.util.Map;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import com.sk.Driver;
+import com.sk.util.data.DataGson;
 
 public class PersonStatistics extends LinkedHashMap<String, AttributeStatistics> {
 
@@ -53,7 +53,7 @@ public class PersonStatistics extends LinkedHashMap<String, AttributeStatistics>
 			in.beginObject();
 			while (in.hasNext()) {
 				ret.put(in.nextName(),
-						(AttributeStatistics) Driver.getGson().fromJson(in, AttributeStatistics.class));
+						(AttributeStatistics) DataGson.getGson().fromJson(in, AttributeStatistics.class));
 			}
 			in.endObject();
 			in.endObject();
@@ -67,7 +67,7 @@ public class PersonStatistics extends LinkedHashMap<String, AttributeStatistics>
 			out.name("attributes").beginObject();
 			for (Map.Entry<String, AttributeStatistics> entry : value.entrySet()) {
 				out.name(entry.getKey());
-				Driver.getGson().toJson(Driver.getGson().toJsonTree(entry.getValue(), AttributeStatistics.class),
+				DataGson.getGson().toJson(DataGson.getGson().toJsonTree(entry.getValue(), AttributeStatistics.class),
 						out);
 			}
 			out.endObject();

@@ -12,12 +12,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.sk.stat.PersonStatistics;
 import com.sk.threading.UniversalExecutor;
-import com.sk.util.data.PersonalData;
+import com.sk.util.data.DataGson;
 import com.sk.util.data.PersonalDataStorage;
 
 /**
@@ -46,7 +43,7 @@ public class Driver {
 				System.out.printf("Searching for %s %s...%n", first, last);
 				PersonalDataStorage pds = SearchController.lookForName(first, last);
 				if (pds.size() > 0) {
-					output.add(first + "|" + last, Driver.getGson().toJsonTree(pds));
+					output.add(first + "|" + last, DataGson.getGson().toJsonTree(pds));
 					System.out.printf("Found %d possible results%n", pds.size());
 				} else {
 					System.out.println("None found");
@@ -130,16 +127,4 @@ public class Driver {
 	// }
 	// }
 
-	private static Gson singleGson;
-	private static final Object gsonLock = new Object();
-
-	public static Gson getGson() {
-		if (singleGson == null) {
-			synchronized (gsonLock) {
-				singleGson = new GsonBuilder().registerTypeAdapter(PersonalData.class, PersonalData.getAdapter())
-						.registerTypeAdapter(PersonStatistics.class, PersonStatistics.getAdapter()).create();
-			}
-		}
-		return singleGson;
-	}
 }

@@ -17,6 +17,7 @@ import org.apache.commons.codec.binary.Base64;
 import com.google.gson.JsonObject;
 import com.sk.stat.PersonStatistics;
 import com.sk.stat.StatisticsController;
+import com.sk.util.data.DataGson;
 import com.sk.util.data.PersonalDataStorage;
 
 public class PhpCommunicator implements Runnable {
@@ -81,7 +82,7 @@ public class PhpCommunicator implements Runnable {
 				if (stat == null) {
 					result.addProperty("error", "Failed to generate statistics");
 				} else {
-					result.add("stat", Driver.getGson().toJsonTree(stat, PersonStatistics.class));
+					result.add("stat", DataGson.getGson().toJsonTree(stat, PersonStatistics.class));
 				}
 			}
 			out.println(result);
