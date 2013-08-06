@@ -4,15 +4,15 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.codec.binary.Base64;
-
+import com.sk.image.DCTHash;
 import com.sk.util.PersonalData;
 
 public class DataGroup extends HashSet<PersonalData> {
 
 	private static final long serialVersionUID = 1L;
-	private final Set<String> emails = new HashSet<>(), twitters = new HashSet<>(), phones = new HashSet<>(),
-			images = new HashSet<>();
+	private static final int IMAGE_THRESHOLD = 16;
+	private final Set<String> emails = new HashSet<>(), twitters = new HashSet<>(), phones = new HashSet<>();
+	private final Set<Long> images = new HashSet<>();
 
 	public DataGroup(PersonalData... initializer) {
 		Collections.addAll(this, initializer);
@@ -32,21 +32,19 @@ public class DataGroup extends HashSet<PersonalData> {
 				return true;
 		}
 		if (data.containsKey("profilePicturePrint")) {
-			final String print = data.get("profilePicturePrint").get();
-			byte[] decodedPrint = Base64.decodeBase64(print);
-			for (String image : images) {
-				byte[] decodedImage = Base64.decodeBase64(image);
-				int mistakeLevel = 0;
-				if (decodedPrint.length != decodedImage.length)
-					break;
-				for (int i = 0; i < decodedPrint.length; ++i) {
-					mistakeLevel += Math.abs(decodedPrint[i] & 0xff - decodedImage[i] & 0xff);
-					if (mistakeLevel > 50)
-						break;
-				}
-				if (mistakeLevel <= 50)
+			for (final String print : data.getAllValues("profilePicturePrint")) {
+				if (matchPrint(print))
 					return true;
 			}
+		}
+		return false;
+	}
+
+	private boolean matchPrint(String print) {
+		long printHash = DCTHash.convertHash(print);
+		for (long image : images) {
+			if (DCTHash.compare(image, printHash, IMAGE_THRESHOLD))
+				return true;
 		}
 		return false;
 	}
@@ -57,6 +55,9 @@ public class DataGroup extends HashSet<PersonalData> {
 			Collections.addAll(emails, data.getAllValues("email"));
 			Collections.addAll(twitters, data.getAllValues("twitter"));
 			Collections.addAll(phones, data.getAllValues("phone"));
+			for (String imageHash : data.getAllValues("profilePicturePrint")) {
+				images.add(DCTHash.convertHash(imageHash));
+			}
 			emails.remove("");
 			twitters.remove("");
 			phones.remove("");

@@ -3,7 +3,7 @@ package com.sk.group;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sk.image.ImageHasher;
+import com.sk.image.DCTHash;
 import com.sk.util.PersonalData;
 
 public class GroupController {
@@ -11,7 +11,7 @@ public class GroupController {
 	public List<DataGroup> group(boolean grabImages, PersonalData... input) {
 		List<DataGroup> ret = new ArrayList<>();
 		if (grabImages)
-			ImageHasher.getDefault().fingerprint(input);
+			DCTHash.fingerprint(input);
 		outer: for (PersonalData data : input) {
 			for (DataGroup group : ret) {
 				if (group.matches(data)) {

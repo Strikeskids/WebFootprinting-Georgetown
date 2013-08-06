@@ -3,77 +3,21 @@ package com.sk.image;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
+import java.net.URL;
+import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
+
+import com.sk.threading.TaskGroup;
+import com.sk.threading.UniversalExecutor;
+import com.sk.util.PersonalData;
+import com.sk.web.Base64Util;
 
 public class DCTHash {
 
 	private static final int size = 32, lowSize = 8;
 	private static final double[][] dctt2;
-
-	public static void main(String[] args) throws IOException {
-		Map<String, Long> hashes = new HashMap<>();
-		File BASE = new File("images");
-		DCTHash hasher = new DCTHash();
-		List<String> bases = new ArrayList<>();
-		Set<String> names = new HashSet<>();
-		for (File source : BASE.listFiles(new FileFilter() {
-			@Override
-			public boolean accept(File pathname) {
-				return pathname.isDirectory();
-			}
-		})) {
-			String base = source.getAbsolutePath();
-			bases.add(base);
-			for (File image : source.listFiles()) {
-				String name = image.getName();
-				name = name.substring(0, name.lastIndexOf('.'));
-				names.add(name);
-				hashes.put(base + File.separator + name, hasher.hash(ImageIO.read(image)));
-			}
-		}
-		List<Entry<String, Long>> allHashes = new ArrayList<>(hashes.entrySet());
-		for (String name : names) {
-			List<Long> current = new ArrayList<>();
-			for (String base : bases) {
-				String abs = base + File.separator + name;
-				if (hashes.containsKey(abs))
-					current.add(hashes.get(abs));
-			}
-			List<Integer> fails = new ArrayList<>();
-			for (long a : current) {
-				for (long b : current) {
-					int dist = getDist(a, b);
-					if (dist > 16)
-						fails.add(dist);
-				}
-			}
-			if (!fails.isEmpty())
-				System.out.printf("Failed %s %s%n", name, fails);
-		}
-		Random rand = new Random();
-		for (int i = 0; i < 50; ++i) {
-			Entry<String, Long> ae = allHashes.get(rand.nextInt(allHashes.size())), be = allHashes.get(rand
-					.nextInt(allHashes.size()));
-			if (new File(ae.getKey()).getName().equals(new File(be.getKey()).getName()))
-				continue;
-			if (compare(ae.getValue(), be.getValue(), 16)) {
-				System.out.printf("Failed %s %s %d%n", ae.getKey(), be.getKey(),
-						getDist(ae.getValue(), be.getValue()));
-			}
-		}
-	}
 
 	public static boolean compare(long h1, long h2, int threshold) {
 		return getDist(h1, h2) <= threshold;
@@ -86,7 +30,60 @@ public class DCTHash {
 		return count;
 	}
 
-	public long hash(BufferedImage image) {
+	public static String convertHash(long hash) {
+		ByteBuffer bytes = ByteBuffer.allocate(8);
+		bytes.putLong(hash);
+		return Base64Util.encode(bytes.array());
+	}
+
+	public static long convertHash(String hash) {
+		ByteBuffer bytes = ByteBuffer.wrap(Base64Util.decode(hash));
+		return bytes.getLong();
+	}
+
+	public static boolean fingerprint(PersonalData... in) {
+		TaskGroup tasks = new TaskGroup();
+		for (final PersonalData data : in) {
+			if (shouldCreateTask(data)) {
+				for (final String url : data.getAllValues("profilePictureUrl")) {
+					tasks = addTask(tasks, data, url);
+				}
+			}
+		}
+		tasks.submit(UniversalExecutor.search);
+		return tasks.waitFor();
+	}
+
+	private static boolean shouldCreateTask(PersonalData data) {
+		return data.containsKey("profilePictureUrl") && !data.containsKey("profilePicturePrint");
+	}
+
+	private static TaskGroup addTask(TaskGroup tasks, final PersonalData data, final String url) {
+		tasks.add(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					BufferedImage image = getImage();
+					String hash = stringHash(image);
+					data.put("profilePicturePrint", hash);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			private BufferedImage getImage() throws IOException {
+				return ImageIO.read(new URL(url));
+			}
+		});
+		return tasks;
+	}
+
+	public static String stringHash(BufferedImage image) {
+		long hash = hash(image);
+		return convertHash(hash);
+	}
+
+	public static long hash(BufferedImage image) {
 		BufferedImage scaled = new BufferedImage(size, size, BufferedImage.TYPE_BYTE_GRAY);
 		Graphics g = scaled.getGraphics();
 		g.drawImage(image, 0, 0, size, size, null);
