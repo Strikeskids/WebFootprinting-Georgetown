@@ -28,6 +28,11 @@ public class NameComparison {
 	private static final String FIRST_NAME_BASE_URL = "http://api.pipl.com/name/v2/json/?first_name=%s";
 	private static final String RAW_NAME_BASE_URL = "http://api.pipl.com/name/v2/json/?raw_name=%s";
 
+	private static final long MINIMUM_SEPARATION_TIME = 5;
+
+	private long lastReadTime = 0;
+	private final Object readLock = new Object();
+
 	private final String key;
 
 	private final Map<String, Set<String>> firstNames = new HashMap<>();
@@ -101,7 +106,21 @@ public class NameComparison {
 		String encodedQuery = IOUtil.urlEncode(query);
 		Request request = new Request(String.format(base, encodedQuery));
 		request.addQuery("key", key);
-		return IOUtil.read(request);
+		synchronized (readLock) {
+			waitForRead();
+			return IOUtil.read(request);
+		}
+	}
+
+	private void waitForRead() {
+		long wait = MINIMUM_SEPARATION_TIME - (System.currentTimeMillis() - lastReadTime);
+		if (wait > 0)
+			try {
+				Thread.sleep(wait);
+			} catch (InterruptedException ignored) {
+				Thread.currentThread().interrupt();
+			}
+		lastReadTime = System.currentTimeMillis();
 	}
 
 	private boolean isSame(String lastName1, String lastName2) {
