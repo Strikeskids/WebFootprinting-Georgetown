@@ -17,7 +17,7 @@ public abstract class AbstractLoader {
 			return loadAndParse();
 		}
 	});
-	
+
 	protected void init() {
 		rawData.get();
 	}
@@ -36,6 +36,7 @@ public abstract class AbstractLoader {
 			conn.connect();
 			return IOUtil.readFrom(conn.getInputStream());
 		} catch (IOException ex) {
+			ex.printStackTrace();
 			return "";
 		}
 	}
