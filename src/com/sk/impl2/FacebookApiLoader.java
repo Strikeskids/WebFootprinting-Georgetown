@@ -1,5 +1,6 @@
 package com.sk.impl2;
 
+import java.net.MalformedURLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,7 +26,11 @@ public class FacebookApiLoader extends GoogleSearchLoader {
 				String[] currentNames = getNames(result);
 				if (currentNames == null || !NameComparison.get().isSameName(names, currentNames))
 					return null;
-				return new FacebookPersonLoader(id);
+				try {
+					return new FacebookPersonLoader(id);
+				} catch (MalformedURLException e) {
+					return null;
+				}
 			}
 		});
 	}

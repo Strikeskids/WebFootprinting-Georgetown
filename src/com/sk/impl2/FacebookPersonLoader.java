@@ -12,30 +12,25 @@ import com.sk.util.DocNavigator;
 import com.sk.util.FieldBuilder;
 import com.sk.util.PersonalData;
 import com.sk.web.IOUtil;
-import com.sk.web.OAuthRequest;
 import com.sk.web.Request;
 
 public class FacebookPersonLoader extends IndividualExtractor {
 
 	private static final String BASE_URL = "https://graph.facebook.com/%s";
 
-	private final String url;
+	private final Request request;
 
 	private JsonObject json;
 
-	public FacebookPersonLoader(String id) {
-		this.url = String.format(BASE_URL, IOUtil.urlEncode(id));
+	FacebookPersonLoader(String id) throws MalformedURLException {
+		String url = String.format(BASE_URL, IOUtil.urlEncode(id));
+		request = new Request(url, "GET");
+		request.addHeader("access_token", ApiUtility.getAccessToken(SITE_KEY).getKey());
 	}
 
 	@Override
 	protected Request getRequest() {
-		try {
-			OAuthRequest request = new OAuthRequest(url, "GET");
-			request.signOAuth(ApiUtility.getConsumerToken(SITE_KEY), ApiUtility.getOAuthToken(SITE_KEY));
-			return request;
-		} catch (MalformedURLException ignored) {
-			return null;
-		}
+		return request;
 	}
 
 	@Override
