@@ -1,4 +1,4 @@
-package com.sk.api;
+package com.sk.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +13,7 @@ import java.util.Set;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.sk.api.ApiUtility;
 
 public class NameComparison {
 

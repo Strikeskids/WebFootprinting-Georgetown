@@ -9,11 +9,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.sk.api.NameComparison;
 import com.sk.parse.Extractor;
 import com.sk.parse.OuterLoader;
 import com.sk.parse.PagingLoader;
 import com.sk.parse.Parsers;
+import com.sk.util.NameComparison;
 import com.sk.web.IOUtil;
 import com.sk.web.OAuthRequest;
 import com.sk.web.Request;

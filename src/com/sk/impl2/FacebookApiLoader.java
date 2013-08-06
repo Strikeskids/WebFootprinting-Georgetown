@@ -4,8 +4,8 @@ import java.net.MalformedURLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sk.api.NameComparison;
 import com.sk.parse.Extractor;
+import com.sk.util.NameComparison;
 
 public class FacebookApiLoader extends GoogleSearchLoader {
 

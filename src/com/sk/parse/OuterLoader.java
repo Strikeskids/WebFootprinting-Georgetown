@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import com.sk.Driver;
+import com.sk.threading.UniversalExecutor;
 import com.sk.util.PersonalData;
 
 public abstract class OuterLoader extends PagingLoader {
@@ -14,7 +14,7 @@ public abstract class OuterLoader extends PagingLoader {
 	protected List<PersonalData> loadOwnResults() {
 		List<PersonalData> ret = new ArrayList<>();
 		try {
-			List<Future<List<PersonalData>>> futures = Driver.EXECUTOR.invokeAll(getExtractors());
+			List<Future<List<PersonalData>>> futures = UniversalExecutor.search.invokeAll(getExtractors());
 			for (Future<List<PersonalData>> taskResult : futures) {
 				ret.addAll(taskResult.get());
 			}
