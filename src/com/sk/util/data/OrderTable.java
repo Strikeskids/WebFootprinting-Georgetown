@@ -1,4 +1,4 @@
-package com.sk.util;
+package com.sk.util.data;
 
 import java.util.Comparator;
 import java.util.HashMap;

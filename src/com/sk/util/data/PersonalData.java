@@ -1,4 +1,4 @@
-package com.sk.util;
+package com.sk.util.data;
 
 import java.io.IOException;
 import java.net.URL;
