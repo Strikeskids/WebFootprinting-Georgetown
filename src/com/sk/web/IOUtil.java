@@ -1,4 +1,5 @@
 package com.sk.web;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,13 +10,15 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import java.util.Random;
 
 public class IOUtil {
 
 	public static String urlEncode(String s) {
 		try {
-			return URLEncoder.encode(s, "UTF-8").replaceAll("\\+", "%20");
+			return URLEncoder.encode(s, "UTF-8").replaceAll(Pattern.quote("+"), "%20")
+					.replaceAll(Pattern.quote("*"), "%2A");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return null;

@@ -54,7 +54,7 @@ public class OAuthRequest extends Request {
 		String signature = getSignatureString();
 		String secret = getEncodedSecret(consumer, token);
 		byte[] digest = getDigest(signature.getBytes(), secret.getBytes());
-		return IOUtil.urlEncode(Base64Util.encode(digest));
+		return Base64Util.encode(digest);
 	}
 
 	private String getEncodedSecret(OAuthToken consumer, OAuthToken token) {
@@ -108,6 +108,7 @@ public class OAuthRequest extends Request {
 
 	@Override
 	public void addRequestHeaders(URLConnection conn) {
+		super.addRequestHeaders(conn);
 		conn.addRequestProperty("Authorization", joinOAuthProperties());
 	}
 
@@ -119,9 +120,9 @@ public class OAuthRequest extends Request {
 				oauthProp.append(",");
 			else
 				firstIteration = false;
-			oauthProp.append(prop.getKey());
+			oauthProp.append(IOUtil.urlEncode(prop.getKey()));
 			oauthProp.append("=\"");
-			oauthProp.append(prop.getValue());
+			oauthProp.append(IOUtil.urlEncode(prop.getValue()));
 			oauthProp.append("\"");
 		}
 		return oauthProp.toString();
