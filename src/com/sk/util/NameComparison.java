@@ -9,34 +9,31 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sk.api.ApiUtility;
+import com.sk.web.Token;
 
 public class NameComparison {
 
-	private static NameComparison singleton;
+	private static LazyField<NameComparison> singleton = new LazyField<>(new Callable<NameComparison>() {
+		@Override
+		public NameComparison call() throws Exception {
+			Token token = ApiUtility.getNamedToken("pipl", "name_key");
+			return new NameComparison(token.getKey());
+		}
+	});
 
 	public static NameComparison get() {
-		if (singleton == null) {
-			synchronized (NameComparison.class) {
-				if (singleton == null) {
-					singleton = new NameComparison();
-				}
-			}
-		}
-		return singleton;
+		return singleton.get();
 	}
 
 	private final String key;
 
-	private NameComparison() {
-		JsonObject tokens = ApiUtility.getTokensFor("PiplApi");
-		if (tokens == null || !tokens.has("name_key"))
-			throw new IllegalArgumentException();
-		key = tokens.get("name_key").getAsString();
+	private NameComparison(String key) {
+		this.key = key;
 	}
 
 	private final Map<String, Set<String>> gathered = new HashMap<>();
