@@ -1,8 +1,10 @@
-package com.sk.util;
+package com.sk.util.navigate;
 
 import com.google.gson.JsonElement;
+import com.sk.util.StringProcessor;
+import com.sk.util.data.FieldBuilder;
 
-public class DomNavigator extends DocNavigator {
+public class DomNavigator extends FieldNavigator {
 
 	public DomNavigator(String field, String... navigation) {
 		super(field, navigation);
