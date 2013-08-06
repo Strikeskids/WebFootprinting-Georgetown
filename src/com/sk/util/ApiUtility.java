@@ -1,4 +1,4 @@
-package com.sk.impl2;
+package com.sk.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,20 +11,25 @@ import java.util.concurrent.Callable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.sk.parse.Parsers;
-import com.sk.util.LazyField;
 import com.sk.web.IOUtil;
 import com.sk.web.OAuthToken;
 import com.sk.web.Token;
 
 public class ApiUtility {
 
+	private static final String ACCESS_SECRET_KEY = "secret";
+	private static final String ACCESS_TOKEN_KEY = "token";
+	private static final String USER_KEY = "users";
+	private static final String CLIENT_SECRET_KEY = "client_secret";
+	private static final String CLIENT_TOKEN_KEY = "client_key";
+
 	private static final File TOKEN_STORE = new File("tokensNew.json");
 
 	public static OAuthToken getConsumerToken(String site) {
 		JsonObject siteObject = getSiteObject(site);
-		if (siteObject.has("client_key") && siteObject.has("client_secret")) {
-			return new OAuthToken(siteObject.get("client_key").getAsString(), siteObject.get("client_secret")
-					.getAsString());
+		if (siteObject.has(CLIENT_TOKEN_KEY) && siteObject.has(CLIENT_SECRET_KEY)) {
+			return new OAuthToken(siteObject.get(CLIENT_TOKEN_KEY).getAsString(), siteObject
+					.get(CLIENT_SECRET_KEY).getAsString());
 		} else {
 			return null;
 		}
@@ -41,18 +46,18 @@ public class ApiUtility {
 	}
 
 	private static Set<Entry<String, JsonElement>> getUsers(JsonObject siteObject) {
-		if (siteObject.has("users"))
-			return siteObject.get("users").getAsJsonObject().entrySet();
+		if (siteObject.has(USER_KEY))
+			return siteObject.get(USER_KEY).getAsJsonObject().entrySet();
 		else
 			return new HashSet<>(0, 1f);
 	}
 
 	private static Token extractToken(JsonElement userElement) {
 		JsonObject user = userElement.getAsJsonObject();
-		if (user.has("token")) {
-			String token = user.get("token").getAsString();
-			if (user.has("secret")) {
-				String secret = user.get("secret").getAsString();
+		if (user.has(ACCESS_TOKEN_KEY)) {
+			String token = user.get(ACCESS_TOKEN_KEY).getAsString();
+			if (user.has(ACCESS_SECRET_KEY)) {
+				String secret = user.get(ACCESS_SECRET_KEY).getAsString();
 				return new OAuthToken(token, secret);
 			} else {
 				return new Token(token);
@@ -68,9 +73,15 @@ public class ApiUtility {
 			if (token != null)
 				return token;
 		}
-		if (siteObject.has("client_key"))
-			return new Token(siteObject.get("client_key").getAsString());
-		return null;
+		return getNamedToken(site, CLIENT_TOKEN_KEY);
+	}
+
+	public static Token getNamedToken(String site, String name) {
+		JsonObject siteObject = getSiteObject(site);
+		if (siteObject.has(name))
+			return new Token(siteObject.get(name).getAsString());
+		else
+			return null;
 	}
 
 	private static JsonObject getSiteObject(String site) {
