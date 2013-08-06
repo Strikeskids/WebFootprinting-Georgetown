@@ -9,10 +9,11 @@ import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.codec.binary.Base64;
+
+import com.sk.Driver;
 import com.sk.threading.TaskGroup;
-import com.sk.threading.UniversalExecutor;
 import com.sk.util.PersonalData;
-import com.sk.web.Base64Util;
 
 public class DCTHash {
 
@@ -33,11 +34,11 @@ public class DCTHash {
 	public static String convertHash(long hash) {
 		ByteBuffer bytes = ByteBuffer.allocate(8);
 		bytes.putLong(hash);
-		return Base64Util.encode(bytes.array());
+		return Base64.encodeBase64String(bytes.array());
 	}
 
 	public static long convertHash(String hash) {
-		ByteBuffer bytes = ByteBuffer.wrap(Base64Util.decode(hash));
+		ByteBuffer bytes = ByteBuffer.wrap(Base64.decodeBase64(hash));
 		return bytes.getLong();
 	}
 
@@ -50,7 +51,7 @@ public class DCTHash {
 				}
 			}
 		}
-		tasks.submit(UniversalExecutor.search);
+		tasks.submit(Driver.EXECUTOR);
 		return tasks.waitFor();
 	}
 
