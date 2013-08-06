@@ -3,7 +3,7 @@ package com.sk.group;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sk.image.DCTHash;
+import com.sk.group.image.DCTHash;
 import com.sk.util.PersonalData;
 
 public class GroupController {

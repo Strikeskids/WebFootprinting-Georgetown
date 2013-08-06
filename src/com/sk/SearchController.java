@@ -4,16 +4,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sk.impl2.FacebookApiLoader;
-import com.sk.impl2.FourSquareApiLoader;
-import com.sk.impl2.GooglePlusApiLoader;
-import com.sk.impl2.LinkedinApiLoader;
-import com.sk.impl2.PiplApiLoader;
-import com.sk.impl2.TwitterApiLoader;
-import com.sk.impl2.WhitepagesLoader;
-import com.sk.parse.Extractor;
-import com.sk.parse.OuterLoader;
-import com.sk.parse.PagingLoader;
+import com.sk.parse.impl.FacebookApiLoader;
+import com.sk.parse.impl.FourSquareApiLoader;
+import com.sk.parse.impl.GooglePlusApiLoader;
+import com.sk.parse.impl.LinkedinApiLoader;
+import com.sk.parse.impl.PiplApiLoader;
+import com.sk.parse.impl.TwitterApiLoader;
+import com.sk.parse.impl.WhitepagesLoader;
+import com.sk.parse.util.Extractor;
+import com.sk.parse.util.OuterLoader;
+import com.sk.parse.util.PagingLoader;
 import com.sk.util.PersonalDataStorage;
 import com.sk.web.Request;
 

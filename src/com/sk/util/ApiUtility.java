@@ -10,7 +10,7 @@ import java.util.concurrent.Callable;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.sk.parse.Parsers;
+import com.sk.parse.util.Parsers;
 import com.sk.web.IOUtil;
 import com.sk.web.OAuthToken;
 import com.sk.web.Token;
