@@ -72,11 +72,13 @@ public class TwitterApiLoader extends PagingLoader {
 	@Override
 	protected boolean loadStopPaging() {
 		init();
+		boolean stop = true;
 		for (JsonElement userElement : users) {
 			if (!checkName(userElement))
 				return true;
+			stop = false;
 		}
-		return false;
+		return stop;
 	}
 
 	private boolean checkName(JsonElement userElement) {
@@ -107,7 +109,7 @@ public class TwitterApiLoader extends PagingLoader {
 			}
 			ret.add(data);
 		}
-		stopPaging.set(stop);
+		stopPaging.set(stop || ret.isEmpty());
 		return ret;
 	}
 
