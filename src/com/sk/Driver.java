@@ -30,16 +30,9 @@ import com.sk.util.PersonalDataStorage;
 public class Driver {
 
 	private static int total = 25;
+	private static final int NUM_THREADS = 10;
 
-	public static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
-	static {
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-			@Override
-			public void run() {
-				EXECUTOR.shutdown();
-			}
-		}));
-	}
+	public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(NUM_THREADS);
 
 	public static void main(String[] args) throws IllegalStateException, IOException {
 		SearchController searcher = new SearchController();
