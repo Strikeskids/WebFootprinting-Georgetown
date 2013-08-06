@@ -46,6 +46,7 @@ public class Request {
 
 	public URLConnection openConnection() throws IOException {
 		finalizeUrl();
+		ConnectionStatistics.connecting(url);
 		URLConnection conn = url.openConnection();
 		setRequestMethod(conn);
 		addRequestHeaders(conn);
