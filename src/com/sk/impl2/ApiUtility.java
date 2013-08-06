@@ -18,7 +18,7 @@ import com.sk.web.Token;
 
 public class ApiUtility {
 
-	private static final File TOKEN_STORE = new File("tokens2.json");
+	private static final File TOKEN_STORE = new File("tokensNew.json");
 
 	public static OAuthToken getConsumerToken(String site) {
 		JsonObject siteObject = getSiteObject(site);
@@ -68,6 +68,8 @@ public class ApiUtility {
 			if (token != null)
 				return token;
 		}
+		if (siteObject.has("client_key"))
+			return new Token(siteObject.get("client_key").getAsString());
 		return null;
 	}
 
