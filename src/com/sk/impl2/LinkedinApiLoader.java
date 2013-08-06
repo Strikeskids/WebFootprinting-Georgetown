@@ -77,7 +77,7 @@ public class LinkedinApiLoader extends OuterLoader {
 	}
 
 	@Override
-	protected boolean loadStopSearching() {
+	protected boolean loadStopPaging() {
 		for (Element person : getPeople()) {
 			if (!checkNames(person))
 				return true;

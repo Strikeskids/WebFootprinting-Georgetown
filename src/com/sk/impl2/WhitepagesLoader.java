@@ -46,7 +46,7 @@ public class WhitepagesLoader extends OuterLoader {
 	}
 
 	@Override
-	protected boolean loadStopSearching() {
+	protected boolean loadStopPaging() {
 		init();
 		for (Element result : getResultContainers()) {
 			if (!checkName(result))

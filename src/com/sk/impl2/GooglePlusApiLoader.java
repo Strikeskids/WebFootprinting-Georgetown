@@ -85,7 +85,7 @@ public class GooglePlusApiLoader extends OuterLoader {
 	}
 
 	@Override
-	protected boolean loadStopSearching() {
+	protected boolean loadStopPaging() {
 		return getExtractors().size() < NUM_RESULTS;
 	}
 

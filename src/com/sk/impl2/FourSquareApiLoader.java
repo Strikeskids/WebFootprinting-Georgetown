@@ -96,4 +96,9 @@ public class FourSquareApiLoader extends PagingLoader {
 			new DocNavigator("email", "contact", "email"), new DocNavigator("twitter", "contact", "twitter"),
 			new DocNavigator("phone", "contact", "phone"), };
 
+	@Override
+	protected boolean loadStopPaging() {
+		return false;
+	}
+
 }

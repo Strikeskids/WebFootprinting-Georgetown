@@ -21,6 +21,14 @@ public abstract class PagingLoader extends AbstractLoader implements ChainingExt
 			return createNextPage();
 		}
 	});
+	protected LazyField<Boolean> stopPaging = new LazyField<>(new Callable<Boolean>() {
+		@Override
+		public Boolean call() throws Exception {
+			return loadStopPaging();
+		}
+	});
+
+	protected abstract boolean loadStopPaging();
 
 	@Override
 	public List<PersonalData> getResults() {

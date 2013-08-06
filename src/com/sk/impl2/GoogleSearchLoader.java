@@ -43,7 +43,7 @@ public class GoogleSearchLoader extends OuterLoader {
 	}
 
 	@Override
-	protected boolean loadStopSearching() {
+	protected boolean loadStopPaging() {
 		return searchResults.get().size() - getExtractors().size() > 3;
 	}
 

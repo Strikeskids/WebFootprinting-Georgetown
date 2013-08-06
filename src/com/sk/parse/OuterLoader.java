@@ -36,15 +36,6 @@ public abstract class OuterLoader extends PagingLoader {
 		return ret;
 	}
 
-	protected LazyField<Boolean> stopPaging = new LazyField<>(new Callable<Boolean>() {
-		@Override
-		public Boolean call() throws Exception {
-			return loadStopSearching();
-		}
-	});
-
-	protected abstract boolean loadStopSearching();
-
 	protected abstract List<Extractor> getExtractors();
 
 }
