@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.sk.stat.PersonStatistics;
+import com.sk.threading.UniversalExecutor;
 import com.sk.util.PersonalData;
 import com.sk.util.PersonalDataStorage;
 
@@ -30,9 +31,6 @@ import com.sk.util.PersonalDataStorage;
 public class Driver {
 
 	private static int total = 25;
-	private static final int NUM_THREADS = 10;
-
-	public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(NUM_THREADS);
 
 	public static void main(String[] args) throws IllegalStateException, IOException {
 		SearchController searcher = new SearchController();
@@ -68,7 +66,7 @@ public class Driver {
 				try {
 					final Socket nextSock = server.accept();
 					System.out.println("Received socket");
-					Driver.EXECUTOR.submit(new PhpCommunicator(nextSock, searcher));
+					UniversalExecutor.communicate.submit(new PhpCommunicator(nextSock, searcher));
 				} catch (SocketTimeoutException ex) {
 					break;
 				} catch (IOException ex) {
