@@ -5,13 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 public class IOUtil {
 
@@ -76,7 +77,7 @@ public class IOUtil {
 		return ret.toString();
 	}
 
-	public static String readFrom(InputStream stream) throws IOException {
+	public static String read(InputStream stream) throws IOException {
 		StringBuilder ret = new StringBuilder();
 		String line;
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
@@ -86,6 +87,13 @@ public class IOUtil {
 		}
 		reader.close();
 		return ret.toString();
+	}
+
+	public static String read(Request request) throws IOException {
+		URLConnection conn = request.openConnection();
+		conn.setDoInput(true);
+		conn.connect();
+		return read(conn.getInputStream());
 	}
 
 	public static final Random random = new Random();
