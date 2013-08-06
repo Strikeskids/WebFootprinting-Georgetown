@@ -45,6 +45,7 @@ public class FacebookPersonLoader extends IndividualExtractor {
 
 	@Override
 	protected PersonalData getResult() {
+		init();
 		FieldBuilder builder = new FieldBuilder();
 		PersonalData ret = new PersonalData(SITE_KEY);
 		for (DocNavigator navigator : navigators) {

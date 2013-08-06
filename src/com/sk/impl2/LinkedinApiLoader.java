@@ -86,6 +86,7 @@ public class LinkedinApiLoader extends OuterLoader {
 	}
 
 	private Elements getPeople() {
+		init();
 		return document.select("person");
 	}
 

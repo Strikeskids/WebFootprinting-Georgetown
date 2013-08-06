@@ -61,6 +61,7 @@ public class GooglePlusApiLoader extends OuterLoader {
 
 	@Override
 	protected PagingLoader createNextPage() {
+		init();
 		if (!json.has(NEXT_PAGE_KEY))
 			return null;
 		String nextToken = json.get(NEXT_PAGE_KEY).getAsString();
@@ -102,6 +103,7 @@ public class GooglePlusApiLoader extends OuterLoader {
 	}
 
 	private JsonArray getPeople() {
+		init();
 		if (json.has("items"))
 			return json.get("items").getAsJsonArray();
 		else

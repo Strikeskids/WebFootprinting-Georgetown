@@ -47,6 +47,7 @@ public class WhitepagesLoader extends OuterLoader {
 
 	@Override
 	protected boolean loadStopSearching() {
+		init();
 		for (Element result : getResultContainers()) {
 			if (!checkName(result))
 				return true;
@@ -89,11 +90,13 @@ public class WhitepagesLoader extends OuterLoader {
 	}
 
 	private Elements getResultContainers() {
+		init();
 		return document.select(RESULT_SELECTOR);
 	}
 
 	@Override
 	protected PagingLoader createNextPage() {
+		init();
 		if (page >= NUM_PAGES)
 			return null;
 		if (stopPaging.get())

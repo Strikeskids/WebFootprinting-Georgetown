@@ -48,6 +48,7 @@ public class FourSquareApiLoader extends PagingLoader {
 	}
 
 	private JsonArray getPeople() {
+		init();
 		JsonObject response = json.get("response").getAsJsonObject();
 		return response.get("results").getAsJsonArray();
 	}

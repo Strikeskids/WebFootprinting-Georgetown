@@ -30,6 +30,7 @@ public class WhitepagesPersonLoader extends IndividualExtractor {
 
 	@Override
 	protected PersonalData getResult() {
+		init();
 		PersonalData ret = new PersonalData(SITE_KEY);
 		FieldBuilder builder = new FieldBuilder();
 		for (DocNavigator navigator : navigators) {

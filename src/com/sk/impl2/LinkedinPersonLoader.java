@@ -28,8 +28,8 @@ public class LinkedinPersonLoader extends IndividualExtractor {
 
 	LinkedinPersonLoader(Element apiProfileRequest) throws MalformedURLException {
 		this.request = new OAuthRequest(getUrl(apiProfileRequest), "GET");
-		this.request.signOAuth(ApiUtility.getConsumerToken(SITE_KEY), ApiUtility.getOAuthToken(SITE_KEY));
 		addHeaders(apiProfileRequest);
+		this.request.signOAuth(ApiUtility.getConsumerToken(SITE_KEY), ApiUtility.getOAuthToken(SITE_KEY));
 	}
 
 	private void addHeaders(Element apiProfileRequest) {
@@ -51,6 +51,7 @@ public class LinkedinPersonLoader extends IndividualExtractor {
 
 	@Override
 	protected PersonalData getResult() {
+		init();
 		FieldBuilder builder = new FieldBuilder();
 		for (DocNavigator grabber : navigators) {
 			grabber.navigate(document, builder);

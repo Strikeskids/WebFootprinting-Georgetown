@@ -59,6 +59,7 @@ public class GoogleSearchLoader extends OuterLoader {
 	}
 
 	private List<SearchResult> loadSearchResults() {
+		init();
 		List<SearchResult> results = new ArrayList<>();
 		for (Element link : document.select("div.rc h3.r a")) {
 			SearchResult result = getResult(link);
@@ -74,6 +75,7 @@ public class GoogleSearchLoader extends OuterLoader {
 
 	@Override
 	protected PagingLoader createNextPage() {
+		init();
 		if (stopPaging.get())
 			return null;
 		for (Element nextButton : document.select("#pnnext")) {

@@ -38,6 +38,7 @@ public class GooglePlusPersonLoader extends IndividualExtractor {
 	}
 
 	private void addDataTo(FieldBuilder builder) {
+		init();
 		for (DocNavigator navigator : navigators) {
 			navigator.navigate(json, builder);
 		}
@@ -45,6 +46,7 @@ public class GooglePlusPersonLoader extends IndividualExtractor {
 	}
 
 	private void addOrganizationsTo(FieldBuilder builder) {
+		init();
 		if (json.has("organizations")) {
 			for (JsonElement organizationElement : json.get("organizations").getAsJsonArray()) {
 				JsonObject organization = organizationElement.getAsJsonObject();
