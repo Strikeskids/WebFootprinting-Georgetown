@@ -1,10 +1,6 @@
 package com.sk.util;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,115 +9,139 @@ import java.util.concurrent.Callable;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.sk.parse.util.Parsers;
+import com.sk.util.navigate.DocNavigator;
+import com.sk.web.IOUtil;
+import com.sk.web.Request;
 import com.sk.web.Token;
 
 public class NameComparison {
 
-	private static LazyField<NameComparison> singleton = new LazyField<>(new Callable<NameComparison>() {
+	private static final String TOKEN_NAME = "name_key";
+	private static final String API_NAME = "pipl";
+
+	private static final String LAST_NAME_KEY = "last";
+	private static final String FIRST_NAME_KEY = "first";
+
+	private static final String SEARCH_FORMAT_EXCLUDE_PATTERN = "[^A-Za-z]";
+
+	private static final String FIRST_NAME_BASE_URL = "http://api.pipl.com/name/v2/json/?first_name=%s";
+	private static final String RAW_NAME_BASE_URL = "http://api.pipl.com/name/v2/json/?raw_name=%s";
+
+	private final String key;
+
+	private final Map<String, Set<String>> firstNames = new HashMap<>();
+	private final Map<String, String[]> parsedNames = new HashMap<>();
+
+	private NameComparison(String key) {
+		this.key = key;
+	}
+
+	public Set<String> getRelatedFirstNames(String firstName) {
+		if (firstName == null)
+			return new HashSet<>();
+		firstName = format(firstName);
+		if (firstNames.containsKey(firstName)) {
+			return firstNames.get(firstName);
+		} else {
+			Set<String> ret = loadNamePossibilities(firstName);
+			firstNames.put(firstName, ret);
+			return ret;
+		}
+	}
+
+	public boolean isSameFirstName(String personA, String personB) {
+		Set<String> possA = new HashSet<>(getRelatedFirstNames(personA));
+		possA.retainAll(getRelatedFirstNames(personB));
+		return !possA.isEmpty();
+	}
+
+	public boolean isSameFullName(String[] personANames, String[] personBNames) {
+		if (!checkNameArrayFormat(personANames) || !checkNameArrayFormat(personBNames))
+			return false;
+		return isSame(personANames[1], personBNames[1]) && isSameFirstName(personANames[0], personBNames[0]);
+	}
+
+	public String[] parseName(String rawName) {
+		String formattedRawName = rawName.toLowerCase();
+		if (parsedNames.containsKey(formattedRawName)) {
+			return parsedNames.get(formattedRawName);
+		} else {
+			String[] parsedName = loadParsedName(formattedRawName);
+			parsedNames.put(formattedRawName, parsedName);
+			return parsedName;
+		}
+	}
+
+	private String[] loadParsedName(String formattedRawName) {
+		JsonObject names = getJsonForRawName(formattedRawName);
+		JsonObject name = names.get("name").getAsJsonObject();
+		if (name.has(FIRST_NAME_KEY) && name.has(LAST_NAME_KEY)) {
+			return new String[] { name.get(FIRST_NAME_KEY).getAsString(), name.get(LAST_NAME_KEY).getAsString() };
+		}
+		return null;
+	}
+
+	private JsonObject getJsonForRawName(String formattedRawName) {
+		JsonObject ret = getAndParseJson(RAW_NAME_BASE_URL, formattedRawName).getAsJsonObject();
+		return ret;
+	}
+
+	private JsonElement getAndParseJson(String base, String query) {
+		try {
+			String jsonString = getJsonString(base, query);
+			return Parsers.parseJSON(jsonString);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return new JsonObject();
+		}
+	}
+
+	private String getJsonString(String base, String query) throws IOException {
+		String encodedQuery = IOUtil.urlEncode(query);
+		Request request = new Request(String.format(base, encodedQuery));
+		request.addQuery("key", key);
+		return IOUtil.read(request);
+	}
+
+	private boolean isSame(String lastName1, String lastName2) {
+		return format(lastName1).equals(format(lastName2));
+	}
+
+	private boolean checkNameArrayFormat(String[] names) {
+		return names != null && names.length == 2;
+	}
+
+	private Set<String> loadNamePossibilities(String name) {
+		Set<String> ret = new HashSet<>();
+		JsonElement json = getAndParseJson(FIRST_NAME_BASE_URL, name);
+		for (DocNavigator navigator : firstNameNavigators) {
+			ret.addAll(navigator.navigate(json));
+		}
+		ret.add(name);
+		return ret;
+	}
+
+	public String format(String input) {
+		if (input == null)
+			return "";
+		else
+			return input.toLowerCase().replaceAll(SEARCH_FORMAT_EXCLUDE_PATTERN, "");
+	}
+
+	private static final DocNavigator[] firstNameNavigators = { new DocNavigator("full_names", FIRST_NAME_KEY),
+			new DocNavigator("nicknames", FIRST_NAME_KEY), new DocNavigator("spellings", FIRST_NAME_KEY) };
+
+	private static final LazyField<NameComparison> singleton = new LazyField<>(new Callable<NameComparison>() {
 		@Override
 		public NameComparison call() throws Exception {
-			Token token = ApiUtility.getNamedToken("pipl", "name_key");
+			Token token = ApiUtility.getNamedToken(API_NAME, TOKEN_NAME);
 			return new NameComparison(token.getKey());
 		}
 	});
 
 	public static NameComparison get() {
 		return singleton.get();
-	}
-
-	private final String key;
-
-	private NameComparison(String key) {
-		this.key = key;
-	}
-
-	private final Map<String, Set<String>> gathered = new HashMap<>();
-	private final Map<String, JsonObject> rawObjects = new HashMap<>();
-
-	public boolean isSameFirstName(String a, String b) {
-		HashSet<String> possA = new HashSet<String>(getPossibilities(a));
-		possA.retainAll(getPossibilities(b));
-		return !possA.isEmpty();
-	}
-
-	private static final String FIRST_BASE = "http://api.pipl.com/name/v2/json/?key=%s&first_name=%s";
-	private static final String RAW_BASE = "http://api.pipl.com/name/v2/json/?key=%s&raw_name=%s";
-
-	private static final JsonParser parser = new JsonParser();
-
-	private JsonObject getForName(String raw) throws IOException {
-		raw = raw.toLowerCase();
-		if (rawObjects.containsKey(raw))
-			return rawObjects.get(raw);
-		else {
-			JsonObject ret = parser.parse(
-					new BufferedReader(new InputStreamReader(new URL(String.format(RAW_BASE, key,
-							URLEncoder.encode(raw, "UTF-8"))).openStream()))).getAsJsonObject();
-			rawObjects.put(raw, ret);
-			return ret;
-		}
-	}
-
-	public String[] parseName(String raw) {
-		try {
-			JsonObject names = getForName(raw);
-			JsonObject name = names.get("name").getAsJsonObject();
-			if (name.has("first") && name.has("last")) {
-				return new String[] { name.get("first").getAsString(), name.get("last").getAsString() };
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public boolean isSameName(String[] a, String[] b) {
-		if (a == null || b == null || a.length != 2 || b.length != 2)
-			return false;
-		return format(a[1]).equals(format(b[1])) && isSameFirstName(a[0], b[0]);
-	}
-
-	public Set<String> getPossibilities(String name) {
-		if (name == null)
-			return new HashSet<>();
-		name = format(name);
-		if (gathered.containsKey(name))
-			return gathered.get(name);
-		Set<String> ret = new HashSet<>();
-		try {
-			JsonObject json = parser.parse(
-					new BufferedReader(new InputStreamReader(new URL(String.format(FIRST_BASE, key,
-							URLEncoder.encode(name, "UTF-8"))).openStream()))).getAsJsonObject();
-			addFrom(json, "full_names", ret);
-			addFrom(json, "nicknames", ret);
-			addFrom(json, "spellings", ret);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return ret;
-		}
-		ret.add(name);
-		gathered.put(name, ret);
-		return ret;
-	}
-
-	private void addFrom(JsonObject wrap, String sub, Set<String> dest) {
-		if (wrap == null)
-			return;
-		JsonElement inside = wrap.get(sub);
-		if (inside == null || !inside.isJsonObject())
-			return;
-		JsonElement source = inside.getAsJsonObject().get("first");
-		if (source != null && source.isJsonArray()) {
-			for (JsonElement e : source.getAsJsonArray())
-				dest.add(format(e.getAsString()));
-		}
-	}
-
-	public String format(String input) {
-		if (input == null)
-			return "";
-		return input.toLowerCase().replaceAll("[^A-Za-z]", "");
 	}
 
 }
