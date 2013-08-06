@@ -31,7 +31,6 @@ public class Driver {
 	private static int total = 25;
 
 	public static void main(String[] args) throws IllegalStateException, IOException {
-		SearchController searcher = new SearchController();
 		if (Arrays.asList(args).contains("-gt")) {
 			if (args.length < 3) {
 				System.out.println("Usage: -gt number file");
@@ -45,8 +44,8 @@ public class Driver {
 				String first = names[0], last = names[1];
 				long start = System.currentTimeMillis();
 				System.out.printf("Searching for %s %s...%n", first, last);
-				if (searcher.lookForName(first, last)) {
-					PersonalDataStorage pds = searcher.getDataStorage();
+				PersonalDataStorage pds = SearchController.lookForName(first, last);
+				if (pds.size() > 0) {
 					output.add(first + "|" + last, Driver.getGson().toJsonTree(pds));
 					System.out.printf("Found %d possible results%n", pds.size());
 				} else {
@@ -64,7 +63,7 @@ public class Driver {
 				try {
 					final Socket nextSock = server.accept();
 					System.out.println("Received socket");
-					UniversalExecutor.communicate.submit(new PhpCommunicator(nextSock, searcher));
+					UniversalExecutor.communicate.submit(new PhpCommunicator(nextSock));
 				} catch (SocketTimeoutException ex) {
 					break;
 				} catch (IOException ex) {

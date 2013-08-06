@@ -1,25 +1,21 @@
 package com.sk;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
-import com.sk.api.impl.FacebookApiSearcher;
-import com.sk.api.impl.FourSquareApiSearcher;
-import com.sk.api.impl.GooglePlusApiSearcher;
-import com.sk.api.impl.LinkedinApiSearcher;
-import com.sk.api.impl.PiplApiSearcher;
-import com.sk.api.impl.TwitterApiSearcher;
-import com.sk.impl.search.WhitepagesSearcher;
-import com.sk.util.PersonalData;
+import com.sk.impl2.FacebookApiLoader;
+import com.sk.impl2.FourSquareApiLoader;
+import com.sk.impl2.GooglePlusApiLoader;
+import com.sk.impl2.LinkedinApiLoader;
+import com.sk.impl2.PiplApiLoader;
+import com.sk.impl2.TwitterApiLoader;
+import com.sk.impl2.WhitepagesLoader;
+import com.sk.parse.Extractor;
+import com.sk.parse.OuterLoader;
+import com.sk.parse.PagingLoader;
 import com.sk.util.PersonalDataStorage;
-import com.sk.util.parse.search.NameSearcher;
+import com.sk.web.Request;
 
 /**
  * Controls searching. Just search for a name and it will return a PersonalDataStorage of all of the data
@@ -36,90 +32,58 @@ import com.sk.util.parse.search.NameSearcher;
  * @author Strikeskids
  * 
  */
-public class SearchController implements NameSearcher {
+public class SearchController extends OuterLoader {
 
-	private final ThreadLocal<PersonalDataStorage> store = new ThreadLocal<>();
-	private NameSearcher[] use = { new WhitepagesSearcher(), new LinkedinApiSearcher(), new PiplApiSearcher(),
-			new FourSquareApiSearcher(), new GooglePlusApiSearcher(), new TwitterApiSearcher(),
-			new FacebookApiSearcher() };
+	private final String first, last;
 
-	private final Map<String, PersonalDataStorage> cache = new WeakHashMap<>();
-
-	@Override
-	public URL[] results() throws IllegalStateException {
-		throw new UnsupportedOperationException();
+	public SearchController(String first, String last) {
+		this.first = first;
+		this.last = last;
 	}
 
-	@Override
-	public PersonalData[] getData() throws IllegalStateException {
-		return getDataStorage().toArray();
-	}
-
-	public PersonalDataStorage getDataStorage() throws IllegalStateException {
-		PersonalDataStorage ret = store.get();
-		if (ret == null)
-			throw new IllegalArgumentException();
-		else
-			return ret;
-	}
-
-	@Override
-	public boolean lookForName(String first, String last) throws IOException {
-		String joined = first + "|" + last;
-		PersonalDataStorage store;
-		boolean ret = false;
-
-		if ((store = cache.get(joined)) != null) {
-			ret = true;
-		} else {
-			this.store.remove();
-			store = new PersonalDataStorage();
-			List<Future<PersonalData[]>> futures = new ArrayList<>();
-			for (NameSearcher n : use) {
-				futures.add(Driver.EXECUTOR.submit(new SearchRunnable(n, first, last)));
-			}
-			for (int i = 0; i < futures.size(); ++i) {
-				try {
-					Future<PersonalData[]> fut = futures.get(i);
-					PersonalData[] dat = fut.get();
-					if (dat.length > 0) {
-						ret = true;
-						store.add(dat);
-					}
-				} catch (InterruptedException e) {
-					--i;
-					continue;
-				} catch (ExecutionException e) {
-					e.printStackTrace();
-					continue;
-				}
-			}
-		}
-		cache.put(joined, store);
-
-		if (ret)
-			this.store.set(store);
+	public PersonalDataStorage getResultStorage() {
+		PersonalDataStorage ret = new PersonalDataStorage();
+		ret.addAll(getResults());
 		return ret;
 	}
 
-	private class SearchRunnable implements Callable<PersonalData[]> {
-
-		private final NameSearcher ns;
-		private final String first, last;
-
-		private SearchRunnable(NameSearcher ns, String first, String last) {
-			this.ns = ns;
-			this.first = first;
-			this.last = last;
-		}
-
-		@Override
-		public PersonalData[] call() throws Exception {
-			if (ns.lookForName(first, last))
-				return ns.getData();
-			else
-				return new PersonalData[0];
-		}
+	@Override
+	protected List<Extractor> getExtractors() {
+		List<Extractor> ret = new ArrayList<>();
+		ret.add(new FacebookApiLoader(first, last));
+		ret.add(new FourSquareApiLoader(first, last));
+		ret.add(new GooglePlusApiLoader(first, last));
+		ret.add(new LinkedinApiLoader(first, last));
+		ret.add(new PiplApiLoader(first, last));
+		ret.add(new TwitterApiLoader(first, last));
+		ret.add(new WhitepagesLoader(first, last));
+		return ret;
 	}
 
+	@Override
+	protected boolean loadStopPaging() {
+		return true;
+	}
+
+	@Override
+	protected PagingLoader createNextPage() {
+		return null;
+	}
+
+	@Override
+	protected Request getRequest() {
+		return null;
+	}
+
+	@Override
+	protected void parse(URL source, String data) {
+	}
+
+	public static PersonalDataStorage lookForName(String first, String last) {
+		return search(first, last).getResultStorage();
+	}
+
+	public static SearchController search(String first, String last) {
+		return new SearchController(first, last);
+	}
 }

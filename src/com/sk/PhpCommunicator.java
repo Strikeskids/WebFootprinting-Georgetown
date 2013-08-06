@@ -22,15 +22,13 @@ import com.sk.util.PersonalDataStorage;
 public class PhpCommunicator implements Runnable {
 
 	private final Socket sock;
-	private final SearchController searcher;
 	private MessageDigest digest;
 
 	private final String receiveShake = "GrabName";
 	private final String sendShake = "NameGrabber";
 
-	public PhpCommunicator(Socket sock, SearchController searcher) {
+	public PhpCommunicator(Socket sock) {
 		this.sock = sock;
-		this.searcher = searcher;
 		try {
 			this.digest = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
@@ -73,21 +71,17 @@ public class PhpCommunicator implements Runnable {
 			JsonObject result = new JsonObject();
 			String first = URLDecoder.decode(names[0], "UTF-8"), last = URLDecoder.decode(names[1], "UTF-8");
 			long start = System.currentTimeMillis();
-			if (!searcher.lookForName(first, last)) {
+			PersonalDataStorage store = SearchController.lookForName(first, last);
+			if (store.size() == 0) {
 				result.addProperty("error", "Could not find names");
 			} else {
-				PersonalDataStorage store = searcher.getDataStorage();
-				if (store == null) {
-					result.addProperty("error", "Failed to get data storage");
+				System.out.printf("Found %d results in %d millis%n", store.size(), System.currentTimeMillis()
+						- start);
+				PersonStatistics stat = StatisticsController.get().generateStat(first, last, store.toArray());
+				if (stat == null) {
+					result.addProperty("error", "Failed to generate statistics");
 				} else {
-					System.out.printf("Found %d results in %d millis%n", store.size(), System.currentTimeMillis()
-							- start);
-					PersonStatistics stat = StatisticsController.get().generateStat(first, last, store.toArray());
-					if (stat == null) {
-						result.addProperty("error", "Failed to generate statistics");
-					} else {
-						result.add("stat", Driver.getGson().toJsonTree(stat, PersonStatistics.class));
-					}
+					result.add("stat", Driver.getGson().toJsonTree(stat, PersonStatistics.class));
 				}
 			}
 			out.println(result);
