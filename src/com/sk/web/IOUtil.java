@@ -1,13 +1,17 @@
 package com.sk.web;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,9 +20,15 @@ import java.util.regex.Pattern;
 
 public class IOUtil {
 
+	public static final String CHARSET_NAME = "UTF-8";
+	public static final Charset CHARSET = Charset.forName(CHARSET_NAME);
+
+	private static final String NONCE_ALPHABET = "1qaz2wsx3edc4rfv5tgb6yhn7ujm8ik9ol0pQAZWSXEDCRFVTGBYHNUJMIKOLP";
+	private static final Random random = new Random();
+
 	public static String urlEncode(String s) {
 		try {
-			return URLEncoder.encode(s, "UTF-8").replaceAll(Pattern.quote("+"), "%20")
+			return URLEncoder.encode(s, CHARSET_NAME).replaceAll(Pattern.quote("+"), "%20")
 					.replaceAll(Pattern.quote("*"), "%2A");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -28,7 +38,7 @@ public class IOUtil {
 
 	public static String urlDecode(String s) {
 		try {
-			return URLDecoder.decode(s, "UTF-8");
+			return URLDecoder.decode(s, CHARSET_NAME);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return null;
@@ -65,7 +75,7 @@ public class IOUtil {
 	}
 
 	public static String generateNonce(int length) {
-		return generateString("1qaz2wsx3edc4rfv5tgb6yhn7ujm8ik9ol0pQAZWSXEDCRFVTGBYHNUJMIKOLP", length);
+		return generateString(NONCE_ALPHABET, length);
 	}
 
 	public static String generateString(String alphabet, int length) {
@@ -77,10 +87,25 @@ public class IOUtil {
 		return ret.toString();
 	}
 
+	public static String read(Request request) throws IOException {
+		URLConnection conn = request.openConnection();
+		conn.setDoInput(true);
+		conn.connect();
+		return read(conn.getInputStream());
+	}
+
+	public static String read(File file) throws IOException {
+		return read(new FileInputStream(file));
+	}
+
 	public static String read(InputStream stream) throws IOException {
+		return read(new InputStreamReader(stream, CHARSET));
+	}
+
+	public static String read(Reader inputReader) throws IOException {
+		BufferedReader reader = new BufferedReader(inputReader);
 		StringBuilder ret = new StringBuilder();
 		String line;
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 		while ((line = reader.readLine()) != null) {
 			ret.append(line);
 			ret.append("\n");
@@ -89,12 +114,4 @@ public class IOUtil {
 		return ret.toString();
 	}
 
-	public static String read(Request request) throws IOException {
-		URLConnection conn = request.openConnection();
-		conn.setDoInput(true);
-		conn.connect();
-		return read(conn.getInputStream());
-	}
-
-	public static final Random random = new Random();
 }
