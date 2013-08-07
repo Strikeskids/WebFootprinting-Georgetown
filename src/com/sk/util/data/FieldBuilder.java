@@ -1,5 +1,6 @@
 package com.sk.util.data;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,6 +36,12 @@ public class FieldBuilder {
 			cur.append(value);
 		cur.append("|");
 		builders.put(key, cur);
+	}
+
+	public void putAll(String key, Collection<?> values) {
+		for (Object o : values) {
+			put(key, o);
+		}
 	}
 
 	public void put(JsonObject source, String skey, String dkey) {

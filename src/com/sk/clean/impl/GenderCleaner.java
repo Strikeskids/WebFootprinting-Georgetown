@@ -6,18 +6,17 @@ import com.sk.util.data.PersonalData;
 
 public class GenderCleaner implements DataCleaner {
 
+	private static final String FIELD_NAME = "gender";
+
 	@Override
 	public boolean clean(PersonalData in, PersonalData out) {
-		if (in.containsKey("gender")) {
-			String[] genders = in.getAllValues("gender");
-			in.remove("gender");
-			FieldBuilder builder = new FieldBuilder();
-			for (String gender : genders) {
-				builder.put("gender", Gender.getFor(gender));
-			}
-			builder.addTo(out);
-			return true;
+		FieldBuilder builder = new FieldBuilder();
+		for (String gender : in.getAllValues(FIELD_NAME)) {
+			builder.put(FIELD_NAME, Gender.getFor(gender));
 		}
+		in.remove(FIELD_NAME);
+
+		builder.addTo(out);
 		return false;
 	}
 
@@ -30,12 +29,18 @@ public class GenderCleaner implements DataCleaner {
 			this.values = values;
 		}
 
+		public boolean matches(String value) {
+			for (String repr : this.values) {
+				if (repr.equalsIgnoreCase(value))
+					return true;
+			}
+			return false;
+		}
+
 		public static Gender getFor(String value) {
 			for (Gender gender : values()) {
-				for (String repr : gender.values) {
-					if (repr.equalsIgnoreCase(value))
-						return gender;
-				}
+				if (gender.matches(value))
+					return gender;
 			}
 			return null;
 		}
