@@ -8,6 +8,12 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Remembers the order of objects from disjoint order groups and will sort them accordingly
+ * 
+ * @author Strikeskids
+ * 
+ */
 public class OrderTable implements Comparator<Object> {
 
 	private Map<Object, Map<Object, Integer>> order = new HashMap<>();
