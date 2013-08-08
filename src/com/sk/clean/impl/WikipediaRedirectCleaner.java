@@ -1,13 +1,12 @@
 package com.sk.clean.impl;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -16,133 +15,38 @@ import java.util.TreeSet;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.sk.clean.DataCleaner;
+import com.sk.parse.util.Parsers;
 import com.sk.util.data.FieldBuilder;
 import com.sk.util.data.PersonalData;
+import com.sk.util.navigate.DocNavigator;
+import com.sk.web.IOUtil;
+import com.sk.web.Request;
 
 public class WikipediaRedirectCleaner implements DataCleaner {
 
-	private final String[] attr;
+	private static final DocNavigator CONTINUE_TOKEN_NAVIGATOR = new DocNavigator("query-continue", "links",
+			"plcontinue");
+	private static final String BASE = "http://en.wikipedia.org/w/api.php?format=json&action=query";
+
+	private final String[] chosenFields;
 
 	public WikipediaRedirectCleaner(String... attributeNames) {
-		this.attr = attributeNames;
+		this.chosenFields = attributeNames;
 	}
 
 	@Override
 	public boolean clean(PersonalData in, PersonalData out) {
 		FieldBuilder builder = new FieldBuilder();
-		Map<String, String> allValues = new TreeMap<>();
-		for (String attributeName : attr) {
-			if (in.containsKey(attributeName)) {
-				for (String value : in.getAllValues(attributeName)) {
-					allValues.put(value, value);
-				}
-			}
-		}
-		StringBuilder titles = new StringBuilder();
-		Iterator<String> valueIterator = allValues.keySet().iterator();
+
 		Set<String> disambiguationTitles = new TreeSet<>();
-		Map<String, String> queryMap = new HashMap<>();
-		while (valueIterator.hasNext()) {
-			for (int i = 0; i < 50 && valueIterator.hasNext(); ++i) {
-				titles.append(valueIterator.next());
-				titles.append("|");
-			}
-			queryMap.put("titles", titles.substring(0, titles.length() - 1));
-			queryMap.put("prop", "pageprops");
-			queryMap.put("redirects", "");
-			JsonObject result = readWiki(queryMap);
-			JsonObject query = result.get("query").getAsJsonObject();
-			if (query.has("normalized")) {
-				for (JsonElement normalizedElement : query.get("normalized").getAsJsonArray()) {
-					JsonObject normal = normalizedElement.getAsJsonObject();
-					String from = normal.get("from").getAsString();
-					String to = normal.get("to").getAsString();
-					allValues.put(from, to);
-					allValues.put(to, to);
-				}
-			}
-			if (query.has("redirects")) {
-				for (JsonElement redirElement : query.get("redirects").getAsJsonArray()) {
-					JsonObject redir = redirElement.getAsJsonObject();
-					String from = redir.get("from").getAsString();
-					String to = redir.get("to").getAsString();
-					allValues.put(from, to);
-					allValues.put(to, to);
-				}
-			}
-			if (query.has("pages")) {
-				for (Entry<String, JsonElement> page : query.get("pages").getAsJsonObject().entrySet()) {
-					JsonObject pageObject = page.getValue().getAsJsonObject();
-					if (pageObject.has("pageprops")) {
-						JsonObject props = pageObject.get("pageprops").getAsJsonObject();
-						if (props.has("disambiguation"))
-							disambiguationTitles.add(pageObject.get("title").getAsString());
-					}
-					if (pageObject.has("missing")) {
-						String from = allValues.get(pageObject.get("title").getAsString());
-						String to = GenericCleaner.cleanValue(from);
-						allValues.put(from, to);
-						allValues.put(to, to);
-					}
-				}
-			}
-		}
-		valueIterator = disambiguationTitles.iterator();
+		Map<String, String> changeMap = getChangeMapAndDisambiguation(in, disambiguationTitles);
 
-		queryMap.clear();
-		queryMap.put("pllimit", "500");
-		queryMap.put("prop", "links");
-		while (valueIterator.hasNext()) {
-			FieldBuilder extendedTitleBuilder = new FieldBuilder();
-			for (int i = 0; i < 50 && valueIterator.hasNext(); ++i) {
-				titles.append(valueIterator.next());
-				titles.append("|");
-			}
-			queryMap.put("titles", titles.substring(0, titles.length() - 1));
-			queryMap.remove("plcontinue");
-			JsonObject result;
-			while (true) {
-				result = readWiki(queryMap);
-				for (Entry<String, JsonElement> pageEntry : result.get("query").getAsJsonObject().get("pages")
-						.getAsJsonObject().entrySet()) {
-					JsonObject page = pageEntry.getValue().getAsJsonObject();
-					String title = page.get("title").getAsString();
-					if (page.has("links")) {
-						for (JsonElement linkElement : page.get("links").getAsJsonArray()) {
-							JsonObject link = linkElement.getAsJsonObject();
-							if (link.get("ns").getAsInt() == 0) {
-								extendedTitleBuilder.put(link, "title", title);
-							}
-						}
-					}
-				}
-
-				if (result.has("query-continue")) {
-					queryMap.put("plcontinue", result.get("query-continue").getAsJsonObject().get("links")
-							.getAsJsonObject().get("plcontinue").getAsString());
-				} else {
-					break;
-				}
-			}
-			Map<String, String> extendedTitles = new HashMap<>();
-			extendedTitleBuilder.addTo(extendedTitles);
-			for (Entry<String, String> title : extendedTitles.entrySet()) {
-				allValues.put(title.getKey(), title.getValue());
-				allValues.put(title.getValue(), title.getValue());
-			}
-		}
-		for (String attributeName : attr) {
+		performDisambiguationSearches(changeMap, disambiguationTitles);
+		for (String attributeName : chosenFields) {
 			for (String value : in.getAllValues(attributeName)) {
-				String cur = value;
-				while (true) {
-					String next = allValues.get(cur);
-					if (next == null || next.equals(cur))
-						break;
-					cur = next;
-				}
-				builder.put(attributeName, cur);
+				String changed = getActualValue(changeMap, value);
+				builder.put(attributeName, changed);
 			}
 			in.remove(attributeName);
 		}
@@ -150,23 +54,198 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 		return !builder.isEmpty();
 	}
 
-	private static final String BASE = "http://en.wikipedia.org/w/api.php?format=json&action=query";
-	private static final JsonParser parser = new JsonParser();
+	private Map<String, String> getChangeMapAndDisambiguation(PersonalData input, Set<String> disambiguation) {
+		Map<String, String> changeMap = getBaseChangeMap(input);
+		Iterator<String> titles = new ArrayList<>(changeMap.keySet()).iterator();
+		while (titles.hasNext()) {
+			Set<String> currentDisambiguation = performRedirectRequest(changeMap, titles);
+			disambiguation.addAll(currentDisambiguation);
+		}
+		return changeMap;
+	}
 
-	private JsonObject readWiki(Map<String, String> query) {
-		try {
-			StringBuilder urlb = new StringBuilder(BASE);
-			for (Entry<String, String> param : query.entrySet()) {
-				urlb.append("&");
-				urlb.append(param.getKey());
-				urlb.append("=");
-				urlb.append(URLEncoder.encode(param.getValue(), "UTF-8"));
+	private Map<String, String> performDisambiguationSearches(Map<String, String> changeMap,
+			Set<String> disambiguation) {
+		Iterator<String> titles = disambiguation.iterator();
+		FieldBuilder joinedTitleBuilder = new FieldBuilder();
+		while (titles.hasNext()) {
+			Request request = getDisambiguationPageRequest(titles);
+			joinedTitleBuilder = disambiguationSearch(joinedTitleBuilder, request);
+		}
+		Map<String, String> joinedTitles = new HashMap<>();
+		joinedTitleBuilder.addTo(joinedTitles);
+		for (Entry<String, String> title : joinedTitles.entrySet()) {
+			addChangeToMap(changeMap, title.getKey(), title.getValue());
+		}
+		return changeMap;
+	}
+
+	private FieldBuilder disambiguationSearch(FieldBuilder joinedTitleBuilder, Request request) {
+		JsonObject result = getWikiResult(request);
+		JsonObject query = result.get("query").getAsJsonObject();
+		for (JsonObject page : getPages(query)) {
+			String title = page.get("title").getAsString();
+			for (JsonObject link : getLinks(page)) {
+				if (isPageLink(link))
+					joinedTitleBuilder.put(link, "title", title);
 			}
-			HttpURLConnection wikiConn = (HttpURLConnection) new URL(urlb.toString()).openConnection();
-			wikiConn.addRequestProperty("User-Agent", "WebfootprintingGrabber/1.0 (gtgrab@strikeskids.com)");
-			return parser.parse(new BufferedReader(new InputStreamReader(wikiConn.getInputStream())))
-					.getAsJsonObject();
+		}
+		String continueToken = getLinkContinueToken(result);
+		if (continueToken != null) {
+			request.addQuery("plcontinue", continueToken);
+			return disambiguationSearch(joinedTitleBuilder, request);
+		} else {
+			return joinedTitleBuilder;
+		}
+	}
+
+	private String getLinkContinueToken(JsonObject result) {
+		for (String token : CONTINUE_TOKEN_NAVIGATOR.navigate(result))
+			return token;
+		return null;
+	}
+
+	private Set<String> performRedirectRequest(Map<String, String> changeMap, Iterator<String> titles) {
+		Request request = getRedirectRequest(titles);
+		Set<String> disambiguation = new HashSet<>();
+		JsonObject result = getWikiResult(request);
+		JsonObject query = result.get("query").getAsJsonObject();
+		addChangesToMap(changeMap, query.get("normalized"));
+		addChangesToMap(changeMap, query.get("redirects"));
+		for (JsonObject page : getPages(query)) {
+			String title = page.get("title").getAsString();
+			if (isDisambiguationPage(page)) {
+				disambiguation.add(title);
+			} else if (isMissingPage(page)) {
+				String from = getActualValue(changeMap, title);
+				String to = GenericCleaner.cleanValue(from);
+				addChangeToMap(changeMap, from, to);
+			}
+		}
+		return disambiguation;
+	}
+
+	private Map<String, String> getBaseChangeMap(PersonalData input) {
+		Map<String, String> changeMap = new TreeMap<>();
+		for (String attributeName : chosenFields) {
+			if (input.containsKey(attributeName)) {
+				for (String value : input.getAllValues(attributeName)) {
+					changeMap = addChangeToMap(changeMap, null, value);
+				}
+			}
+		}
+		return changeMap;
+	}
+
+	private Map<String, String> addChangeToMap(Map<String, String> changeMap, String from, String to) {
+		if (from != null)
+			changeMap.put(from, to);
+		changeMap.put(to, null);
+		return changeMap;
+	}
+
+	private String combineStrings(Iterator<String> values, int count) {
+		if (count <= 0 || !values.hasNext())
+			return "";
+		StringBuilder ret = new StringBuilder();
+		for (int i = 0; i < count && values.hasNext(); ++i) {
+			ret.append(values.next());
+			ret.append("|");
+		}
+		return ret.substring(0, ret.length() - 1);
+	}
+
+	private void addChangesToMap(Map<String, String> changeMap, JsonElement changes) {
+		if (changes == null)
+			return;
+		for (JsonElement changeElement : changes.getAsJsonArray()) {
+			JsonObject change = changeElement.getAsJsonObject();
+			String from = change.get("from").getAsString();
+			String to = change.get("to").getAsString();
+			changeMap = addChangeToMap(changeMap, from, to);
+		}
+	}
+
+	private List<JsonObject> getPages(JsonObject query) {
+		List<JsonObject> ret = new ArrayList<>();
+		if (query.has("pages")) {
+			JsonObject pages = query.get("pages").getAsJsonObject();
+			for (Entry<String, JsonElement> pageEntry : pages.entrySet()) {
+				ret.add(pageEntry.getValue().getAsJsonObject());
+			}
+		}
+		return ret;
+	}
+
+	private List<JsonObject> getLinks(JsonObject page) {
+		List<JsonObject> ret = new ArrayList<>();
+		if (page.has("links")) {
+			for (JsonElement linkElement : page.get("links").getAsJsonArray()) {
+				JsonObject link = linkElement.getAsJsonObject();
+				ret.add(link);
+			}
+		}
+		return ret;
+	}
+
+	private boolean isDisambiguationPage(JsonObject page) {
+		if (page.has("pageprops")) {
+			JsonObject pageprops = page.get("pageprops").getAsJsonObject();
+			return pageprops.has("disambiguation");
+		} else {
+			return false;
+		}
+	}
+
+	private boolean isMissingPage(JsonObject page) {
+		return page.has("missing");
+	}
+
+	private boolean isPageLink(JsonObject link) {
+		return link.get("ns").getAsInt() == 0;
+	}
+
+	private String getActualValue(Map<String, String> changeMap, String title) {
+		String prev = title;
+		while (title != null) {
+			prev = title;
+			title = changeMap.get(title);
+		}
+		return prev;
+	}
+
+	private JsonObject getWikiResult(Request request) {
+		try {
+			String jsonString = IOUtil.read(request);
+			return Parsers.parseJSON(jsonString).getAsJsonObject();
 		} catch (IOException ex) {
+			ex.printStackTrace();
+			return new JsonObject();
+		}
+	}
+
+	private Request getRedirectRequest(Iterator<String> titles) {
+		Request ret = getBaseRequest(titles);
+		ret.addQuery("prop", "pageprops");
+		ret.addQuery("redirects", "");
+		return ret;
+	}
+
+	private Request getDisambiguationPageRequest(Iterator<String> titles) {
+		Request ret = getBaseRequest(titles);
+		ret.addQuery("pllimit", "500");
+		ret.addQuery("prop", "links");
+		return ret;
+	}
+
+	private Request getBaseRequest(Iterator<String> titles) {
+		try {
+			Request ret = new Request(BASE);
+			String joinedTitles = combineStrings(titles, 50);
+			ret.addQuery("titles", joinedTitles);
+			return ret;
+		} catch (MalformedURLException impossible) {
+			impossible.printStackTrace();
 			return null;
 		}
 	}
