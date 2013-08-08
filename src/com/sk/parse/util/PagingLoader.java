@@ -1,6 +1,7 @@
 package com.sk.parse.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -50,6 +51,9 @@ public abstract class PagingLoader extends AbstractLoader implements ChainingExt
 	}
 
 	private List<PersonalData> initializeResults() {
+		List<PersonalData> ownResults = getOwnResults();
+		if (ownResults == null)
+			ownResults = Arrays.asList();
 		List<PersonalData> results = new ArrayList<>(getOwnResults());
 		PagingLoader nextPage = getNextPage();
 		if (nextPage != null)

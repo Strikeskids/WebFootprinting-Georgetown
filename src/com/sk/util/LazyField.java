@@ -1,10 +1,11 @@
 package com.sk.util;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LazyField<T> {
 
-	private volatile boolean initialized = false;
+	private AtomicBoolean initialized = new AtomicBoolean(false);
 	private T value;
 	private final Callable<T> initializer;
 	private final Object initLock = new Object();
@@ -14,9 +15,9 @@ public class LazyField<T> {
 	}
 
 	public T get() {
-		if (!initialized) {
+		if (!initialized.get()) {
 			synchronized (initLock) {
-				if (!initialized)
+				if (!initialized.get())
 					initialize();
 			}
 		}
@@ -26,13 +27,14 @@ public class LazyField<T> {
 	public void set(T value) {
 		synchronized (initLock) {
 			this.value = value;
-			this.initialized = true;
+			this.initialized.set(true);
 		}
 	}
 
 	private void initialize() {
 		try {
 			value = initializer.call();
+			initialized.set(true);
 		} catch (Exception ignored) {
 			ignored.printStackTrace();
 		}

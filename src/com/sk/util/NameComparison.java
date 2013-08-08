@@ -28,7 +28,7 @@ public class NameComparison {
 	private static final String FIRST_NAME_BASE_URL = "http://api.pipl.com/name/v2/json/?first_name=%s";
 	private static final String RAW_NAME_BASE_URL = "http://api.pipl.com/name/v2/json/?raw_name=%s";
 
-	private static final long MINIMUM_SEPARATION_TIME = 20;
+	private static final long MINIMUM_SEPARATION_TIME = 100;
 
 	private long lastReadTime = 0;
 	private final Object readLock = new Object();
@@ -46,13 +46,16 @@ public class NameComparison {
 		if (firstName == null)
 			return new HashSet<>();
 		firstName = format(firstName);
-		if (firstNames.containsKey(firstName)) {
-			return firstNames.get(firstName);
-		} else {
-			Set<String> ret = loadNamePossibilities(firstName);
-			firstNames.put(firstName, ret);
-			return ret;
+
+		if (!firstNames.containsKey(firstName)) {
+			synchronized (firstNames) {
+				if (!firstNames.containsKey(firstName)) {
+					Set<String> ret = loadNamePossibilities(firstName);
+					firstNames.put(firstName, ret);
+				}
+			}
 		}
+		return firstNames.get(firstName);
 	}
 
 	public boolean isSameFirstName(String personA, String personB) {
@@ -69,17 +72,22 @@ public class NameComparison {
 
 	public String[] parseName(String rawName) {
 		String formattedRawName = rawName.toLowerCase();
-		if (parsedNames.containsKey(formattedRawName)) {
-			return parsedNames.get(formattedRawName);
-		} else {
-			String[] parsedName = loadParsedName(formattedRawName);
-			parsedNames.put(formattedRawName, parsedName);
-			return parsedName;
+		if (!parsedNames.containsKey(formattedRawName)) {
+			synchronized (parsedNames) {
+				if (!parsedNames.containsKey(formattedRawName)) {
+					System.out.printf("Loading %s%n", formattedRawName);
+					String[] parsedName = loadParsedName(formattedRawName);
+					parsedNames.put(formattedRawName, parsedName);
+				}
+			}
 		}
+		return parsedNames.get(formattedRawName);
 	}
 
 	private String[] loadParsedName(String formattedRawName) {
 		JsonObject names = getJsonForRawName(formattedRawName);
+		if (!names.has("name"))
+			return null;
 		JsonObject name = names.get("name").getAsJsonObject();
 		if (name.has(FIRST_NAME_KEY) && name.has(LAST_NAME_KEY)) {
 			return new String[] { name.get(FIRST_NAME_KEY).getAsString(), name.get(LAST_NAME_KEY).getAsString() };
@@ -166,5 +174,5 @@ public class NameComparison {
 	public static NameComparison get() {
 		return singleton.get();
 	}
-	
+
 }
