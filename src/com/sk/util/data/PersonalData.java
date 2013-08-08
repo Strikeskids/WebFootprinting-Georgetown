@@ -53,6 +53,8 @@ public class PersonalData extends LinkedHashMap<String, String> {
 
 	private PersonalData(String site, int id, Map<? extends String, ? extends String> map) {
 		super(map);
+		if (id == -1)
+			id = dataInc++;
 		this.siteId = site;
 		this.dataId = id;
 	}

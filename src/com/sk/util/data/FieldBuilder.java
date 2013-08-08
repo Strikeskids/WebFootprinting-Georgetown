@@ -44,28 +44,28 @@ public class FieldBuilder {
 		}
 	}
 
-	public void put(JsonObject source, String skey, String dkey) {
-		if (source.has(skey)) {
-			JsonElement value = source.get(skey);
+	public void put(JsonObject source, String sourceKey, String destinationKey) {
+		if (source.has(sourceKey)) {
+			JsonElement value = source.get(sourceKey);
 			if (!value.isJsonPrimitive())
-				put(dkey, null);
+				put(destinationKey, null);
 			if (value.isJsonPrimitive()) {
 				JsonPrimitive primitiveValue = value.getAsJsonPrimitive();
 				if (primitiveValue.isBoolean())
-					put(dkey, primitiveValue.getAsBoolean());
+					put(destinationKey, primitiveValue.getAsBoolean());
 				else if (primitiveValue.isNumber())
-					put(dkey, primitiveValue.getAsNumber());
+					put(destinationKey, primitiveValue.getAsNumber());
 				else if (primitiveValue.isString())
-					put(dkey, primitiveValue.getAsString());
+					put(destinationKey, primitiveValue.getAsString());
 				else
 					throw new IllegalArgumentException();
 			}
 		} else
-			put(dkey, null);
+			put(destinationKey, null);
 	}
 
-	public void put(JsonObject user, String key) {
-		put(user, key, key);
+	public void put(JsonObject source, String sourceAndDestinationKey) {
+		put(source, sourceAndDestinationKey, sourceAndDestinationKey);
 	}
 
 	public void joinNames() {
