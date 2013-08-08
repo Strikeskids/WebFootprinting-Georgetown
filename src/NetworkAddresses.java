@@ -37,7 +37,7 @@ public class NetworkAddresses {
 			try {
 				for (NetworkInterface net : Collections.list(NetworkInterface.getNetworkInterfaces())) {
 					if (!net.getDisplayName().contains("lo")) {
-						addresses = new InetAddressNode(net.getInetAddresses());
+						addresses = InetAddressNode.create(net.getInetAddresses());
 						break;
 					}
 				}
@@ -51,20 +51,31 @@ public class NetworkAddresses {
 		private InetAddress current;
 		private InetAddressNode next;
 
-		public InetAddressNode(Enumeration<InetAddress> addresses) {
+		public InetAddressNode(InetAddress ad) {
+			this.current = ad;
+		}
+
+		private static InetAddressNode create(Enumeration<InetAddress> addresses) {
 			if (!addresses.hasMoreElements())
 				throw new IllegalArgumentException();
-			current = addresses.nextElement();
-			if (!addresses.hasMoreElements()) {
-				next = this;
-			} else {
-				next = new InetAddressNode(addresses);
-				InetAddressNode tmp = next;
-				while (tmp.next != tmp) {
-					tmp = tmp.next;
-				}
-				tmp.next = this;
+			InetAddressNode first = null;
+			InetAddressNode prev = null;
+			InetAddressNode node = null;
+			int count = 0;
+			while (addresses.hasMoreElements()) {
+				InetAddress add = addresses.nextElement();
+				if (add.getHostName().contains("borrowed-icon.local"))
+					continue;
+				count++;
+				node = new InetAddressNode(add);
+				if (first == null)
+					first = node;
+				if (prev != null)
+					prev.next = node;
 			}
+			System.out.printf("Loaded %d ip addresses%n", count);
+			node.next = first;
+			return first;
 		}
 	}
 }
