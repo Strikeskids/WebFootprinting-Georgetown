@@ -16,7 +16,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
-public class MyAgent {
+public class BindIPAgent {
 	public static void premain(String args, Instrumentation inst) {
 		try {
 			inst.appendToBootstrapClassLoaderSearch(new JarFile(new File("boot.jar")));
