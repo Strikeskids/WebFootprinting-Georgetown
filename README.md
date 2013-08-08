@@ -117,3 +117,12 @@ The class provides a way to compare names to see if they are essentially
 equivalent. It uses the Name API provided by Pipl to do name queries and 
 matches. It is most used in this project to provide an endpoint for the 
 paging through results. 
+
+## Using multiple IPs
+Must exec with `-javaagent:agent.jar`. This allows the loader to modify
+the classes required to allow binding the local IP address.
+
+By default, the ip addresses bound cycle through and each connection
+is bound using a different IP address. To change this, open 
+`NetworkAddresses` and change the `bindSocket(Socket)` method. Then
+recompile the jar files with `buildagent.sh`
