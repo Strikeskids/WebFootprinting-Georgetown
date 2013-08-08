@@ -28,7 +28,7 @@ public class NameComparison {
 	private static final String FIRST_NAME_BASE_URL = "http://api.pipl.com/name/v2/json/?first_name=%s";
 	private static final String RAW_NAME_BASE_URL = "http://api.pipl.com/name/v2/json/?raw_name=%s";
 
-	private static final long MINIMUM_SEPARATION_TIME = 100;
+	private static final long MINIMUM_SEPARATION_TIME = 0;
 
 	private long lastReadTime = 0;
 	private final Object readLock = new Object();
