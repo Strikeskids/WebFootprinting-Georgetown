@@ -25,8 +25,25 @@ import com.sk.web.Request;
 
 public class WikipediaRedirectCleaner implements DataCleaner {
 
-	private static final DocNavigator CONTINUE_TOKEN_NAVIGATOR = new DocNavigator("query-continue", "links",
-			"plcontinue");
+	private static final String TITLES_KEY = "titles";
+	private static final String MAXIMUM_LINKS_PER_REQUEST = "500";
+	private static final String LINKS_LIMIT_KEY = "pllimit";
+	private static final String REDIRECT_KEY = "redirects";
+	private static final String PROPERTY_KEY = "prop";
+	private static final String NAMESPACE_KEY = "ns";
+	private static final String MISSING_PAGE_KEY = "missing";
+	private static final String DISAMBIGUATION_PAGE_KEY = "disambiguation";
+	private static final String PAGE_PROPERTIES_KEY = "pageprops";
+	private static final String LINKS_KEY = "links";
+	private static final String PAGES_KEY = "pages";
+	private static final String TO_KEY = "to";
+	private static final String FROM_KEY = "from";
+	private static final String[] REDIRECT_KEYS = { REDIRECT_KEY, "normalized" };
+	private static final String CONTINUE_LINK_KEY = "plcontinue";
+	private static final String TITLE_KEY = "title";
+	private static final String QUERY_KEY = "query";
+	private static final DocNavigator CONTINUE_TOKEN_NAVIGATOR = new DocNavigator("query-continue", LINKS_KEY,
+			CONTINUE_LINK_KEY);
 	private static final String BASE = "http://en.wikipedia.org/w/api.php?format=json&action=query";
 
 	private final String[] chosenFields;
@@ -82,17 +99,17 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 
 	private FieldBuilder disambiguationSearch(FieldBuilder joinedTitleBuilder, Request request) {
 		JsonObject result = getWikiResult(request);
-		JsonObject query = result.get("query").getAsJsonObject();
+		JsonObject query = result.get(QUERY_KEY).getAsJsonObject();
 		for (JsonObject page : getPages(query)) {
-			String title = page.get("title").getAsString();
+			String title = page.get(TITLE_KEY).getAsString();
 			for (JsonObject link : getLinks(page)) {
 				if (isPageLink(link))
-					joinedTitleBuilder.put(link, "title", title);
+					joinedTitleBuilder.put(link, TITLE_KEY, title);
 			}
 		}
 		String continueToken = getLinkContinueToken(result);
 		if (continueToken != null) {
-			request.addQuery("plcontinue", continueToken);
+			request.addQuery(CONTINUE_LINK_KEY, continueToken);
 			return disambiguationSearch(joinedTitleBuilder, request);
 		} else {
 			return joinedTitleBuilder;
@@ -109,11 +126,11 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 		Request request = getRedirectRequest(titles);
 		Set<String> disambiguation = new HashSet<>();
 		JsonObject result = getWikiResult(request);
-		JsonObject query = result.get("query").getAsJsonObject();
-		addChangesToMap(changeMap, query.get("normalized"));
-		addChangesToMap(changeMap, query.get("redirects"));
+		JsonObject query = result.get(QUERY_KEY).getAsJsonObject();
+		for (String key : REDIRECT_KEYS)
+			addChangesToMap(changeMap, query.get(key));
 		for (JsonObject page : getPages(query)) {
-			String title = page.get("title").getAsString();
+			String title = page.get(TITLE_KEY).getAsString();
 			if (isDisambiguationPage(page)) {
 				disambiguation.add(title);
 			} else if (isMissingPage(page)) {
@@ -160,16 +177,16 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 			return;
 		for (JsonElement changeElement : changes.getAsJsonArray()) {
 			JsonObject change = changeElement.getAsJsonObject();
-			String from = change.get("from").getAsString();
-			String to = change.get("to").getAsString();
+			String from = change.get(FROM_KEY).getAsString();
+			String to = change.get(TO_KEY).getAsString();
 			changeMap = addChangeToMap(changeMap, from, to);
 		}
 	}
 
 	private List<JsonObject> getPages(JsonObject query) {
 		List<JsonObject> ret = new ArrayList<>();
-		if (query.has("pages")) {
-			JsonObject pages = query.get("pages").getAsJsonObject();
+		if (query.has(PAGES_KEY)) {
+			JsonObject pages = query.get(PAGES_KEY).getAsJsonObject();
 			for (Entry<String, JsonElement> pageEntry : pages.entrySet()) {
 				ret.add(pageEntry.getValue().getAsJsonObject());
 			}
@@ -179,8 +196,8 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 
 	private List<JsonObject> getLinks(JsonObject page) {
 		List<JsonObject> ret = new ArrayList<>();
-		if (page.has("links")) {
-			for (JsonElement linkElement : page.get("links").getAsJsonArray()) {
+		if (page.has(LINKS_KEY)) {
+			for (JsonElement linkElement : page.get(LINKS_KEY).getAsJsonArray()) {
 				JsonObject link = linkElement.getAsJsonObject();
 				ret.add(link);
 			}
@@ -189,20 +206,20 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 	}
 
 	private boolean isDisambiguationPage(JsonObject page) {
-		if (page.has("pageprops")) {
-			JsonObject pageprops = page.get("pageprops").getAsJsonObject();
-			return pageprops.has("disambiguation");
+		if (page.has(PAGE_PROPERTIES_KEY)) {
+			JsonObject pageprops = page.get(PAGE_PROPERTIES_KEY).getAsJsonObject();
+			return pageprops.has(DISAMBIGUATION_PAGE_KEY);
 		} else {
 			return false;
 		}
 	}
 
 	private boolean isMissingPage(JsonObject page) {
-		return page.has("missing");
+		return page.has(MISSING_PAGE_KEY);
 	}
 
 	private boolean isPageLink(JsonObject link) {
-		return link.get("ns").getAsInt() == 0;
+		return link.get(NAMESPACE_KEY).getAsInt() == 0;
 	}
 
 	private String getActualValue(Map<String, String> changeMap, String title) {
@@ -226,15 +243,15 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 
 	private Request getRedirectRequest(Iterator<String> titles) {
 		Request ret = getBaseRequest(titles);
-		ret.addQuery("prop", "pageprops");
-		ret.addQuery("redirects", "");
+		ret.addQuery(PROPERTY_KEY, PAGE_PROPERTIES_KEY);
+		ret.addQuery(REDIRECT_KEY, "");
 		return ret;
 	}
 
 	private Request getDisambiguationPageRequest(Iterator<String> titles) {
 		Request ret = getBaseRequest(titles);
-		ret.addQuery("pllimit", "500");
-		ret.addQuery("prop", "links");
+		ret.addQuery(LINKS_LIMIT_KEY, MAXIMUM_LINKS_PER_REQUEST);
+		ret.addQuery(PROPERTY_KEY, LINKS_KEY);
 		return ret;
 	}
 
@@ -242,7 +259,7 @@ public class WikipediaRedirectCleaner implements DataCleaner {
 		try {
 			Request ret = new Request(BASE);
 			String joinedTitles = combineStrings(titles, 50);
-			ret.addQuery("titles", joinedTitles);
+			ret.addQuery(TITLES_KEY, joinedTitles);
 			return ret;
 		} catch (MalformedURLException impossible) {
 			impossible.printStackTrace();
