@@ -61,7 +61,7 @@ public class BindIPAgent {
 			if (label.getOffset() == 78) {
 				System.out.println("Transform label offset = 78");
 				mv.visitVarInsn(ALOAD, 3);
-				mv.visitMethodInsn(INVOKESTATIC, "NetworkAddresses", "bindSocket", "(Ljava/net/Socket;)V");
+				mv.visitMethodInsn(INVOKESTATIC, "NetworkAddresses", "modifySocket", "(Ljava/net/Socket;)V");
 			}
 
 		}
