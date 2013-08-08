@@ -72,7 +72,11 @@ public class GooglePlusPersonLoader extends IndividualExtractor {
 
 	@Override
 	protected void parse(URL source, String data) {
-		json = Parsers.parseJSON(data).getAsJsonObject();
+		JsonElement parsed = Parsers.parseJSON(data);
+		if (parsed != null && parsed.isJsonObject())
+			json = parsed.getAsJsonObject();
+		else
+			json = new JsonObject();
 	}
 
 	private static final FieldNavigator[] navigators = { new FieldNavigator("blob", "aboutMe"),
@@ -81,6 +85,7 @@ public class GooglePlusPersonLoader extends IndividualExtractor {
 			new FieldNavigator("lastName", "name", "familyName"), new FieldNavigator("gender", "gender"),
 			new FieldNavigator("relationshipStatus", "relationshipStatus"),
 			new FieldNavigator("birthday", "birthday"), new FieldNavigator("age", "ageRange"),
-			new FieldNavigator("profilePictureUrl", "image", "url"), new FieldNavigator("email", "emails", "value") };
+			new FieldNavigator("profilePictureUrl", "image", "url"),
+			new FieldNavigator("email", "emails", "value") };
 
 }

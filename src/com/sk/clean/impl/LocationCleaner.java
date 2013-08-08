@@ -96,6 +96,8 @@ public class LocationCleaner implements DataCleaner {
 		for (int i = addressComponents.size() - 1; i >= 0; --i) {
 			JsonObject addressComponent = addressComponents.get(i).getAsJsonObject();
 			String typeName = getType(addressComponent);
+			if (typeName == null)
+				continue;
 			String newName = formatTypeName(typeName);
 			builder.put(addressComponent, COMPONENT_VALUE_KEY, newName);
 		}
@@ -104,7 +106,10 @@ public class LocationCleaner implements DataCleaner {
 
 	private String getType(JsonObject addressComponent) {
 		JsonArray typesArray = addressComponent.get(TYPES_ARRAY_KEY).getAsJsonArray();
-		return typesArray.get(0).getAsString();
+		if (typesArray.size() == 0)
+			return null;
+		else
+			return typesArray.get(0).getAsString();
 	}
 
 	private String formatTypeName(String typeName) {

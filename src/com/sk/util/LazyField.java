@@ -32,11 +32,13 @@ public class LazyField<T> {
 	}
 
 	private void initialize() {
-		try {
-			value = initializer.call();
-			initialized.set(true);
-		} catch (Exception ignored) {
-			ignored.printStackTrace();
+		synchronized (initLock) {
+			try {
+				value = initializer.call();
+				initialized.set(true);
+			} catch (Exception ignored) {
+				ignored.printStackTrace();
+			}
 		}
 	}
 }
