@@ -166,5 +166,5 @@ public class NameComparison {
 	public static NameComparison get() {
 		return singleton.get();
 	}
-
+	
 }

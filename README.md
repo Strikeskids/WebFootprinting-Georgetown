@@ -126,3 +126,29 @@ By default, the ip addresses bound cycle through and each connection
 is bound using a different IP address. To change this, open 
 `NetworkAddresses` and change the `bindSocket(Socket)` method. Then
 recompile the jar files with `buildagent.sh`
+
+### Explanation
+Java provides methods for getting information about classes and redefining
+during runtime using the instrumentation api `java.lang.instrument`. 
+
+Because the native URLConnection implementation does not allow binding to
+a socket address, the java SDK must be changed using this java 
+instrumentation API. URLConnection, when performing an HTTP(S) request,
+calls `sun.net.www.http.HttpClient` which extends from `sun.net.NetworkClient`
+to open the Socket. By injecting code into the `doConnect()` method, 
+you access the socket itself and bind it to the specific local address.
+
+This injection was performed using [ASM](http://asm.ow2.org/) to modify the 
+`doConnect()` method. This method was changed to call `NetworkAddresses`
+(in the default package) method `modifySocket(Socket)` which can be modified
+to perform any action on the socket required. 
+
+Because `sun.net.NetworkClient` is loaded with the bootstrap class loader, 
+`NetworkAddresses` must be added to the boot class path, which is easily done
+with instrumentation (`appendToBootstrapClassLoaderSearch(JarFile)`).
+
+To get java to load the instrumentation and allow the modification of 
+`NetworkClient`, the jvm must be started with the `-javaagent:` option 
+pointing to a jar file containing the java agent. The jar file must
+also have in its manifest `Premain-Class: CLASS_NAME` to indicate to the JVM
+which class should be used as the java agent.
